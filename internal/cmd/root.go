@@ -1,0 +1,33 @@
+package cmd
+
+import (
+	"github.com/spf13/cobra"
+
+	"github.com/ChiragAgg5k/appwrite-cli-go/internal/app"
+	"github.com/ChiragAgg5k/appwrite-cli-go/internal/cmd/services"
+)
+
+// NewRootCommand builds the full command tree.
+//
+// Registration is deliberately eager. Phase 0 measured the complete tree at
+// 5.0ms against 206ms for the TypeScript CLI, so lazy construction would add
+// complexity to generated code for no measurable gain -- see
+// docs/go-cli/BENCHMARKS.md.
+func NewRootCommand() *cobra.Command {
+	root := &cobra.Command{
+		Use:     "appwrite",
+		Short:   "Manage your Appwrite project from the command line",
+		Version: app.Version,
+		// Errors and usage are rendered by the output package, not by cobra.
+		SilenceUsage:  true,
+		SilenceErrors: true,
+	}
+
+	app.RegisterGlobalFlags(root)
+	services.Register(root)
+	registerSessionCommands(root)
+
+	registerCompletionInstall(root)
+
+	return root
+}

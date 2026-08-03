@@ -1,0 +1,422 @@
+package presences
+
+import (
+	"encoding/json"
+	"errors"
+	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
+	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/models"
+	"strings"
+)
+
+// Presences service
+type Presences struct {
+	client client.Client
+}
+
+func New(clt client.Client) *Presences {
+	return &Presences{
+		client: clt,
+	}
+}
+
+type ListOptions struct {
+	Queries []string
+	Total bool
+	Ttl int
+	enabledSetters map[string]bool
+}
+func (options ListOptions) New() *ListOptions {
+	options.enabledSetters = map[string]bool{
+		"Queries": false,
+		"Total": false,
+		"Ttl": false,
+	}
+	return &options
+}
+type ListOption func(*ListOptions)
+func (srv *Presences) WithListQueries(v []string) ListOption {
+	return func(o *ListOptions) {
+		o.Queries = v
+		o.enabledSetters["Queries"] = true
+	}
+}
+func (srv *Presences) WithListTotal(v bool) ListOption {
+	return func(o *ListOptions) {
+		o.Total = v
+		o.enabledSetters["Total"] = true
+	}
+}
+func (srv *Presences) WithListTtl(v int) ListOption {
+	return func(o *ListOptions) {
+		o.Ttl = v
+		o.enabledSetters["Ttl"] = true
+	}
+}
+	
+// List list presence logs. Expired entries are filtered out automatically.
+func (srv *Presences) List(optionalSetters ...ListOption)(*models.PresenceList, error) {
+	path := "/presences"
+	options := ListOptions{}.New()
+	for _, opt := range optionalSetters {
+		opt(options)
+	}
+	params := map[string]interface{}{}
+	if options.enabledSetters["Queries"] {
+		params["queries"] = options.Queries
+	}
+	if options.enabledSetters["Total"] {
+		params["total"] = options.Total
+	}
+	if options.enabledSetters["Ttl"] {
+		params["ttl"] = options.Ttl
+	}
+	headers := map[string]interface{}{
+		"X-Appwrite-Project": srv.client.Config["project"],
+		"accept": "application/json",
+	}
+
+	resp, err := srv.client.Call("GET", path, headers, params)
+	if err != nil {
+		return nil, err
+	}
+	if strings.HasPrefix(resp.Type, "application/json") {
+		bytes := []byte(resp.Result.(string))
+
+		parsed := models.PresenceList{}.New(bytes)
+
+		err = json.Unmarshal(bytes, parsed)
+		if err != nil {
+			return nil, err
+		}
+
+		return parsed, nil
+	}
+	var parsed models.PresenceList
+	parsed, ok := resp.Result.(models.PresenceList)
+	if !ok {
+		return nil, errors.New("unexpected response type")
+	}
+	return &parsed, nil
+
+}
+type GetUsageOptions struct {
+	Range string
+	enabledSetters map[string]bool
+}
+func (options GetUsageOptions) New() *GetUsageOptions {
+	options.enabledSetters = map[string]bool{
+		"Range": false,
+	}
+	return &options
+}
+type GetUsageOption func(*GetUsageOptions)
+func (srv *Presences) WithGetUsageRange(v string) GetUsageOption {
+	return func(o *GetUsageOptions) {
+		o.Range = v
+		o.enabledSetters["Range"] = true
+	}
+}
+	
+// GetUsage get presence usage metrics, including the current total of online
+// users and historical online user counts for the selected time range.
+func (srv *Presences) GetUsage(optionalSetters ...GetUsageOption)(*models.UsagePresence, error) {
+	path := "/presences/usage"
+	options := GetUsageOptions{}.New()
+	for _, opt := range optionalSetters {
+		opt(options)
+	}
+	params := map[string]interface{}{}
+	if options.enabledSetters["Range"] {
+		params["range"] = options.Range
+	}
+	headers := map[string]interface{}{
+		"X-Appwrite-Project": srv.client.Config["project"],
+		"accept": "application/json",
+	}
+
+	resp, err := srv.client.Call("GET", path, headers, params)
+	if err != nil {
+		return nil, err
+	}
+	if strings.HasPrefix(resp.Type, "application/json") {
+		bytes := []byte(resp.Result.(string))
+
+		parsed := models.UsagePresence{}.New(bytes)
+
+		err = json.Unmarshal(bytes, parsed)
+		if err != nil {
+			return nil, err
+		}
+
+		return parsed, nil
+	}
+	var parsed models.UsagePresence
+	parsed, ok := resp.Result.(models.UsagePresence)
+	if !ok {
+		return nil, errors.New("unexpected response type")
+	}
+	return &parsed, nil
+
+}
+	
+// Get get a presence log by its unique ID. Entries whose `expiresAt` is in
+// the past are treated as not found.
+func (srv *Presences) Get(PresenceId string)(*models.Presence, error) {
+	r := strings.NewReplacer("{presenceId}", PresenceId)
+	path := r.Replace("/presences/{presenceId}")
+	params := map[string]interface{}{}
+	params["presenceId"] = PresenceId
+	headers := map[string]interface{}{
+		"X-Appwrite-Project": srv.client.Config["project"],
+		"accept": "application/json",
+	}
+
+	resp, err := srv.client.Call("GET", path, headers, params)
+	if err != nil {
+		return nil, err
+	}
+	if strings.HasPrefix(resp.Type, "application/json") {
+		bytes := []byte(resp.Result.(string))
+
+		parsed := models.Presence{}.New(bytes)
+
+		err = json.Unmarshal(bytes, parsed)
+		if err != nil {
+			return nil, err
+		}
+
+		return parsed, nil
+	}
+	var parsed models.Presence
+	parsed, ok := resp.Result.(models.Presence)
+	if !ok {
+		return nil, errors.New("unexpected response type")
+	}
+	return &parsed, nil
+
+}
+type UpsertOptions struct {
+	Permissions []string
+	ExpiresAt string
+	Metadata interface{}
+	enabledSetters map[string]bool
+}
+func (options UpsertOptions) New() *UpsertOptions {
+	options.enabledSetters = map[string]bool{
+		"Permissions": false,
+		"ExpiresAt": false,
+		"Metadata": false,
+	}
+	return &options
+}
+type UpsertOption func(*UpsertOptions)
+func (srv *Presences) WithUpsertPermissions(v []string) UpsertOption {
+	return func(o *UpsertOptions) {
+		o.Permissions = v
+		o.enabledSetters["Permissions"] = true
+	}
+}
+func (srv *Presences) WithUpsertExpiresAt(v string) UpsertOption {
+	return func(o *UpsertOptions) {
+		o.ExpiresAt = v
+		o.enabledSetters["ExpiresAt"] = true
+	}
+}
+func (srv *Presences) WithUpsertMetadata(v interface{}) UpsertOption {
+	return func(o *UpsertOptions) {
+		o.Metadata = v
+		o.enabledSetters["Metadata"] = true
+	}
+}
+					
+// Upsert create or update a presence log by its user ID.
+func (srv *Presences) Upsert(PresenceId string, Status string, optionalSetters ...UpsertOption)(*models.Presence, error) {
+	r := strings.NewReplacer("{presenceId}", PresenceId)
+	path := r.Replace("/presences/{presenceId}")
+	options := UpsertOptions{}.New()
+	for _, opt := range optionalSetters {
+		opt(options)
+	}
+	params := map[string]interface{}{}
+	params["presenceId"] = PresenceId
+	params["status"] = Status
+	if options.enabledSetters["Permissions"] {
+		params["permissions"] = options.Permissions
+	}
+	if options.enabledSetters["ExpiresAt"] {
+		params["expiresAt"] = options.ExpiresAt
+	}
+	if options.enabledSetters["Metadata"] {
+		params["metadata"] = options.Metadata
+	}
+	headers := map[string]interface{}{
+		"X-Appwrite-Project": srv.client.Config["project"],
+		"content-type": "application/json",
+		"accept": "application/json",
+	}
+
+	resp, err := srv.client.Call("PUT", path, headers, params)
+	if err != nil {
+		return nil, err
+	}
+	if strings.HasPrefix(resp.Type, "application/json") {
+		bytes := []byte(resp.Result.(string))
+
+		parsed := models.Presence{}.New(bytes)
+
+		err = json.Unmarshal(bytes, parsed)
+		if err != nil {
+			return nil, err
+		}
+
+		return parsed, nil
+	}
+	var parsed models.Presence
+	parsed, ok := resp.Result.(models.Presence)
+	if !ok {
+		return nil, errors.New("unexpected response type")
+	}
+	return &parsed, nil
+
+}
+type UpdateOptions struct {
+	Status string
+	ExpiresAt string
+	Metadata interface{}
+	Permissions []string
+	Purge bool
+	enabledSetters map[string]bool
+}
+func (options UpdateOptions) New() *UpdateOptions {
+	options.enabledSetters = map[string]bool{
+		"Status": false,
+		"ExpiresAt": false,
+		"Metadata": false,
+		"Permissions": false,
+		"Purge": false,
+	}
+	return &options
+}
+type UpdateOption func(*UpdateOptions)
+func (srv *Presences) WithUpdateStatus(v string) UpdateOption {
+	return func(o *UpdateOptions) {
+		o.Status = v
+		o.enabledSetters["Status"] = true
+	}
+}
+func (srv *Presences) WithUpdateExpiresAt(v string) UpdateOption {
+	return func(o *UpdateOptions) {
+		o.ExpiresAt = v
+		o.enabledSetters["ExpiresAt"] = true
+	}
+}
+func (srv *Presences) WithUpdateMetadata(v interface{}) UpdateOption {
+	return func(o *UpdateOptions) {
+		o.Metadata = v
+		o.enabledSetters["Metadata"] = true
+	}
+}
+func (srv *Presences) WithUpdatePermissions(v []string) UpdateOption {
+	return func(o *UpdateOptions) {
+		o.Permissions = v
+		o.enabledSetters["Permissions"] = true
+	}
+}
+func (srv *Presences) WithUpdatePurge(v bool) UpdateOption {
+	return func(o *UpdateOptions) {
+		o.Purge = v
+		o.enabledSetters["Purge"] = true
+	}
+}
+			
+// Update update a presence log by its unique ID. Using the patch method you
+// can pass only specific fields that will get updated.
+func (srv *Presences) Update(PresenceId string, optionalSetters ...UpdateOption)(*models.Presence, error) {
+	r := strings.NewReplacer("{presenceId}", PresenceId)
+	path := r.Replace("/presences/{presenceId}")
+	options := UpdateOptions{}.New()
+	for _, opt := range optionalSetters {
+		opt(options)
+	}
+	params := map[string]interface{}{}
+	params["presenceId"] = PresenceId
+	if options.enabledSetters["Status"] {
+		params["status"] = options.Status
+	}
+	if options.enabledSetters["ExpiresAt"] {
+		params["expiresAt"] = options.ExpiresAt
+	}
+	if options.enabledSetters["Metadata"] {
+		params["metadata"] = options.Metadata
+	}
+	if options.enabledSetters["Permissions"] {
+		params["permissions"] = options.Permissions
+	}
+	if options.enabledSetters["Purge"] {
+		params["purge"] = options.Purge
+	}
+	headers := map[string]interface{}{
+		"X-Appwrite-Project": srv.client.Config["project"],
+		"content-type": "application/json",
+		"accept": "application/json",
+	}
+
+	resp, err := srv.client.Call("PATCH", path, headers, params)
+	if err != nil {
+		return nil, err
+	}
+	if strings.HasPrefix(resp.Type, "application/json") {
+		bytes := []byte(resp.Result.(string))
+
+		parsed := models.Presence{}.New(bytes)
+
+		err = json.Unmarshal(bytes, parsed)
+		if err != nil {
+			return nil, err
+		}
+
+		return parsed, nil
+	}
+	var parsed models.Presence
+	parsed, ok := resp.Result.(models.Presence)
+	if !ok {
+		return nil, errors.New("unexpected response type")
+	}
+	return &parsed, nil
+
+}
+	
+// Delete delete a presence log by its unique ID.
+func (srv *Presences) Delete(PresenceId string)(*interface{}, error) {
+	r := strings.NewReplacer("{presenceId}", PresenceId)
+	path := r.Replace("/presences/{presenceId}")
+	params := map[string]interface{}{}
+	params["presenceId"] = PresenceId
+	headers := map[string]interface{}{
+		"X-Appwrite-Project": srv.client.Config["project"],
+		"content-type": "application/json",
+	}
+
+	resp, err := srv.client.Call("DELETE", path, headers, params)
+	if err != nil {
+		return nil, err
+	}
+	if strings.HasPrefix(resp.Type, "application/json") {
+		bytes := []byte(resp.Result.(string))
+
+		var parsed interface{}
+
+		err = json.Unmarshal(bytes, &parsed)
+		if err != nil {
+			return nil, err
+		}
+		return &parsed, nil
+	}
+	var parsed interface{}
+	parsed, ok := resp.Result.(interface{})
+	if !ok {
+		return nil, errors.New("unexpected response type")
+	}
+	return &parsed, nil
+
+}
