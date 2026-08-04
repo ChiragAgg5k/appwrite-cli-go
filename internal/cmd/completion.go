@@ -87,6 +87,10 @@ func newCompletionInstallCommand(root *cobra.Command) *cobra.Command {
 
 			fmt.Fprintf(command.OutOrStdout(), "Installed %s completion to %s\n", shell, path)
 
+			if follow := completionFollowUp(shell, filepath.Dir(path)); follow != "" {
+				fmt.Fprint(command.OutOrStdout(), "\n"+follow)
+			}
+
 			return nil
 		},
 	}
@@ -140,6 +144,79 @@ func completionInstallPath(shell string) (string, error) {
 			name+".fish",
 		), nil
 	}
+}
+
+// completionFollowUp is what the user still has to do for the script to be
+// loaded, or "" when the shell needs nothing.
+//
+// Writing the file is not installing it. zsh only autoloads completions from a
+// directory on its `fpath`, and `~/.zfunc` -- the path both CLIs write to -- is
+// not on it by default. So `completion install` reported success and tab
+// completion did nothing, with no way for the user to tell which half had
+// failed.
+//
+// The stale-index note is not hypothetical: `_appwrite` autoloaded from a
+// directory that has since gone, and compinit's cached index still named it, so
+// pressing Tab printed
+//
+//	(eval):1: _appwrite: function definition file not found
+//
+// three times and completed nothing. Adding the directory to fpath does not
+// clear that cache.
+//
+// The CLI advises rather than edits: a shell profile is the user's file, and
+// appending to it from an installer is how profiles end up with six copies of
+// the same line.
+func completionFollowUp(shell, directory string) string {
+	name := app.ExecutableName
+
+	// Quoted: these lines are meant to be pasted into a shell, and a home
+	// directory with a space in it -- "/Users/My Name" -- would otherwise turn
+	// one fpath entry into three broken ones.
+	quoted := shellQuote(directory)
+
+	switch shell {
+	case "zsh":
+		return fmt.Sprintf(`zsh loads completions from its fpath, which does not include %s by default.
+Add these to ~/.zshrc, then open a new shell:
+
+  fpath=(%s $fpath)
+  autoload -Uz compinit && compinit
+
+If Tab then reports "_%s: function definition file not found", compinit is
+using a cached index from an earlier install -- clear it with:
+
+  rm -f ~/.zcompdump*
+`, directory, quoted, name)
+	case "bash":
+		return fmt.Sprintf(`This directory is loaded by bash-completion. If Tab does nothing, either
+bash-completion is not installed, or ~/.bashrc does not source it:
+
+  source /usr/share/bash-completion/bash_completion
+
+You can also source the script directly:
+
+  source %s
+`, shellQuote(filepath.Join(directory, name)))
+	default:
+		// fish loads ~/.config/fish/completions itself, with no setup.
+		return ""
+	}
+}
+
+// shellQuote makes a path safe to paste into zsh or bash.
+//
+// Only when it needs it: the overwhelming majority of paths need no quoting,
+// and wrapping every one of them would put quotes around the single line most
+// users copy for no reason at all.
+func shellQuote(path string) string {
+	if path != "" && !strings.ContainsAny(path, " \t\n'\"\\$`*?()[]{};&|<>#~!") {
+		return path
+	}
+
+	// Single quotes suppress every expansion; the only character they cannot
+	// hold is a single quote, which is closed, escaped and reopened.
+	return "'" + strings.ReplaceAll(path, "'", `'\''`) + "'"
 }
 
 func overridePath(variable, fallback string) string {

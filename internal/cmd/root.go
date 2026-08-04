@@ -50,6 +50,9 @@ func NewRootCommand() *cobra.Command {
 
 	registerCompletionInstall(root)
 
+	// Last, so the grouped screen sees the whole tree.
+	registerMainHelp(root)
+
 	return root
 }
 
