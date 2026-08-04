@@ -52,6 +52,11 @@ func (c *Context) base(endpoint string) sdkclient.Client {
 	// Keeps the response body for --raw and --json, which must show what the
 	// API sent rather than the typed model re-encoded. See capture.go.
 	client.Client = recordingHTTPClient(client.Timeout)
+	// `client --self-signed true` is what a user running Appwrite behind its own
+	// certificate sets. The SDK honours this field; storing the preference and
+	// never passing it on left the flag inert and every request rejected on
+	// certificate validation.
+	client.SelfSigned = c.Global.CurrentBool(config.PreferenceSelfSigned)
 	client.AddHeader("x-sdk-name", "Command Line")
 	client.AddHeader("x-sdk-platform", "console")
 	client.AddHeader("x-sdk-language", "cli")
@@ -129,16 +134,6 @@ func (c *Context) noCredentials(allowAPIKey bool, key string) error {
 
 	return ErrNotLoggedIn
 }
-
-// Environment variables that override the configured context.
-//
-// Ports templates/cli/lib/context.ts. A CI job sets these expecting them to
-// beat a checked-in appwrite.config.json, so they are consulted first.
-const (
-	EnvProjectID      = "APPWRITE_PROJECT_ID"
-	EnvOrganizationID = "APPWRITE_ORGANIZATION_ID"
-	EnvEndpoint       = "APPWRITE_ENDPOINT"
-)
 
 // endpoint returns the active session's endpoint.
 func (c *Context) endpoint() (string, error) {

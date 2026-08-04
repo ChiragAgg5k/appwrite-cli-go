@@ -1,0 +1,28 @@
+{
+  "name": "appwrite-cli",
+  "version": "0.7.5",
+  "description": "The Appwrite CLI, rewritten in Go",
+  "homepage": "https://appwrite.io/support",
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "bin": {
+    "appwrite": "run.js"
+  },
+  "files": [
+    "run.js"
+  ],
+  "optionalDependencies": {
+    "appwrite-cli-darwin-arm64": "0.7.5",
+    "appwrite-cli-darwin-x64": "0.7.5",
+    "appwrite-cli-linux-arm64": "0.7.5",
+    "appwrite-cli-linux-x64": "0.7.5",
+    "appwrite-cli-win-arm64": "0.7.5",
+    "appwrite-cli-win-x64": "0.7.5"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -3,8 +3,8 @@ package main
 
 import (
     "fmt"
-    "github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
-    "github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/tablesdb"
+    "github.com/appwrite/sdk-for-go/client"
+    "github.com/appwrite/sdk-for-go/tablesdb"
 )
 
 client := client.New(

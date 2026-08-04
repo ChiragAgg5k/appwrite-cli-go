@@ -3,8 +3,8 @@ package main
 
 import (
     "fmt"
-    "github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
-    "github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/backups"
+    "github.com/appwrite/sdk-for-go/client"
+    "github.com/appwrite/sdk-for-go/backups"
 )
 
 client := client.New(

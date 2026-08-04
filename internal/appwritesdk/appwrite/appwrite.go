@@ -12,6 +12,7 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/assistant"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/console"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/databases"
+	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/documentsdb"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/domains"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/functions"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/graphql"
@@ -39,6 +40,7 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/usage"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/users"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/vcs"
+	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/vectorsdb"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/waf"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/webhooks"
 )
@@ -66,6 +68,9 @@ func NewConsole(clt client.Client) *console.Console {
 }
 func NewDatabases(clt client.Client) *databases.Databases {
 	return databases.New(clt)
+}
+func NewDocumentsDB(clt client.Client) *documentsdb.DocumentsDB {
+	return documentsdb.New(clt)
 }
 func NewDomains(clt client.Client) *domains.Domains {
 	return domains.New(clt)
@@ -147,6 +152,9 @@ func NewUsers(clt client.Client) *users.Users {
 }
 func NewVcs(clt client.Client) *vcs.Vcs {
 	return vcs.New(clt)
+}
+func NewVectorsDB(clt client.Client) *vectorsdb.VectorsDB {
+	return vectorsdb.New(clt)
 }
 func NewWaf(clt client.Client) *waf.Waf {
 	return waf.New(clt)

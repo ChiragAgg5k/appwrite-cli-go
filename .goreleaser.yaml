@@ -85,7 +85,7 @@ release:
   github:
     owner: ChiragAgg5k
     name: appwrite-cli-go
-  draft: false
+  draft: true
 
 # Developer ID signing and notarisation are deliberately absent.
 #

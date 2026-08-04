@@ -57,7 +57,7 @@ func TestVerifyEndpointRejectsAServerThatIsNotAppwrite(t *testing.T) {
 	}))
 	defer server.Close()
 
-	if err := verifyEndpoint(server.URL); err == nil {
+	if err := verifyEndpoint(server.URL, false); err == nil {
 		t.Error("a server with no version was accepted as an Appwrite instance")
 	}
 }
@@ -71,14 +71,14 @@ func TestVerifyEndpointAcceptsAnAppwriteServer(t *testing.T) {
 	}))
 	defer server.Close()
 
-	if err := verifyEndpoint(server.URL); err != nil {
+	if err := verifyEndpoint(server.URL, false); err != nil {
 		t.Errorf("a healthy server was rejected: %v", err)
 	}
 }
 
 func TestVerifyEndpointRejectsAMalformedURL(t *testing.T) {
 	for _, endpoint := range []string{"not a url", "ftp://example.com/v1", ""} {
-		if err := verifyEndpoint(endpoint); err == nil {
+		if err := verifyEndpoint(endpoint, false); err == nil {
 			t.Errorf("%q was accepted as an endpoint", endpoint)
 		}
 	}
@@ -113,19 +113,98 @@ func TestClientCapturesTheConsoleSessionCookie(t *testing.T) {
 
 // A response that sets no cookie must not clear one already held, or a later
 // request in the same flow would go out unauthenticated.
+//
+// Asserted on the request the server actually receives. `SetCookie` writes the
+// outbound credential while `SessionCookie` holds what a response last set --
+// two different fields, so checking `SessionCookie` here would pass whether or
+// not the credential survived.
 func TestClientKeepsTheCookieWhenAResponseSetsNone(t *testing.T) {
+	var sent []string
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		sent = append(sent, r.Header.Get("Cookie"))
 		w.Write([]byte(`{}`))
 	}))
 	defer server.Close()
 
 	api := client.New(server.URL, "test").SetCookie("a_session_console=kept")
-	if err := api.Call("GET", "/account", nil, nil); err != nil {
-		t.Fatal(err)
+	for range 2 {
+		if err := api.Call("GET", "/account", nil, nil); err != nil {
+			t.Fatal(err)
+		}
 	}
 
-	if api.SessionCookie != "" {
-		t.Errorf("SessionCookie = %q, want it untouched by a response that set none",
-			api.SessionCookie)
+	for i, cookie := range sent {
+		if !strings.Contains(cookie, "a_session_console=kept") {
+			t.Errorf("request %d went out with Cookie %q, want the held credential", i+1, cookie)
+		}
+	}
+}
+
+// Every `*.appwrite.io` host takes the browser flow, and a staging deployment
+// seeded from a production dump hands out the same account IDs. Keying a
+// session on the subject alone let the second sign-in overwrite the first
+// endpoint's session -- and its keyring refresh token, which shares the key.
+func TestCloudSessionIDSeparatesEndpointsSharingASubject(t *testing.T) {
+	production := cloudSessionID("https://cloud.appwrite.io/v1", "68a1b2c3d4e5f6")
+	staging := cloudSessionID("https://stage.appwrite.io/v1", "68a1b2c3d4e5f6")
+
+	if production == staging {
+		t.Errorf("both endpoints keyed to %q, so one sign-in overwrites the other", production)
+	}
+}
+
+// Signing in again to an account already signed in on the same endpoint has to
+// land on the existing entry rather than accumulate a new one each time.
+func TestCloudSessionIDIsStableForOneAccountAndEndpoint(t *testing.T) {
+	first := cloudSessionID("https://cloud.appwrite.io/v1", "68a1b2c3d4e5f6")
+	second := cloudSessionID("https://cloud.appwrite.io/v1", "68a1b2c3d4e5f6")
+
+	if first != second {
+		t.Errorf("%q then %q, want one stable key per account and endpoint", first, second)
+	}
+}
+
+// Two self-hosted instances can share a host and differ only by scheme or base
+// path -- one reverse-proxied at /staging/v1 and another at /prod/v1, or an http
+// and an https URL for the same box during a migration. Keying on the host alone
+// collapsed those onto one session.
+func TestCloudSessionIDSeparatesEndpointsSharingAHost(t *testing.T) {
+	for _, pair := range [][2]string{
+		{"http://appwrite.example/v1", "https://appwrite.example/v1"},
+		{"https://appwrite.example/staging/v1", "https://appwrite.example/prod/v1"},
+		{"https://appwrite.example:8080/v1", "https://appwrite.example:9090/v1"},
+	} {
+		first := cloudSessionID(pair[0], "68a1b2c3d4e5f6")
+		second := cloudSessionID(pair[1], "68a1b2c3d4e5f6")
+
+		if first == second {
+			t.Errorf("%s and %s both keyed to %q", pair[0], pair[1], first)
+		}
+	}
+}
+
+// The same instance typed differently must still be one session, or a trailing
+// slash would strand the credentials of the session it already has.
+func TestCloudSessionIDIgnoresSpellingOfTheSameEndpoint(t *testing.T) {
+	for _, pair := range [][2]string{
+		{"https://cloud.appwrite.io/v1", "https://cloud.appwrite.io/v1/"},
+		{"https://Cloud.Appwrite.IO/v1", "https://cloud.appwrite.io/v1"},
+	} {
+		first := cloudSessionID(pair[0], "68a1b2c3d4e5f6")
+		second := cloudSessionID(pair[1], "68a1b2c3d4e5f6")
+
+		if first != second {
+			t.Errorf("%s keyed to %q but %s keyed to %q", pair[0], first, pair[1], second)
+		}
+	}
+}
+
+// No subject claim leaves nothing stable to key on. Two such sign-ins must
+// still not collide, so the fallback has to vary.
+func TestCloudSessionIDFallsBackWithoutASubject(t *testing.T) {
+	id := cloudSessionID("https://cloud.appwrite.io/v1", "")
+
+	if id == "" || strings.HasPrefix(id, "@") {
+		t.Errorf("id = %q, want a usable fallback key", id)
 	}
 }

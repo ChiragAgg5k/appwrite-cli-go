@@ -1,11 +1,17 @@
 module github.com/ChiragAgg5k/appwrite-cli-go
 
+// Matches templates/go/go.mod.twig. The CLI depends on the Go SDK this same
+// generator produces, and `go mod tidy` raises this directive to whatever that
+// module declares -- so a lower value here is silently rewritten on every
+// regeneration. Change both together.
 go 1.26.5
 
+// Direct dependencies only. Run `go mod tidy` after generation to resolve the
+// indirect set and refresh go.sum -- go.mod is regenerated from this template,
+// so anything added by hand to the generated file is lost on the next run.
 require (
 	github.com/charmbracelet/huh v1.0.0
 	github.com/charmbracelet/lipgloss v1.1.0
-	github.com/charmbracelet/x/ansi v0.9.3
 	github.com/fsnotify/fsnotify v1.10.1
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.9
@@ -13,6 +19,8 @@ require (
 	golang.org/x/sync v0.19.0
 	golang.org/x/term v0.33.0
 )
+
+require github.com/charmbracelet/x/ansi v0.9.3
 
 require (
 	al.essio.dev/pkg/shellescape v1.5.1 // indirect

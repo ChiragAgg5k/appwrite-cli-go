@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"runtime"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/app"
@@ -100,7 +101,8 @@ func runLogin(command *cobra.Command, options loginOptions) error {
 	// Checked BEFORE anything is prompted for, so a wrong endpoint fails
 	// immediately rather than after the email and password are typed.
 	if options.Endpoint != "" && !cloud {
-		if err := verifyEndpoint(configEndpoint); err != nil {
+		if err := verifyEndpoint(configEndpoint,
+			global.CurrentBool(config.PreferenceSelfSigned)); err != nil {
 			return err
 		}
 	}
@@ -163,14 +165,18 @@ func currentAccount() *jsonx.Object {
 // password is typed into it.
 //
 // Ports verifyEndpoint (session.ts:41).
-func verifyEndpoint(endpoint string) error {
+func verifyEndpoint(endpoint string, selfSigned bool) error {
 	parsed, err := url.Parse(endpoint)
 	if err != nil || (parsed.Scheme != "http" && parsed.Scheme != "https") {
 		return fmt.Errorf("invalid endpoint URL: %s", endpoint)
 	}
 
 	version := jsonx.NewObject()
-	err = client.New(endpoint, app.Version).Call("GET", "/health/version", nil, version)
+	// selfSigned is threaded in rather than read from preferences: `client
+	// --endpoint X --self-signed true` has to verify X under the setting given in
+	// the same invocation, not the one stored from a previous run.
+	err = client.New(endpoint, app.Version).SetSelfSigned(selfSigned).
+		Call("GET", "/health/version", nil, version)
 	if err == nil && version.GetString("version") != "" {
 		return nil
 	}
@@ -459,14 +465,7 @@ func loginWithDevice(command *cobra.Command, endpoint string) error {
 	}
 
 	email, name, subject := auth.DecodeIDToken(token.IDToken)
-	sessionID := subject
-	if sessionID == "" {
-		// Without a subject claim there is nothing stable to key the
-		// session on, so fall back to the login time. Two logins to the
-		// same account would then create two entries rather than
-		// overwrite one, which is noisy but not wrong.
-		sessionID = strconv.FormatInt(time.Now().UnixMilli(), 10)
-	}
+	sessionID := cloudSessionID(endpoint, subject)
 
 	session := config.NewObject()
 	// Key order matches what the TypeScript CLI writes, so a prefs.json
@@ -503,6 +502,56 @@ func loginWithDevice(command *cobra.Command, endpoint string) error {
 	command.Printf("Signed in as %s on %s\n", who, endpoint)
 
 	return nil
+}
+
+// cloudSessionID keys a browser-flow session on the endpoint as well as the
+// account.
+//
+// The subject alone is not unique. Every `*.appwrite.io` host takes this flow,
+// and a staging deployment seeded from a production dump hands out the very
+// same account IDs, so keying on the subject alone lets a second sign-in
+// overwrite the first endpoint's session -- and, because the same string names
+// the keyring entry, its refresh token with it.
+//
+// The TypeScript avoids this by keying on `ID.unique()` (login.ts:548), which
+// is collision-free but accumulates a fresh entry every time you sign in to an
+// account you are already signed in to. Composing the two keeps the
+// deduplication and drops the collision. The key is internal -- `session list`
+// and `login --switch` label sessions by email and endpoint -- so its spelling
+// is free.
+//
+// The WHOLE endpoint goes into the key, not just its host. Two self-hosted
+// instances can share a host and differ only by scheme or base path -- one
+// reverse-proxied at /staging/v1 and another at /prod/v1, or an http and an https
+// URL for the same box during a migration -- and reducing them to the host would
+// reintroduce exactly the collision this function exists to remove.
+func cloudSessionID(endpoint, subject string) string {
+	if subject == "" {
+		// No subject claim leaves nothing stable to key on, so fall back to the
+		// sign-in time. Repeated sign-ins then accumulate entries rather than
+		// overwrite one, which is noisy but never wrong.
+		return strconv.FormatInt(time.Now().UnixMilli(), 10)
+	}
+
+	return subject + "@" + canonicalEndpoint(endpoint)
+}
+
+// canonicalEndpoint reduces an endpoint to one spelling per instance, so the same
+// instance keys to the same session however it was typed.
+//
+// Hostnames are case-insensitive and a trailing slash is not meaningful; paths
+// are case-sensitive, so only the host is folded.
+func canonicalEndpoint(endpoint string) string {
+	trimmed := strings.TrimRight(endpoint, "/")
+
+	parsed, err := url.Parse(trimmed)
+	if err != nil || parsed.Host == "" {
+		return trimmed
+	}
+	parsed.Host = strings.ToLower(parsed.Host)
+	parsed.Scheme = strings.ToLower(parsed.Scheme)
+
+	return parsed.String()
 }
 
 // openBrowser is best-effort: a headless or locked-down environment simply

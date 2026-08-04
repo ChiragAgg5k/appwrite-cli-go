@@ -1,16 +1,11 @@
-# Appwrite NAME SDK
+# Appwrite Go SDK
 
 ![License](https://img.shields.io/github/license/appwrite/sdk-for-go.svg?style=flat-square)
 ![Version](https://img.shields.io/badge/api%20version-1.9.5-blue.svg?style=flat-square)
 [![Build Status](https://img.shields.io/travis/com/appwrite/sdk-generator?style=flat-square)](https://travis-ci.com/appwrite/sdk-generator)
-[![Twitter Account](https://img.shields.io/twitter/follow/appwrite?color=00acee&label=twitter&style=flat-square)](https://twitter.com/appwrite)
-[![Discord](https://img.shields.io/discord/564160730845151244?label=discord&style=flat-square)](https://appwrite.io/discord)
 
-**WORK IN PROGRESS - NOT READY FOR USAGE**
+Appwrite Go SDK
 
-Repo description goes here
-
-![Appwrite](https://github.com/appwrite/appwrite/raw/main/public/images/github.png)
 
 ## Installation
 
@@ -23,7 +18,7 @@ go mod init <YOUR_MODULE_NAME>
 To install using `go get`:
 
 ```bash
-go get github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk
+go get github.com/appwrite/sdk-for-go
 ```
 
 ## Testing the SDK
@@ -51,8 +46,8 @@ go get github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk
 		"os"
 		"time"
 
-		"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/appwrite"
-		"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/id"
+		"github.com/appwrite/sdk-for-go/appwrite"
+		"github.com/appwrite/sdk-for-go/id"
 	)
 
 	func main() {

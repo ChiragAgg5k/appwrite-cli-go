@@ -21,7 +21,7 @@ import (
 func NewRootCommand() *cobra.Command {
 	root := &cobra.Command{
 		Use:     "appwrite",
-		Short:   "Manage your Appwrite project from the command line",
+		Short:   "The Appwrite CLI, rewritten in Go",
 		Version: app.Version,
 		// Errors and usage are rendered by the output package, not by cobra.
 		SilenceUsage:  true,
