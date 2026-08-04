@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/models"
+	"net/url"
 	"strings"
 )
 
@@ -299,10 +300,9 @@ func (srv *Account) CreateBillingAddress(Country string, City string, StreetAddr
 	
 // GetBillingAddress get a specific billing address for a user using it's ID.
 func (srv *Account) GetBillingAddress(BillingAddressId string)(*models.BillingAddress, error) {
-	r := strings.NewReplacer("{billingAddressId}", BillingAddressId)
+	r := strings.NewReplacer("{billingAddressId}", url.PathEscape(BillingAddressId))
 	path := r.Replace("/account/billing-addresses/{billingAddressId}")
 	params := map[string]interface{}{}
-	params["billingAddressId"] = BillingAddressId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -368,14 +368,13 @@ func (srv *Account) WithUpdateBillingAddressPostalCode(v string) UpdateBillingAd
 									
 // UpdateBillingAddress update a specific billing address using it's ID.
 func (srv *Account) UpdateBillingAddress(BillingAddressId string, Country string, City string, StreetAddress string, optionalSetters ...UpdateBillingAddressOption)(*models.BillingAddress, error) {
-	r := strings.NewReplacer("{billingAddressId}", BillingAddressId)
+	r := strings.NewReplacer("{billingAddressId}", url.PathEscape(BillingAddressId))
 	path := r.Replace("/account/billing-addresses/{billingAddressId}")
 	options := UpdateBillingAddressOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["billingAddressId"] = BillingAddressId
 	params["country"] = Country
 	params["city"] = City
 	params["streetAddress"] = StreetAddress
@@ -421,10 +420,9 @@ func (srv *Account) UpdateBillingAddress(BillingAddressId string, Country string
 	
 // DeleteBillingAddress delete a specific billing address using it's ID.
 func (srv *Account) DeleteBillingAddress(BillingAddressId string)(*interface{}, error) {
-	r := strings.NewReplacer("{billingAddressId}", BillingAddressId)
+	r := strings.NewReplacer("{billingAddressId}", url.PathEscape(BillingAddressId))
 	path := r.Replace("/account/billing-addresses/{billingAddressId}")
 	params := map[string]interface{}{}
-	params["billingAddressId"] = BillingAddressId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -528,10 +526,9 @@ func (srv *Account) ListConsents(optionalSetters ...ListConsentsOption)(*models.
 // GetConsent get an OAuth2 consent the current user has given to a
 // third-party app by its unique ID.
 func (srv *Account) GetConsent(ConsentId string)(*models.Oauth2Consent, error) {
-	r := strings.NewReplacer("{consentId}", ConsentId)
+	r := strings.NewReplacer("{consentId}", url.PathEscape(ConsentId))
 	path := r.Replace("/account/consents/{consentId}")
 	params := map[string]interface{}{}
-	params["consentId"] = ConsentId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -566,10 +563,9 @@ func (srv *Account) GetConsent(ConsentId string)(*models.Oauth2Consent, error) {
 // issued under the consent are revoked, and the app must ask for consent
 // again to regain access.
 func (srv *Account) DeleteConsent(ConsentId string)(*interface{}, error) {
-	r := strings.NewReplacer("{consentId}", ConsentId)
+	r := strings.NewReplacer("{consentId}", url.PathEscape(ConsentId))
 	path := r.Replace("/account/consents/{consentId}")
 	params := map[string]interface{}{}
-	params["consentId"] = ConsentId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -629,14 +625,13 @@ func (srv *Account) WithListConsentTokensTotal(v bool) ListConsentTokensOption {
 // consent. Each entry represents one authorized device or session; the token
 // secrets themselves are never returned.
 func (srv *Account) ListConsentTokens(ConsentId string, optionalSetters ...ListConsentTokensOption)(*models.Oauth2ConsentTokenList, error) {
-	r := strings.NewReplacer("{consentId}", ConsentId)
+	r := strings.NewReplacer("{consentId}", url.PathEscape(ConsentId))
 	path := r.Replace("/account/consents/{consentId}/tokens")
 	options := ListConsentTokensOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["consentId"] = ConsentId
 	if options.enabledSetters["Queries"] {
 		params["queries"] = options.Queries
 	}
@@ -676,11 +671,9 @@ func (srv *Account) ListConsentTokens(ConsentId string, optionalSetters ...ListC
 // GetConsentToken get a token family issued under an OAuth2 consent by its
 // unique ID. The token secrets themselves are never returned.
 func (srv *Account) GetConsentToken(ConsentId string, TokenId string)(*models.Oauth2ConsentToken, error) {
-	r := strings.NewReplacer("{consentId}", ConsentId, "{tokenId}", TokenId)
+	r := strings.NewReplacer("{consentId}", url.PathEscape(ConsentId), "{tokenId}", url.PathEscape(TokenId))
 	path := r.Replace("/account/consents/{consentId}/tokens/{tokenId}")
 	params := map[string]interface{}{}
-	params["consentId"] = ConsentId
-	params["tokenId"] = TokenId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -715,11 +708,9 @@ func (srv *Account) GetConsentToken(ConsentId string, TokenId string)(*models.Oa
 // its unique ID. The access and refresh tokens of the family stop working
 // immediately; other token families and the consent itself are unaffected.
 func (srv *Account) DeleteConsentToken(ConsentId string, TokenId string)(*interface{}, error) {
-	r := strings.NewReplacer("{consentId}", ConsentId, "{tokenId}", TokenId)
+	r := strings.NewReplacer("{consentId}", url.PathEscape(ConsentId), "{tokenId}", url.PathEscape(TokenId))
 	path := r.Replace("/account/consents/{consentId}/tokens/{tokenId}")
 	params := map[string]interface{}{}
-	params["consentId"] = ConsentId
-	params["tokenId"] = TokenId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -752,10 +743,9 @@ func (srv *Account) DeleteConsentToken(ConsentId string, TokenId string)(*interf
 	
 // GetCoupon get coupon details for an account.
 func (srv *Account) GetCoupon(CouponId string)(*models.Coupon, error) {
-	r := strings.NewReplacer("{couponId}", CouponId)
+	r := strings.NewReplacer("{couponId}", url.PathEscape(CouponId))
 	path := r.Replace("/account/coupons/{couponId}")
 	params := map[string]interface{}{}
-	params["couponId"] = CouponId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -900,10 +890,9 @@ func (srv *Account) ListIdentities(optionalSetters ...ListIdentitiesOption)(*mod
 	
 // DeleteIdentity delete an identity by its unique ID.
 func (srv *Account) DeleteIdentity(IdentityId string)(*interface{}, error) {
-	r := strings.NewReplacer("{identityId}", IdentityId)
+	r := strings.NewReplacer("{identityId}", url.PathEscape(IdentityId))
 	path := r.Replace("/account/identities/{identityId}")
 	params := map[string]interface{}{}
-	params["identityId"] = IdentityId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -1176,10 +1165,9 @@ func (srv *Account) CreateKey(Name string, Scopes []string, optionalSetters ...C
 // GetKey get a key by its unique ID. This endpoint returns details about a
 // specific API key in your account including it's scopes.
 func (srv *Account) GetKey(KeyId string)(*models.Key, error) {
-	r := strings.NewReplacer("{keyId}", KeyId)
+	r := strings.NewReplacer("{keyId}", url.PathEscape(KeyId))
 	path := r.Replace("/account/keys/{keyId}")
 	params := map[string]interface{}{}
-	params["keyId"] = KeyId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -1230,14 +1218,13 @@ func (srv *Account) WithUpdateKeyExpire(v string) UpdateKeyOption {
 // UpdateKey update a key by its unique ID. Use this endpoint to update the
 // name, scopes, or expiration time of an API key.
 func (srv *Account) UpdateKey(KeyId string, Name string, Scopes []string, optionalSetters ...UpdateKeyOption)(*models.Key, error) {
-	r := strings.NewReplacer("{keyId}", KeyId)
+	r := strings.NewReplacer("{keyId}", url.PathEscape(KeyId))
 	path := r.Replace("/account/keys/{keyId}")
 	options := UpdateKeyOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["keyId"] = KeyId
 	params["name"] = Name
 	params["scopes"] = Scopes
 	if options.enabledSetters["Expire"] {
@@ -1277,10 +1264,9 @@ func (srv *Account) UpdateKey(KeyId string, Name string, Scopes []string, option
 // DeleteKey delete a key by its unique ID. Once deleted, the key can no
 // longer be used to authenticate API calls.
 func (srv *Account) DeleteKey(KeyId string)(*interface{}, error) {
-	r := strings.NewReplacer("{keyId}", KeyId)
+	r := strings.NewReplacer("{keyId}", url.PathEscape(KeyId))
 	path := r.Replace("/account/keys/{keyId}")
 	params := map[string]interface{}{}
-	params["keyId"] = KeyId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -1425,10 +1411,9 @@ func (srv *Account) UpdateMFA(Mfa bool)(*models.User, error) {
 //
 // Deprecated: This API has been deprecated since 1.8.0. Please use `Account.createMFAAuthenticator` instead.
 func (srv *Account) CreateMfaAuthenticator(Type string)(*models.MfaType, error) {
-	r := strings.NewReplacer("{type}", Type)
+	r := strings.NewReplacer("{type}", url.PathEscape(Type))
 	path := r.Replace("/account/mfa/authenticators/{type}")
 	params := map[string]interface{}{}
-	params["type"] = Type
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -1465,10 +1450,9 @@ func (srv *Account) CreateMfaAuthenticator(Type string)(*models.MfaType, error) 
 // authenticator](/docs/references/cloud/client-web/account#updateMfaAuthenticator)
 // method.
 func (srv *Account) CreateMFAAuthenticator(Type string)(*models.MfaType, error) {
-	r := strings.NewReplacer("{type}", Type)
+	r := strings.NewReplacer("{type}", url.PathEscape(Type))
 	path := r.Replace("/account/mfa/authenticators/{type}")
 	params := map[string]interface{}{}
-	params["type"] = Type
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -1507,10 +1491,9 @@ func (srv *Account) CreateMFAAuthenticator(Type string)(*models.MfaType, error) 
 //
 // Deprecated: This API has been deprecated since 1.8.0. Please use `Account.updateMFAAuthenticator` instead.
 func (srv *Account) UpdateMfaAuthenticator(Type string, Otp string)(*models.User, error) {
-	r := strings.NewReplacer("{type}", Type)
+	r := strings.NewReplacer("{type}", url.PathEscape(Type))
 	path := r.Replace("/account/mfa/authenticators/{type}")
 	params := map[string]interface{}{}
-	params["type"] = Type
 	params["otp"] = Otp
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
@@ -1548,10 +1531,9 @@ func (srv *Account) UpdateMfaAuthenticator(Type string, Otp string)(*models.User
 // authenticator](/docs/references/cloud/client-web/account#createMfaAuthenticator)
 // method.
 func (srv *Account) UpdateMFAAuthenticator(Type string, Otp string)(*models.User, error) {
-	r := strings.NewReplacer("{type}", Type)
+	r := strings.NewReplacer("{type}", url.PathEscape(Type))
 	path := r.Replace("/account/mfa/authenticators/{type}")
 	params := map[string]interface{}{}
-	params["type"] = Type
 	params["otp"] = Otp
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
@@ -1588,10 +1570,9 @@ func (srv *Account) UpdateMFAAuthenticator(Type string, Otp string)(*models.User
 //
 // Deprecated: This API has been deprecated since 1.8.0. Please use `Account.deleteMFAAuthenticator` instead.
 func (srv *Account) DeleteMfaAuthenticator(Type string)(*interface{}, error) {
-	r := strings.NewReplacer("{type}", Type)
+	r := strings.NewReplacer("{type}", url.PathEscape(Type))
 	path := r.Replace("/account/mfa/authenticators/{type}")
 	params := map[string]interface{}{}
-	params["type"] = Type
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -1623,10 +1604,9 @@ func (srv *Account) DeleteMfaAuthenticator(Type string)(*interface{}, error) {
 	
 // DeleteMFAAuthenticator delete an authenticator for a user by ID.
 func (srv *Account) DeleteMFAAuthenticator(Type string)(*interface{}, error) {
-	r := strings.NewReplacer("{type}", Type)
+	r := strings.NewReplacer("{type}", url.PathEscape(Type))
 	path := r.Replace("/account/mfa/authenticators/{type}")
 	params := map[string]interface{}{}
-	params["type"] = Type
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -2323,10 +2303,9 @@ func (srv *Account) CreatePaymentMethod()(*models.PaymentMethod, error) {
 	
 // GetPaymentMethod get a specific payment method for the user.
 func (srv *Account) GetPaymentMethod(PaymentMethodId string)(*models.PaymentMethod, error) {
-	r := strings.NewReplacer("{paymentMethodId}", PaymentMethodId)
+	r := strings.NewReplacer("{paymentMethodId}", url.PathEscape(PaymentMethodId))
 	path := r.Replace("/account/payment-methods/{paymentMethodId}")
 	params := map[string]interface{}{}
-	params["paymentMethodId"] = PaymentMethodId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -2377,14 +2356,13 @@ func (srv *Account) WithUpdatePaymentMethodState(v string) UpdatePaymentMethodOp
 // UpdatePaymentMethod update a new payment method for the current user
 // account.
 func (srv *Account) UpdatePaymentMethod(PaymentMethodId string, ExpiryMonth int, ExpiryYear int, optionalSetters ...UpdatePaymentMethodOption)(*models.PaymentMethod, error) {
-	r := strings.NewReplacer("{paymentMethodId}", PaymentMethodId)
+	r := strings.NewReplacer("{paymentMethodId}", url.PathEscape(PaymentMethodId))
 	path := r.Replace("/account/payment-methods/{paymentMethodId}")
 	options := UpdatePaymentMethodOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["paymentMethodId"] = PaymentMethodId
 	params["expiryMonth"] = ExpiryMonth
 	params["expiryYear"] = ExpiryYear
 	if options.enabledSetters["State"] {
@@ -2423,10 +2401,9 @@ func (srv *Account) UpdatePaymentMethod(PaymentMethodId string, ExpiryMonth int,
 	
 // DeletePaymentMethod delete a specific payment method from a user's account.
 func (srv *Account) DeletePaymentMethod(PaymentMethodId string)(*interface{}, error) {
-	r := strings.NewReplacer("{paymentMethodId}", PaymentMethodId)
+	r := strings.NewReplacer("{paymentMethodId}", url.PathEscape(PaymentMethodId))
 	path := r.Replace("/account/payment-methods/{paymentMethodId}")
 	params := map[string]interface{}{}
-	params["paymentMethodId"] = PaymentMethodId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -2476,14 +2453,13 @@ func (srv *Account) WithUpdatePaymentMethodProviderState(v string) UpdatePayment
 							
 // UpdatePaymentMethodProvider update payment method provider.
 func (srv *Account) UpdatePaymentMethodProvider(PaymentMethodId string, ProviderMethodId string, Name string, optionalSetters ...UpdatePaymentMethodProviderOption)(*models.PaymentMethod, error) {
-	r := strings.NewReplacer("{paymentMethodId}", PaymentMethodId)
+	r := strings.NewReplacer("{paymentMethodId}", url.PathEscape(PaymentMethodId))
 	path := r.Replace("/account/payment-methods/{paymentMethodId}/provider")
 	options := UpdatePaymentMethodProviderOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["paymentMethodId"] = PaymentMethodId
 	params["providerMethodId"] = ProviderMethodId
 	params["name"] = Name
 	if options.enabledSetters["State"] {
@@ -2522,10 +2498,9 @@ func (srv *Account) UpdatePaymentMethodProvider(PaymentMethodId string, Provider
 	
 // UpdatePaymentMethodMandateOptions update payment method mandate options.
 func (srv *Account) UpdatePaymentMethodMandateOptions(PaymentMethodId string)(*models.PaymentMethod, error) {
-	r := strings.NewReplacer("{paymentMethodId}", PaymentMethodId)
+	r := strings.NewReplacer("{paymentMethodId}", url.PathEscape(PaymentMethodId))
 	path := r.Replace("/account/payment-methods/{paymentMethodId}/setup")
 	params := map[string]interface{}{}
-	params["paymentMethodId"] = PaymentMethodId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -3007,14 +2982,13 @@ func (srv *Account) WithCreateOAuth2SessionScopes(v []string) CreateOAuth2Sessio
 // about session
 // limits](https://appwrite.io/docs/authentication-security#limits).
 func (srv *Account) CreateOAuth2Session(Provider string, optionalSetters ...CreateOAuth2SessionOption)(*bool, error) {
-	r := strings.NewReplacer("{provider}", Provider)
+	r := strings.NewReplacer("{provider}", url.PathEscape(Provider))
 	path := r.Replace("/account/sessions/oauth2/{provider}")
 	options := CreateOAuth2SessionOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["provider"] = Provider
 	if options.enabledSetters["Success"] {
 		params["success"] = options.Success
 	}
@@ -3138,10 +3112,9 @@ func (srv *Account) CreateSession(UserId string, Secret string)(*models.Session,
 // GetSession use this endpoint to get a logged in user's session using a
 // Session ID. Inputting 'current' will return the current session being used.
 func (srv *Account) GetSession(SessionId string)(*models.Session, error) {
-	r := strings.NewReplacer("{sessionId}", SessionId)
+	r := strings.NewReplacer("{sessionId}", url.PathEscape(SessionId))
 	path := r.Replace("/account/sessions/{sessionId}")
 	params := map[string]interface{}{}
-	params["sessionId"] = SessionId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -3177,10 +3150,9 @@ func (srv *Account) GetSession(SessionId string)(*models.Session, error) {
 // using an OAuth provider, this endpoint refreshes the access token from the
 // provider.
 func (srv *Account) UpdateSession(SessionId string)(*models.Session, error) {
-	r := strings.NewReplacer("{sessionId}", SessionId)
+	r := strings.NewReplacer("{sessionId}", url.PathEscape(SessionId))
 	path := r.Replace("/account/sessions/{sessionId}")
 	params := map[string]interface{}{}
-	params["sessionId"] = SessionId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -3218,10 +3190,9 @@ func (srv *Account) UpdateSession(SessionId string)(*models.Session, error) {
 // Sessions](https://appwrite.io/docs/references/cloud/client-web/account#deleteSessions)
 // instead.
 func (srv *Account) DeleteSession(SessionId string)(*interface{}, error) {
-	r := strings.NewReplacer("{sessionId}", SessionId)
+	r := strings.NewReplacer("{sessionId}", url.PathEscape(SessionId))
 	path := r.Replace("/account/sessions/{sessionId}")
 	params := map[string]interface{}{}
-	params["sessionId"] = SessionId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -3360,10 +3331,9 @@ func (srv *Account) CreatePushTarget(TargetId string, Identifier string, optiona
 // current user. If you change the provider ID, notifications will be sent
 // through the new messaging provider instead.
 func (srv *Account) UpdatePushTarget(TargetId string, Identifier string)(*models.Target, error) {
-	r := strings.NewReplacer("{targetId}", TargetId)
+	r := strings.NewReplacer("{targetId}", url.PathEscape(TargetId))
 	path := r.Replace("/account/targets/{targetId}/push")
 	params := map[string]interface{}{}
-	params["targetId"] = TargetId
 	params["identifier"] = Identifier
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
@@ -3400,10 +3370,9 @@ func (srv *Account) UpdatePushTarget(TargetId string, Identifier string)(*models
 // in user. After deletion, the device will no longer receive push
 // notifications. The target must exist and belong to the current user.
 func (srv *Account) DeletePushTarget(TargetId string)(*interface{}, error) {
-	r := strings.NewReplacer("{targetId}", TargetId)
+	r := strings.NewReplacer("{targetId}", url.PathEscape(TargetId))
 	path := r.Replace("/account/targets/{targetId}/push")
 	params := map[string]interface{}{}
-	params["targetId"] = TargetId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -3638,14 +3607,13 @@ func (srv *Account) WithCreateOAuth2TokenScopes(v []string) CreateOAuth2TokenOpt
 // about session
 // limits](https://appwrite.io/docs/authentication-security#limits).
 func (srv *Account) CreateOAuth2Token(Provider string, optionalSetters ...CreateOAuth2TokenOption)(*bool, error) {
-	r := strings.NewReplacer("{provider}", Provider)
+	r := strings.NewReplacer("{provider}", url.PathEscape(Provider))
 	path := r.Replace("/account/tokens/oauth2/{provider}")
 	options := CreateOAuth2TokenOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["provider"] = Provider
 	if options.enabledSetters["Success"] {
 		params["success"] = options.Success
 	}

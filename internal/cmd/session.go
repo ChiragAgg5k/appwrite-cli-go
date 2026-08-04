@@ -2,11 +2,14 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
+	"strings"
 
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/app"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/auth"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/client"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/config"
+	"github.com/ChiragAgg5k/appwrite-cli-go/internal/jsonx"
 	"github.com/spf13/cobra"
 )
 
@@ -91,18 +94,23 @@ func newWhoamiCommand() *cobra.Command {
 				return err
 			}
 
-			var account map[string]any
-			if err := api.Call("GET", "/account", nil, &account); err != nil {
+			account := jsonx.NewObject()
+			if err := api.Call("GET", "/account", nil, account); err != nil {
 				return err
 			}
 
+			// Rendered rather than printed, so --json and --raw work here as
+			// they do on every generated command. Printing directly meant
+			// `whoami --json` emitted the human table.
 			session := global.Current()
-			command.Printf("Endpoint : %s\n", session.GetString(config.PreferenceEndpoint))
-			command.Printf("Email    : %v\n", account["email"])
-			command.Printf("Name     : %v\n", account["name"])
-			command.Printf("ID       : %v\n", account["$id"])
+			report := jsonx.NewObject()
+			report.Set("ID", account.GetString("$id"))
+			report.Set("Name", account.GetString("name"))
+			report.Set("Email", account.GetString("email"))
+			report.Set("MFA enabled", yesOrNo(account, "mfa"))
+			report.Set("Endpoint", session.GetString(config.PreferenceEndpoint))
 
-			return nil
+			return app.Render(report)
 		},
 	}
 }
@@ -124,17 +132,25 @@ func newSessionsCommand() *cobra.Command {
 				return nil
 			}
 
+			// Rendered like everything else so --json is machine-readable.
+			// The active session is a field rather than a leading asterisk,
+			// because a marker in a table cannot survive JSON.
 			current := global.CurrentSessionID()
+			rows := make([]any, 0, len(ids))
 			for _, id := range ids {
 				session, _ := global.Session(id)
-				marker := " "
-				if id == current {
-					marker = "*"
-				}
-				command.Printf("%s %s  %s  %s\n", marker, id, session.Email, session.Endpoint)
+				row := jsonx.NewObject()
+				row.Set("ID", id)
+				row.Set("Email", session.Email)
+				row.Set("Endpoint", session.Endpoint)
+				row.Set("Active", id == current)
+				rows = append(rows, row)
 			}
 
-			return nil
+			report := jsonx.NewObject()
+			report.Set("sessions", rows)
+
+			return app.Render(report)
 		},
 	}
 }
@@ -162,25 +178,38 @@ func newLogoutCommand() *cobra.Command {
 				return nil
 			}
 
-			// Clear the refresh token before removing the session entry:
-			// DeleteRefresh needs the session to still exist to drop the prefs
-			// fallback copy.
-			store := &auth.TokenStore{Global: global}
-			for _, id := range targets {
-				if err := store.DeleteRefresh(id); err != nil {
-					return err
-				}
-				global.DeleteSession(id)
-			}
+			// Revoked at the server first. Deleting the local entry alone
+			// left the credential working until it expired on its own.
+			result := logoutSessions(global, targets)
 			if err := global.Write(); err != nil {
 				return err
 			}
 
-			command.Printf("Signed out of %d session(s).\n", len(targets))
+			if len(result.SignedOut) > 0 {
+				command.Printf("Signed out of %d session(s).\n", len(result.SignedOut))
+			}
+			if len(result.Failed) > 0 {
+				// Kept, not removed: a live server session with no local record
+				// of it is the one state the user cannot recover from.
+				return fmt.Errorf(
+					"could not sign out of %d session(s), which are still stored: %s",
+					len(result.Failed), strings.Join(result.Errors, "; "))
+			}
 
 			return nil
 		},
 	}
+}
+
+// yesOrNo renders a boolean field the way the TypeScript's whoami table does.
+func yesOrNo(object *jsonx.Object, key string) string {
+	if value, ok := object.Get(key); ok {
+		if enabled, isBool := value.(bool); isBool && enabled {
+			return "Yes"
+		}
+	}
+
+	return "No"
 }
 
 // registerSessionCommands attaches the commands that do not come from the spec.

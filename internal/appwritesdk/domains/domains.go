@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/models"
+	"net/url"
 	"strings"
 )
 
@@ -261,7 +262,6 @@ func (srv *Domains) CreatePurchase(Domain string, OrganizationId string, FirstNa
 	params["email"] = Email
 	params["phone"] = Phone
 	params["billingAddressId"] = BillingAddressId
-	params["paymentMethodId"] = PaymentMethodId
 	if options.enabledSetters["AddressLine3"] {
 		params["addressLine3"] = options.AddressLine3
 	}
@@ -274,6 +274,7 @@ func (srv *Domains) CreatePurchase(Domain string, OrganizationId string, FirstNa
 	if options.enabledSetters["AutoRenewal"] {
 		params["autoRenewal"] = options.AutoRenewal
 	}
+	params["paymentMethodId"] = PaymentMethodId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -310,10 +311,9 @@ func (srv *Domains) CreatePurchase(Domain string, OrganizationId string, FirstNa
 // the domain, captures the payment, and provisions default DNS records.
 // Returns a 402 error if authentication is still pending.
 func (srv *Domains) UpdatePurchase(InvoiceId string, OrganizationId string)(*models.DomainPurchase, error) {
-	r := strings.NewReplacer("{invoiceId}", InvoiceId)
+	r := strings.NewReplacer("{invoiceId}", url.PathEscape(InvoiceId))
 	path := r.Replace("/domains/purchases/{invoiceId}")
 	params := map[string]interface{}{}
-	params["invoiceId"] = InvoiceId
 	params["organizationId"] = OrganizationId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
@@ -482,10 +482,10 @@ func (srv *Domains) CreateTransferIn(Domain string, OrganizationId string, AuthC
 	params["domain"] = Domain
 	params["organizationId"] = OrganizationId
 	params["authCode"] = AuthCode
-	params["paymentMethodId"] = PaymentMethodId
 	if options.enabledSetters["AutoRenewal"] {
 		params["autoRenewal"] = options.AutoRenewal
 	}
+	params["paymentMethodId"] = PaymentMethodId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -523,10 +523,9 @@ func (srv *Domains) CreateTransferIn(Domain string, OrganizationId string, AuthC
 // payment, and sends a confirmation email. Returns a 402 error if
 // authentication is still pending.
 func (srv *Domains) UpdateTransferIn(InvoiceId string, OrganizationId string)(*models.DomainPurchase, error) {
-	r := strings.NewReplacer("{invoiceId}", InvoiceId)
+	r := strings.NewReplacer("{invoiceId}", url.PathEscape(InvoiceId))
 	path := r.Replace("/domains/transfers/in/{invoiceId}")
 	params := map[string]interface{}{}
-	params["invoiceId"] = InvoiceId
 	params["organizationId"] = OrganizationId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
@@ -602,10 +601,9 @@ func (srv *Domains) CreateTransferOut(DomainId string, OrganizationId string)(*m
 	
 // Get get a domain by its unique ID.
 func (srv *Domains) Get(DomainId string)(*models.Domain, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}")
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -641,10 +639,9 @@ func (srv *Domains) Get(DomainId string)(*models.Domain, error) {
 // Once deleted, the domain will no longer be available for use and all
 // associated resources will be removed.
 func (srv *Domains) Delete(DomainId string)(*interface{}, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}")
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -677,10 +674,9 @@ func (srv *Domains) Delete(DomainId string)(*interface{}, error) {
 			
 // UpdateAutoRenewal enable or disable auto-renewal for a domain.
 func (srv *Domains) UpdateAutoRenewal(DomainId string, AutoRenewal bool)(*models.Domain, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/auto-renewal")
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	params["autoRenewal"] = AutoRenewal
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
@@ -734,14 +730,13 @@ func (srv *Domains) WithUpdateNameserversNameservers(v []string) UpdateNameserve
 // When nameservers are not provided,
 // the domain will be updated to use Appwrite nameservers.
 func (srv *Domains) UpdateNameservers(DomainId string, optionalSetters ...UpdateNameserversOption)(*models.Domain, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/nameservers")
 	options := UpdateNameserversOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	if options.enabledSetters["Nameservers"] {
 		params["nameservers"] = options.Nameservers
 	}
@@ -782,10 +777,9 @@ func (srv *Domains) UpdateNameservers(DomainId string, optionalSetters ...Update
 // match the expected
 // Appwrite nameservers.
 func (srv *Domains) VerifyNameservers(DomainId string)(*models.Domain, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/nameservers/verification")
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -819,10 +813,9 @@ func (srv *Domains) VerifyNameservers(DomainId string)(*models.Domain, error) {
 	
 // GetPresetGoogleWorkspace list Google Workspace DNS records.
 func (srv *Domains) GetPresetGoogleWorkspace(DomainId string)(*models.DnsRecordsList, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/presets/google-workspace")
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -857,10 +850,9 @@ func (srv *Domains) GetPresetGoogleWorkspace(DomainId string)(*models.DnsRecords
 // This will create the required MX records
 // for Google Workspace email hosting.
 func (srv *Domains) CreatePresetGoogleWorkspace(DomainId string)(*models.DnsRecordsList, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/presets/google-workspace")
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -894,10 +886,9 @@ func (srv *Domains) CreatePresetGoogleWorkspace(DomainId string)(*models.DnsReco
 	
 // GetPresetICloud list iCloud DNS records.
 func (srv *Domains) GetPresetICloud(DomainId string)(*models.DnsRecordsList, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/presets/icloud")
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -932,10 +923,9 @@ func (srv *Domains) GetPresetICloud(DomainId string)(*models.DnsRecordsList, err
 // the required MX and SPF records
 // for using iCloud email services with your domain.
 func (srv *Domains) CreatePresetICloud(DomainId string)(*models.DnsRecordsList, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/presets/icloud")
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -969,10 +959,9 @@ func (srv *Domains) CreatePresetICloud(DomainId string)(*models.DnsRecordsList, 
 	
 // GetPresetMailgun list Mailgun DNS records.
 func (srv *Domains) GetPresetMailgun(DomainId string)(*models.DnsRecordsList, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/presets/mailgun")
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -1007,10 +996,9 @@ func (srv *Domains) GetPresetMailgun(DomainId string)(*models.DnsRecordsList, er
 // will create the required DNS records
 // for Mailgun in the specified domain.
 func (srv *Domains) CreatePresetMailgun(DomainId string)(*models.DnsRecordsList, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/presets/mailgun")
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -1044,10 +1032,9 @@ func (srv *Domains) CreatePresetMailgun(DomainId string)(*models.DnsRecordsList,
 	
 // GetPresetOutlook list Outlook DNS records.
 func (srv *Domains) GetPresetOutlook(DomainId string)(*models.DnsRecordsList, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/presets/outlook")
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -1082,10 +1069,9 @@ func (srv *Domains) GetPresetOutlook(DomainId string)(*models.DnsRecordsList, er
 // the required MX records
 // for setting up Outlook email hosting for your domain.
 func (srv *Domains) CreatePresetOutlook(DomainId string)(*models.DnsRecordsList, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/presets/outlook")
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -1119,10 +1105,9 @@ func (srv *Domains) CreatePresetOutlook(DomainId string)(*models.DnsRecordsList,
 	
 // GetPresetProtonMail list ProtonMail DNS records.
 func (srv *Domains) GetPresetProtonMail(DomainId string)(*models.DnsRecordsList, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/presets/proton-mail")
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -1157,10 +1142,9 @@ func (srv *Domains) GetPresetProtonMail(DomainId string)(*models.DnsRecordsList,
 // create the required MX records
 // for using ProtonMail with your custom domain.
 func (srv *Domains) CreatePresetProtonMail(DomainId string)(*models.DnsRecordsList, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/presets/proton-mail")
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -1194,10 +1178,9 @@ func (srv *Domains) CreatePresetProtonMail(DomainId string)(*models.DnsRecordsLi
 	
 // GetPresetZoho list Zoho DNS records.
 func (srv *Domains) GetPresetZoho(DomainId string)(*models.DnsRecordsList, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/presets/zoho")
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -1232,10 +1215,9 @@ func (srv *Domains) GetPresetZoho(DomainId string)(*models.DnsRecordsList, error
 // the required MX records
 // for setting up Zoho Mail on your domain.
 func (srv *Domains) CreatePresetZoho(DomainId string)(*models.DnsRecordsList, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/presets/zoho")
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -1288,14 +1270,13 @@ func (srv *Domains) WithListRecordsQueries(v []string) ListRecordsOption {
 // to list all the DNS records
 // associated with your domain.
 func (srv *Domains) ListRecords(DomainId string, optionalSetters ...ListRecordsOption)(*models.DnsRecordsList, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/records")
 	options := ListRecordsOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	if options.enabledSetters["Queries"] {
 		params["queries"] = options.Queries
 	}
@@ -1350,14 +1331,13 @@ func (srv *Domains) WithCreateRecordAComment(v string) CreateRecordAOption {
 // used to point a domain name
 // to an IPv4 address. The record value should be a valid IPv4 address.
 func (srv *Domains) CreateRecordA(DomainId string, Name string, Value string, Ttl int, optionalSetters ...CreateRecordAOption)(*models.DnsRecord, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/records/a")
 	options := CreateRecordAOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	params["name"] = Name
 	params["value"] = Value
 	params["ttl"] = Ttl
@@ -1418,15 +1398,13 @@ func (srv *Domains) WithUpdateRecordAComment(v string) UpdateRecordAOption {
 // TTL,
 // and optional comment.
 func (srv *Domains) UpdateRecordA(DomainId string, RecordId string, Name string, Value string, Ttl int, optionalSetters ...UpdateRecordAOption)(*models.DnsRecord, error) {
-	r := strings.NewReplacer("{domainId}", DomainId, "{recordId}", RecordId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId), "{recordId}", url.PathEscape(RecordId))
 	path := r.Replace("/domains/{domainId}/records/a/{recordId}")
 	options := UpdateRecordAOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
-	params["recordId"] = RecordId
 	params["name"] = Name
 	params["value"] = Value
 	params["ttl"] = Ttl
@@ -1486,14 +1464,13 @@ func (srv *Domains) WithCreateRecordAAAAComment(v string) CreateRecordAAAAOption
 // to your domain. The record will be used to point a hostname to an IPv6
 // address.
 func (srv *Domains) CreateRecordAAAA(DomainId string, Name string, Value string, Ttl int, optionalSetters ...CreateRecordAAAAOption)(*models.DnsRecord, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/records/aaaa")
 	options := CreateRecordAAAAOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	params["name"] = Name
 	params["value"] = Value
 	params["ttl"] = Ttl
@@ -1554,15 +1531,13 @@ func (srv *Domains) WithUpdateRecordAAAAComment(v string) UpdateRecordAAAAOption
 // IPv6 address,
 // TTL, and optional comment.
 func (srv *Domains) UpdateRecordAAAA(DomainId string, RecordId string, Name string, Value string, Ttl int, optionalSetters ...UpdateRecordAAAAOption)(*models.DnsRecord, error) {
-	r := strings.NewReplacer("{domainId}", DomainId, "{recordId}", RecordId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId), "{recordId}", url.PathEscape(RecordId))
 	path := r.Replace("/domains/{domainId}/records/aaaa/{recordId}")
 	options := UpdateRecordAAAAOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
-	params["recordId"] = RecordId
 	params["name"] = Name
 	params["value"] = Value
 	params["ttl"] = Ttl
@@ -1623,14 +1598,13 @@ func (srv *Domains) WithCreateRecordAliasComment(v string) CreateRecordAliasOpti
 // useful when you want to
 // map your domain to a target domain that may change its IP address.
 func (srv *Domains) CreateRecordAlias(DomainId string, Name string, Value string, Ttl int, optionalSetters ...CreateRecordAliasOption)(*models.DnsRecord, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/records/alias")
 	options := CreateRecordAliasOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	params["name"] = Name
 	params["value"] = Value
 	params["ttl"] = Ttl
@@ -1694,15 +1668,13 @@ func (srv *Domains) WithUpdateRecordAliasComment(v string) UpdateRecordAliasOpti
 // zone apex (root domain).
 // It provides a way to map one domain name to another.
 func (srv *Domains) UpdateRecordAlias(DomainId string, RecordId string, Name string, Value string, Ttl int, optionalSetters ...UpdateRecordAliasOption)(*models.DnsRecord, error) {
-	r := strings.NewReplacer("{domainId}", DomainId, "{recordId}", RecordId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId), "{recordId}", url.PathEscape(RecordId))
 	path := r.Replace("/domains/{domainId}/records/alias/{recordId}")
 	options := UpdateRecordAliasOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
-	params["recordId"] = RecordId
 	params["name"] = Name
 	params["value"] = Value
 	params["ttl"] = Ttl
@@ -1762,14 +1734,13 @@ func (srv *Domains) WithCreateRecordCAAComment(v string) CreateRecordCAAOption {
 // Certificate Authorities (CAs) are allowed to issue SSL/TLS certificates for
 // your domain.
 func (srv *Domains) CreateRecordCAA(DomainId string, Name string, Value string, Ttl int, optionalSetters ...CreateRecordCAAOption)(*models.DnsRecord, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/records/caa")
 	options := CreateRecordCAAOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	params["name"] = Name
 	params["value"] = Value
 	params["ttl"] = Ttl
@@ -1830,15 +1801,13 @@ func (srv *Domains) WithUpdateRecordCAAComment(v string) UpdateRecordCAAOption {
 // authorized to issue certificates
 // for a domain.
 func (srv *Domains) UpdateRecordCAA(DomainId string, RecordId string, Name string, Value string, Ttl int, optionalSetters ...UpdateRecordCAAOption)(*models.DnsRecord, error) {
-	r := strings.NewReplacer("{domainId}", DomainId, "{recordId}", RecordId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId), "{recordId}", url.PathEscape(RecordId))
 	path := r.Replace("/domains/{domainId}/records/caa/{recordId}")
 	options := UpdateRecordCAAOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
-	params["recordId"] = RecordId
 	params["name"] = Name
 	params["value"] = Value
 	params["ttl"] = Ttl
@@ -1901,14 +1870,13 @@ func (srv *Domains) WithCreateRecordCNAMEComment(v string) CreateRecordCNAMEOpti
 // 'blog.example.com'
 // to 'example.wordpress.com'.
 func (srv *Domains) CreateRecordCNAME(DomainId string, Name string, Value string, Ttl int, optionalSetters ...CreateRecordCNAMEOption)(*models.DnsRecord, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/records/cname")
 	options := CreateRecordCNAMEOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	params["name"] = Name
 	params["value"] = Value
 	params["ttl"] = Ttl
@@ -1965,15 +1933,13 @@ func (srv *Domains) WithUpdateRecordCNAMEComment(v string) UpdateRecordCNAMEOpti
 											
 // UpdateRecordCNAME update an existing CNAME record for the given domain.
 func (srv *Domains) UpdateRecordCNAME(DomainId string, RecordId string, Name string, Value string, Ttl int, optionalSetters ...UpdateRecordCNAMEOption)(*models.DnsRecord, error) {
-	r := strings.NewReplacer("{domainId}", DomainId, "{recordId}", RecordId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId), "{recordId}", url.PathEscape(RecordId))
 	path := r.Replace("/domains/{domainId}/records/cname/{recordId}")
 	options := UpdateRecordCNAMEOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
-	params["recordId"] = RecordId
 	params["name"] = Name
 	params["value"] = Value
 	params["ttl"] = Ttl
@@ -2032,14 +1998,13 @@ func (srv *Domains) WithCreateRecordHTTPSComment(v string) CreateRecordHTTPSOpti
 // record is used to configure HTTPS
 // settings for your domain, enabling secure communication over SSL/TLS.
 func (srv *Domains) CreateRecordHTTPS(DomainId string, Name string, Value string, Ttl int, optionalSetters ...CreateRecordHTTPSOption)(*models.DnsRecord, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/records/https")
 	options := CreateRecordHTTPSOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	params["name"] = Name
 	params["value"] = Value
 	params["ttl"] = Ttl
@@ -2100,15 +2065,13 @@ func (srv *Domains) WithUpdateRecordHTTPSComment(v string) UpdateRecordHTTPSOpti
 // the name (subdomain),
 // target value, TTL, and optional comment.
 func (srv *Domains) UpdateRecordHTTPS(DomainId string, RecordId string, Name string, Value string, Ttl int, optionalSetters ...UpdateRecordHTTPSOption)(*models.DnsRecord, error) {
-	r := strings.NewReplacer("{domainId}", DomainId, "{recordId}", RecordId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId), "{recordId}", url.PathEscape(RecordId))
 	path := r.Replace("/domains/{domainId}/records/https/{recordId}")
 	options := UpdateRecordHTTPSOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
-	params["recordId"] = RecordId
 	params["name"] = Name
 	params["value"] = Value
 	params["ttl"] = Ttl
@@ -2171,14 +2134,13 @@ func (srv *Domains) WithCreateRecordMXComment(v string) CreateRecordMXOption {
 // with lower values indicating
 // higher priority.
 func (srv *Domains) CreateRecordMX(DomainId string, Name string, Value string, Ttl int, Priority int, optionalSetters ...CreateRecordMXOption)(*models.DnsRecord, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/records/mx")
 	options := CreateRecordMXOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	params["name"] = Name
 	params["value"] = Value
 	params["ttl"] = Ttl
@@ -2236,15 +2198,13 @@ func (srv *Domains) WithUpdateRecordMXComment(v string) UpdateRecordMXOption {
 													
 // UpdateRecordMX update an existing MX record for the given domain.
 func (srv *Domains) UpdateRecordMX(DomainId string, RecordId string, Name string, Value string, Ttl int, Priority int, optionalSetters ...UpdateRecordMXOption)(*models.DnsRecord, error) {
-	r := strings.NewReplacer("{domainId}", DomainId, "{recordId}", RecordId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId), "{recordId}", url.PathEscape(RecordId))
 	path := r.Replace("/domains/{domainId}/records/mx/{recordId}")
 	options := UpdateRecordMXOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
-	params["recordId"] = RecordId
 	params["name"] = Name
 	params["value"] = Value
 	params["ttl"] = Ttl
@@ -2305,14 +2265,13 @@ func (srv *Domains) WithCreateRecordNSComment(v string) CreateRecordNSOption {
 // to resolve the domain name to IP addresses. Each domain can have multiple
 // NS records.
 func (srv *Domains) CreateRecordNS(DomainId string, Name string, Value string, Ttl int, optionalSetters ...CreateRecordNSOption)(*models.DnsRecord, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/records/ns")
 	options := CreateRecordNSOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	params["name"] = Name
 	params["value"] = Value
 	params["ttl"] = Ttl
@@ -2375,15 +2334,13 @@ func (srv *Domains) WithUpdateRecordNSComment(v string) UpdateRecordNSOption {
 // modify comments
 // for better record management.
 func (srv *Domains) UpdateRecordNS(DomainId string, RecordId string, Name string, Value string, Ttl int, optionalSetters ...UpdateRecordNSOption)(*models.DnsRecord, error) {
-	r := strings.NewReplacer("{domainId}", DomainId, "{recordId}", RecordId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId), "{recordId}", url.PathEscape(RecordId))
 	path := r.Replace("/domains/{domainId}/records/ns/{recordId}")
 	options := UpdateRecordNSOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
-	params["recordId"] = RecordId
 	params["name"] = Name
 	params["value"] = Value
 	params["ttl"] = Ttl
@@ -2444,14 +2401,13 @@ func (srv *Domains) WithCreateRecordSRVComment(v string) CreateRecordSRVOption {
 // which server
 // handles a specific service like SIP or XMPP for the domain.
 func (srv *Domains) CreateRecordSRV(DomainId string, Name string, Value string, Ttl int, Priority int, Weight int, Port int, optionalSetters ...CreateRecordSRVOption)(*models.DnsRecord, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/records/srv")
 	options := CreateRecordSRVOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	params["name"] = Name
 	params["value"] = Value
 	params["ttl"] = Ttl
@@ -2524,15 +2480,13 @@ func (srv *Domains) WithUpdateRecordSRVComment(v string) UpdateRecordSRVOption {
 // Optional parameters:
 // - comment: A comment for this record
 func (srv *Domains) UpdateRecordSRV(DomainId string, RecordId string, Name string, Value string, Ttl int, Priority int, Weight int, Port int, optionalSetters ...UpdateRecordSRVOption)(*models.DnsRecord, error) {
-	r := strings.NewReplacer("{domainId}", DomainId, "{recordId}", RecordId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId), "{recordId}", url.PathEscape(RecordId))
 	path := r.Replace("/domains/{domainId}/records/srv/{recordId}")
 	options := UpdateRecordSRVOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
-	params["recordId"] = RecordId
 	params["name"] = Name
 	params["value"] = Value
 	params["ttl"] = Ttl
@@ -2603,19 +2557,18 @@ func (srv *Domains) WithCreateRecordTXTComment(v string) CreateRecordTXTOption {
 // to provide additional information about your domain, such as domain
 // verification records, SPF records, or DKIM records.
 func (srv *Domains) CreateRecordTXT(DomainId string, Name string, Ttl int, optionalSetters ...CreateRecordTXTOption)(*models.DnsRecord, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/records/txt")
 	options := CreateRecordTXTOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	params["name"] = Name
-	params["ttl"] = Ttl
 	if options.enabledSetters["Value"] {
 		params["value"] = options.Value
 	}
+	params["ttl"] = Ttl
 	if options.enabledSetters["Comment"] {
 		params["comment"] = options.Comment
 	}
@@ -2674,15 +2627,13 @@ func (srv *Domains) WithUpdateRecordTXTComment(v string) UpdateRecordTXTOption {
 // record ID, and the new record configuration including name, value, TTL, and
 // an optional comment.
 func (srv *Domains) UpdateRecordTXT(DomainId string, RecordId string, Name string, Value string, Ttl int, optionalSetters ...UpdateRecordTXTOption)(*models.DnsRecord, error) {
-	r := strings.NewReplacer("{domainId}", DomainId, "{recordId}", RecordId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId), "{recordId}", url.PathEscape(RecordId))
 	path := r.Replace("/domains/{domainId}/records/txt/{recordId}")
 	options := UpdateRecordTXTOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
-	params["recordId"] = RecordId
 	params["name"] = Name
 	params["value"] = Value
 	params["ttl"] = Ttl
@@ -2728,11 +2679,9 @@ func (srv *Domains) UpdateRecordTXT(DomainId string, RecordId string, Name strin
 // configuration
 // such as type, value, and TTL settings.
 func (srv *Domains) GetRecord(DomainId string, RecordId string)(*models.DnsRecord, error) {
-	r := strings.NewReplacer("{domainId}", DomainId, "{recordId}", RecordId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId), "{recordId}", url.PathEscape(RecordId))
 	path := r.Replace("/domains/{domainId}/records/{recordId}")
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
-	params["recordId"] = RecordId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -2767,11 +2716,9 @@ func (srv *Domains) GetRecord(DomainId string, RecordId string)(*models.DnsRecor
 // you to delete an existing DNS record
 // from a specific domain.
 func (srv *Domains) DeleteRecord(DomainId string, RecordId string)(*interface{}, error) {
-	r := strings.NewReplacer("{domainId}", DomainId, "{recordId}", RecordId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId), "{recordId}", url.PathEscape(RecordId))
 	path := r.Replace("/domains/{domainId}/records/{recordId}")
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
-	params["recordId"] = RecordId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -2809,10 +2756,9 @@ func (srv *Domains) DeleteRecord(DomainId string, RecordId string)(*interface{},
 // domain
 // and all its DNS records to the new team.
 func (srv *Domains) UpdateTeam(DomainId string, TeamId string)(*models.Domain, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/team")
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	params["teamId"] = TeamId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
@@ -2849,10 +2795,9 @@ func (srv *Domains) UpdateTeam(DomainId string, TeamId string)(*models.Domain, e
 // Returns the status, an optional reason, and a timestamp of the last status
 // change.
 func (srv *Domains) GetTransferStatus(DomainId string)(*models.DomainTransferStatus, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/transfers/status")
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -2888,10 +2833,9 @@ func (srv *Domains) GetTransferStatus(DomainId string)(*models.DomainTransferSta
 // zone file in a standardized format that can be used to configure DNS
 // servers.
 func (srv *Domains) GetZone(DomainId string)(*interface{}, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/zone")
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "text/plain",
@@ -2926,10 +2870,9 @@ func (srv *Domains) GetZone(DomainId string)(*interface{}, error) {
 // All parsed records are imported and then the main domain document is
 // returned.
 func (srv *Domains) UpdateZone(DomainId string, Content string)(*models.Domain, error) {
-	r := strings.NewReplacer("{domainId}", DomainId)
+	r := strings.NewReplacer("{domainId}", url.PathEscape(DomainId))
 	path := r.Replace("/domains/{domainId}/zone")
 	params := map[string]interface{}{}
-	params["domainId"] = DomainId
 	params["content"] = Content
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],

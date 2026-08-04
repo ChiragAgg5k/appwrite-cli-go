@@ -1,0 +1,38 @@
+```go
+package main
+
+import (
+    "fmt"
+    "github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
+    "github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/messaging"
+)
+
+client := client.New(
+    client.WithEndpoint("https://<REGION>.cloud.appwrite.io/v1")
+    client.WithProject("<YOUR_PROJECT_ID>")
+)
+
+service := messaging.New(client)
+
+response, error := service.UpdatePush(
+    "<MESSAGE_ID>",
+    messaging.WithUpdatePushTopics([]string{}),
+    messaging.WithUpdatePushUsers([]string{}),
+    messaging.WithUpdatePushTargets([]string{}),
+    messaging.WithUpdatePushTitle("<TITLE>"),
+    messaging.WithUpdatePushBody("<BODY>"),
+    messaging.WithUpdatePushData(map[string]interface{}{}),
+    messaging.WithUpdatePushAction("<ACTION>"),
+    messaging.WithUpdatePushImage("<ID1:ID2>"),
+    messaging.WithUpdatePushIcon("<ICON>"),
+    messaging.WithUpdatePushSound("<SOUND>"),
+    messaging.WithUpdatePushColor("<COLOR>"),
+    messaging.WithUpdatePushTag("<TAG>"),
+    messaging.WithUpdatePushBadge(0),
+    messaging.WithUpdatePushDraft(false),
+    messaging.WithUpdatePushScheduledAt("2020-10-15T06:38:00.000+00:00"),
+    messaging.WithUpdatePushContentAvailable(false),
+    messaging.WithUpdatePushCritical(false),
+    messaging.WithUpdatePushPriority("normal"),
+)
+```

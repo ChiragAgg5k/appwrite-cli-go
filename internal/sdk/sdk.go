@@ -49,12 +49,18 @@ func Load(executableName, sdkVersion string) (*Context, error) {
 func (c *Context) base(endpoint string) sdkclient.Client {
 	client := sdkclient.New()
 	client.Endpoint = endpoint
+	// Keeps the response body for --raw and --json, which must show what the
+	// API sent rather than the typed model re-encoded. See capture.go.
+	client.Client = recordingHTTPClient(client.Timeout)
 	client.AddHeader("x-sdk-name", "Command Line")
 	client.AddHeader("x-sdk-platform", "console")
 	client.AddHeader("x-sdk-language", "cli")
 	client.AddHeader("x-sdk-version", c.SDKVersion)
 	client.AddHeader("user-agent",
 		fmt.Sprintf("AppwriteCLI/%s (%s; %s)", c.SDKVersion, runtime.GOOS, runtime.GOARCH))
+	// setLocale("en-US") on both clients in sdks.ts. The API localises some
+	// response strings from it, so omitting it changed what came back.
+	client.AddHeader("X-Appwrite-Locale", "en-US")
 
 	return client
 }
@@ -271,7 +277,7 @@ func osGetenv(name string) string { return os.Getenv(name) }
 // directory, returning "" when there is no config -- running outside a project
 // is normal for many commands.
 func (c *Context) localValue(key string) string {
-	local, err := config.LoadLocal(config.LocalPath("."))
+	local, err := config.LoadLocal(config.FindLocalPath())
 	if err != nil {
 		return ""
 	}

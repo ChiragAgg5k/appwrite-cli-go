@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/models"
+	"net/url"
 	"strings"
 )
 
@@ -164,10 +165,10 @@ func (srv *Waf) CreateBypassRule(RuleId string, ResourceType string, Name string
 	params := map[string]interface{}{}
 	params["ruleId"] = RuleId
 	params["resourceType"] = ResourceType
-	params["name"] = Name
 	if options.enabledSetters["ResourceId"] {
 		params["resourceId"] = options.ResourceId
 	}
+	params["name"] = Name
 	if options.enabledSetters["Description"] {
 		params["description"] = options.Description
 	}
@@ -283,14 +284,13 @@ func (srv *Waf) WithUpdateBypassRuleConditions(v string) UpdateBypassRuleOption 
 // `browserVersion`. Conditions on `city` and `state` require the premium Geo
 // DB addon.
 func (srv *Waf) UpdateBypassRule(RuleId string, optionalSetters ...UpdateBypassRuleOption)(*models.WafRuleBypass, error) {
-	r := strings.NewReplacer("{ruleId}", RuleId)
+	r := strings.NewReplacer("{ruleId}", url.PathEscape(RuleId))
 	path := r.Replace("/waf/rules/bypass/{ruleId}")
 	options := UpdateBypassRuleOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["ruleId"] = RuleId
 	if options.enabledSetters["ResourceType"] {
 		params["resourceType"] = options.ResourceType
 	}
@@ -434,10 +434,10 @@ func (srv *Waf) CreateChallengeRule(RuleId string, ResourceType string, Name str
 	params := map[string]interface{}{}
 	params["ruleId"] = RuleId
 	params["resourceType"] = ResourceType
-	params["name"] = Name
 	if options.enabledSetters["ResourceId"] {
 		params["resourceId"] = options.ResourceId
 	}
+	params["name"] = Name
 	if options.enabledSetters["Description"] {
 		params["description"] = options.Description
 	}
@@ -589,14 +589,13 @@ func (srv *Waf) WithUpdateChallengeRuleTtl(v int) UpdateChallengeRuleOption {
 // `browserVersion`. Conditions on `city` and `state` require the premium Geo
 // DB addon.
 func (srv *Waf) UpdateChallengeRule(RuleId string, optionalSetters ...UpdateChallengeRuleOption)(*models.WafRuleChallenge, error) {
-	r := strings.NewReplacer("{ruleId}", RuleId)
+	r := strings.NewReplacer("{ruleId}", url.PathEscape(RuleId))
 	path := r.Replace("/waf/rules/challenge/{ruleId}")
 	options := UpdateChallengeRuleOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["ruleId"] = RuleId
 	if options.enabledSetters["ResourceType"] {
 		params["resourceType"] = options.ResourceType
 	}
@@ -722,10 +721,10 @@ func (srv *Waf) CreateDenyRule(RuleId string, ResourceType string, Name string, 
 	params := map[string]interface{}{}
 	params["ruleId"] = RuleId
 	params["resourceType"] = ResourceType
-	params["name"] = Name
 	if options.enabledSetters["ResourceId"] {
 		params["resourceId"] = options.ResourceId
 	}
+	params["name"] = Name
 	if options.enabledSetters["Description"] {
 		params["description"] = options.Description
 	}
@@ -841,14 +840,13 @@ func (srv *Waf) WithUpdateDenyRuleConditions(v string) UpdateDenyRuleOption {
 // `browserVersion`. Conditions on `city` and `state` require the premium Geo
 // DB addon.
 func (srv *Waf) UpdateDenyRule(RuleId string, optionalSetters ...UpdateDenyRuleOption)(*models.WafRuleDeny, error) {
-	r := strings.NewReplacer("{ruleId}", RuleId)
+	r := strings.NewReplacer("{ruleId}", url.PathEscape(RuleId))
 	path := r.Replace("/waf/rules/deny/{ruleId}")
 	options := UpdateDenyRuleOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["ruleId"] = RuleId
 	if options.enabledSetters["ResourceType"] {
 		params["resourceType"] = options.ResourceType
 	}
@@ -975,15 +973,15 @@ func (srv *Waf) CreateRateLimitRule(RuleId string, ResourceType string, Name str
 	params := map[string]interface{}{}
 	params["ruleId"] = RuleId
 	params["resourceType"] = ResourceType
-	params["name"] = Name
-	params["limit"] = Limit
-	params["interval"] = Interval
 	if options.enabledSetters["ResourceId"] {
 		params["resourceId"] = options.ResourceId
 	}
+	params["name"] = Name
 	if options.enabledSetters["Description"] {
 		params["description"] = options.Description
 	}
+	params["limit"] = Limit
+	params["interval"] = Interval
 	if options.enabledSetters["Key"] {
 		params["key"] = options.Key
 	}
@@ -1125,14 +1123,13 @@ func (srv *Waf) WithUpdateRateLimitRuleConditions(v string) UpdateRateLimitRuleO
 // `os`, `osVersion`, `browser`, and `browserVersion`. Conditions on `city`
 // and `state` require the premium Geo DB addon.
 func (srv *Waf) UpdateRateLimitRule(RuleId string, optionalSetters ...UpdateRateLimitRuleOption)(*models.WafRuleRateLimit, error) {
-	r := strings.NewReplacer("{ruleId}", RuleId)
+	r := strings.NewReplacer("{ruleId}", url.PathEscape(RuleId))
 	path := r.Replace("/waf/rules/rate-limit/{ruleId}")
 	options := UpdateRateLimitRuleOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["ruleId"] = RuleId
 	if options.enabledSetters["ResourceType"] {
 		params["resourceType"] = options.ResourceType
 	}
@@ -1258,15 +1255,15 @@ func (srv *Waf) CreateRedirectRule(RuleId string, ResourceType string, Name stri
 	params := map[string]interface{}{}
 	params["ruleId"] = RuleId
 	params["resourceType"] = ResourceType
-	params["name"] = Name
-	params["location"] = Location
-	params["statusCode"] = StatusCode
 	if options.enabledSetters["ResourceId"] {
 		params["resourceId"] = options.ResourceId
 	}
+	params["name"] = Name
 	if options.enabledSetters["Description"] {
 		params["description"] = options.Description
 	}
+	params["location"] = Location
+	params["statusCode"] = StatusCode
 	if options.enabledSetters["Priority"] {
 		params["priority"] = options.Priority
 	}
@@ -1395,14 +1392,13 @@ func (srv *Waf) WithUpdateRedirectRuleConditions(v string) UpdateRedirectRuleOpt
 // `browserVersion`. Conditions on `city` and `state` require the premium Geo
 // DB addon.
 func (srv *Waf) UpdateRedirectRule(RuleId string, optionalSetters ...UpdateRedirectRuleOption)(*models.WafRuleRedirect, error) {
-	r := strings.NewReplacer("{ruleId}", RuleId)
+	r := strings.NewReplacer("{ruleId}", url.PathEscape(RuleId))
 	path := r.Replace("/waf/rules/redirect/{ruleId}")
 	options := UpdateRedirectRuleOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["ruleId"] = RuleId
 	if options.enabledSetters["ResourceType"] {
 		params["resourceType"] = options.ResourceType
 	}
@@ -1463,10 +1459,9 @@ func (srv *Waf) UpdateRedirectRule(RuleId string, optionalSetters ...UpdateRedir
 	
 // GetRule get a WAF rule by its ID.
 func (srv *Waf) GetRule(RuleId string)(*models.WafRule, error) {
-	r := strings.NewReplacer("{ruleId}", RuleId)
+	r := strings.NewReplacer("{ruleId}", url.PathEscape(RuleId))
 	path := r.Replace("/waf/rules/{ruleId}")
 	params := map[string]interface{}{}
-	params["ruleId"] = RuleId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -1499,10 +1494,9 @@ func (srv *Waf) GetRule(RuleId string)(*models.WafRule, error) {
 	
 // DeleteRule delete a WAF rule.
 func (srv *Waf) DeleteRule(RuleId string)(*interface{}, error) {
-	r := strings.NewReplacer("{ruleId}", RuleId)
+	r := strings.NewReplacer("{ruleId}", url.PathEscape(RuleId))
 	path := r.Replace("/waf/rules/{ruleId}")
 	params := map[string]interface{}{}
-	params["ruleId"] = RuleId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",

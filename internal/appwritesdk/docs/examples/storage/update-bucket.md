@@ -1,0 +1,30 @@
+```go
+package main
+
+import (
+    "fmt"
+    "github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
+    "github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/storage"
+)
+
+client := client.New(
+    client.WithEndpoint("https://<REGION>.cloud.appwrite.io/v1")
+    client.WithProject("<YOUR_PROJECT_ID>")
+)
+
+service := storage.New(client)
+
+response, error := service.UpdateBucket(
+    "<BUCKET_ID>",
+    "<NAME>",
+    storage.WithUpdateBucketPermissions([]string{"read("any")"}),
+    storage.WithUpdateBucketFileSecurity(false),
+    storage.WithUpdateBucketEnabled(false),
+    storage.WithUpdateBucketMaximumFileSize(1),
+    storage.WithUpdateBucketAllowedFileExtensions([]string{}),
+    storage.WithUpdateBucketCompression("none"),
+    storage.WithUpdateBucketEncryption(false),
+    storage.WithUpdateBucketAntivirus(false),
+    storage.WithUpdateBucketTransformations(false),
+)
+```

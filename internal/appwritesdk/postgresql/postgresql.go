@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/models"
+	"net/url"
 	"strings"
 )
 
@@ -311,10 +312,9 @@ func (srv *Postgresql) ListSpecifications()(*models.DedicatedDatabaseSpecificati
 // Get get a dedicated database by its unique ID. Returns the database
 // configuration and current status.
 func (srv *Postgresql) Get(DatabaseId string)(*models.DedicatedDatabase, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}")
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -535,14 +535,13 @@ func (srv *Postgresql) WithUpdateSqlApiTimeoutSeconds(v int) UpdateOption {
 // handled via rolling cutover. Storage expansion is done online. All other
 // settings are applied in-place.
 func (srv *Postgresql) Update(DatabaseId string, optionalSetters ...UpdateOption)(*models.DedicatedDatabase, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}")
 	options := UpdateOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	if options.enabledSetters["Name"] {
 		params["name"] = options.Name
 	}
@@ -645,10 +644,9 @@ func (srv *Postgresql) Update(DatabaseId string, optionalSetters ...UpdateOption
 // up. Deletion is allowed from any state, and repeating the call
 // re-dispatches the cleanup.
 func (srv *Postgresql) Delete(DatabaseId string)(*interface{}, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}")
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -699,14 +697,13 @@ func (srv *Postgresql) WithListBackupsQueries(v []string) ListBackupsOption {
 // ListBackups list all backups for a dedicated database. Results can be
 // filtered by status and type.
 func (srv *Postgresql) ListBackups(DatabaseId string, optionalSetters ...ListBackupsOption)(*models.DedicatedDatabaseBackupList, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}/backups")
 	options := ListBackupsOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	if options.enabledSetters["Queries"] {
 		params["queries"] = options.Queries
 	}
@@ -761,14 +758,13 @@ func (srv *Postgresql) WithCreateBackupType(v string) CreateBackupOption {
 // will be created asynchronously and its status can be checked via the get
 // backup endpoint.
 func (srv *Postgresql) CreateBackup(DatabaseId string, optionalSetters ...CreateBackupOption)(*models.DedicatedDatabaseBackup, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}/backups")
 	options := CreateBackupOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	if options.enabledSetters["Type"] {
 		params["type"] = options.Type
 	}
@@ -822,14 +818,13 @@ func (srv *Postgresql) WithListBackupPoliciesQueries(v []string) ListBackupPolic
 			
 // ListBackupPolicies list scheduled backup policies for a dedicated database.
 func (srv *Postgresql) ListBackupPolicies(DatabaseId string, optionalSetters ...ListBackupPoliciesOption)(*models.BackupPolicyList, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}/backups/policies")
 	options := ListBackupPoliciesOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	if options.enabledSetters["Queries"] {
 		params["queries"] = options.Queries
 	}
@@ -891,14 +886,13 @@ func (srv *Postgresql) WithCreateBackupPolicyEnabled(v bool) CreateBackupPolicyO
 // CreateBackupPolicy create a scheduled backup policy for a dedicated
 // database.
 func (srv *Postgresql) CreateBackupPolicy(DatabaseId string, PolicyId string, Name string, Schedule string, Retention int, optionalSetters ...CreateBackupPolicyOption)(*models.BackupPolicy, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}/backups/policies")
 	options := CreateBackupPolicyOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	params["policyId"] = PolicyId
 	params["name"] = Name
 	params["schedule"] = Schedule
@@ -942,11 +936,9 @@ func (srv *Postgresql) CreateBackupPolicy(DatabaseId string, PolicyId string, Na
 			
 // GetBackupPolicy get a scheduled backup policy for a dedicated database.
 func (srv *Postgresql) GetBackupPolicy(DatabaseId string, PolicyId string)(*models.BackupPolicy, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId, "{policyId}", PolicyId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId), "{policyId}", url.PathEscape(PolicyId))
 	path := r.Replace("/postgresql/{databaseId}/backups/policies/{policyId}")
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
-	params["policyId"] = PolicyId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -1021,15 +1013,13 @@ func (srv *Postgresql) WithUpdateBackupPolicyEnabled(v bool) UpdateBackupPolicyO
 // UpdateBackupPolicy update a scheduled backup policy for a dedicated
 // database.
 func (srv *Postgresql) UpdateBackupPolicy(DatabaseId string, PolicyId string, optionalSetters ...UpdateBackupPolicyOption)(*models.BackupPolicy, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId, "{policyId}", PolicyId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId), "{policyId}", url.PathEscape(PolicyId))
 	path := r.Replace("/postgresql/{databaseId}/backups/policies/{policyId}")
 	options := UpdateBackupPolicyOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
-	params["policyId"] = PolicyId
 	if options.enabledSetters["Name"] {
 		params["name"] = options.Name
 	}
@@ -1077,11 +1067,9 @@ func (srv *Postgresql) UpdateBackupPolicy(DatabaseId string, PolicyId string, op
 // database. Backups already taken by the policy are kept until their
 // retention expires.
 func (srv *Postgresql) DeleteBackupPolicy(DatabaseId string, PolicyId string)(*interface{}, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId, "{policyId}", PolicyId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId), "{policyId}", url.PathEscape(PolicyId))
 	path := r.Replace("/postgresql/{databaseId}/backups/policies/{policyId}")
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
-	params["policyId"] = PolicyId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -1150,18 +1138,15 @@ func (srv *Postgresql) WithUpdateBackupStorageEndpoint(v string) UpdateBackupSto
 // will be stored to the configured destination in addition to on-cluster
 // storage.
 func (srv *Postgresql) UpdateBackupStorage(DatabaseId string, Provider string, Bucket string, AccessKey string, SecretKey string, optionalSetters ...UpdateBackupStorageOption)(*models.DedicatedDatabaseBackupStorage, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}/backups/storage")
 	options := UpdateBackupStorageOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	params["provider"] = Provider
 	params["bucket"] = Bucket
-	params["accessKey"] = AccessKey
-	params["secretKey"] = SecretKey
 	if options.enabledSetters["Region"] {
 		params["region"] = options.Region
 	}
@@ -1171,6 +1156,8 @@ func (srv *Postgresql) UpdateBackupStorage(DatabaseId string, Provider string, B
 	if options.enabledSetters["Endpoint"] {
 		params["endpoint"] = options.Endpoint
 	}
+	params["accessKey"] = AccessKey
+	params["secretKey"] = SecretKey
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -1205,11 +1192,9 @@ func (srv *Postgresql) UpdateBackupStorage(DatabaseId string, Provider string, B
 // GetBackup get details of a specific database backup including its status,
 // size, and timestamps.
 func (srv *Postgresql) GetBackup(DatabaseId string, BackupId string)(*models.DedicatedDatabaseBackup, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId, "{backupId}", BackupId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId), "{backupId}", url.PathEscape(BackupId))
 	path := r.Replace("/postgresql/{databaseId}/backups/{backupId}")
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
-	params["backupId"] = BackupId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -1243,11 +1228,9 @@ func (srv *Postgresql) GetBackup(DatabaseId string, BackupId string)(*models.Ded
 // DeleteBackup delete a database backup. This will permanently remove the
 // backup from storage and cannot be undone.
 func (srv *Postgresql) DeleteBackup(DatabaseId string, BackupId string)(*interface{}, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId, "{backupId}", BackupId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId), "{backupId}", url.PathEscape(BackupId))
 	path := r.Replace("/postgresql/{databaseId}/backups/{backupId}")
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
-	params["backupId"] = BackupId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -1281,10 +1264,9 @@ func (srv *Postgresql) DeleteBackup(DatabaseId string, BackupId string)(*interfa
 // ListBranches list all ephemeral branches for a dedicated database. Returns
 // branch metadata including ID, name, namespace, and expiration time.
 func (srv *Postgresql) ListBranches(DatabaseId string)(*models.DedicatedDatabaseBranchList, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}/branches")
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -1346,14 +1328,13 @@ func (srv *Postgresql) WithCreateBranchTtl(v int) CreateBranchOption {
 // affecting production data. Branches expire after the configured TTL
 // (default 24 hours). The branch is created asynchronously.
 func (srv *Postgresql) CreateBranch(DatabaseId string, optionalSetters ...CreateBranchOption)(*models.DedicatedDatabase, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}/branches")
 	options := CreateBranchOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	if options.enabledSetters["BranchId"] {
 		params["branchId"] = options.BranchId
 	}
@@ -1395,11 +1376,9 @@ func (srv *Postgresql) CreateBranch(DatabaseId string, optionalSetters ...Create
 // namespace, its PVC, and the associated VolumeSnapshot. The deletion runs
 // asynchronously and is irreversible.
 func (srv *Postgresql) DeleteBranch(DatabaseId string, BranchId string)(*models.DedicatedDatabase, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId, "{branchId}", BranchId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId), "{branchId}", url.PathEscape(BranchId))
 	path := r.Replace("/postgresql/{databaseId}/branches/{branchId}")
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
-	params["branchId"] = BranchId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -1436,10 +1415,9 @@ func (srv *Postgresql) DeleteBranch(DatabaseId string, BranchId string)(*models.
 // Previous credentials stop working immediately. Returns the database with a
 // refreshed connection string carrying the new password.
 func (srv *Postgresql) UpdateCredentials(DatabaseId string)(*models.DedicatedDatabase, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}/credentials")
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -1506,14 +1484,13 @@ func (srv *Postgresql) WithCreateExecutionTimeoutSeconds(v int) CreateExecutionO
 // database's configured allow-list. Use bound parameters for any
 // user-supplied values — the API does not interpolate raw strings.
 func (srv *Postgresql) CreateExecution(DatabaseId string, Sql string, optionalSetters ...CreateExecutionOption)(*models.DedicatedDatabaseExecution, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}/executions")
 	options := CreateExecutionOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	params["sql"] = Sql
 	if options.enabledSetters["Bindings"] {
 		params["bindings"] = options.Bindings
@@ -1555,10 +1532,9 @@ func (srv *Postgresql) CreateExecution(DatabaseId string, Sql string, optionalSe
 // ListExtensions list installed and available extensions for a PostgreSQL
 // database.
 func (srv *Postgresql) ListExtensions(DatabaseId string)(*models.DedicatedDatabaseExtensions, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}/extensions")
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -1593,10 +1569,9 @@ func (srv *Postgresql) ListExtensions(DatabaseId string)(*models.DedicatedDataba
 // databases. The install runs asynchronously; poll the extensions list
 // endpoint for status.
 func (srv *Postgresql) CreateExtension(DatabaseId string, Name string)(*models.DedicatedDatabase, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}/extensions")
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	params["name"] = Name
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
@@ -1633,11 +1608,9 @@ func (srv *Postgresql) CreateExtension(DatabaseId string, Name string)(*models.D
 // The uninstall runs asynchronously; poll the extensions list endpoint for
 // status.
 func (srv *Postgresql) DeleteExtension(DatabaseId string, ExtensionName string)(*models.DedicatedDatabase, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId, "{extensionName}", ExtensionName)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId), "{extensionName}", url.PathEscape(ExtensionName))
 	path := r.Replace("/postgresql/{databaseId}/extensions/{extensionName}")
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
-	params["extensionName"] = ExtensionName
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -1692,14 +1665,13 @@ func (srv *Postgresql) WithCreateFailoverTargetReplicaId(v string) CreateFailove
 // left mid-operation by a failover that did not finish also accepts this call
 // as a repair, provided `targetReplicaId` names the member to promote.
 func (srv *Postgresql) CreateFailover(DatabaseId string, optionalSetters ...CreateFailoverOption)(*models.DedicatedDatabase, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}/failovers")
 	options := CreateFailoverOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	if options.enabledSetters["TargetReplicaId"] {
 		params["targetReplicaId"] = options.TargetReplicaId
 	}
@@ -1738,10 +1710,9 @@ func (srv *Postgresql) CreateFailover(DatabaseId string, optionalSetters ...Crea
 // Maintenance operations like minor version upgrades will be performed during
 // this window.
 func (srv *Postgresql) UpdateMaintenance(DatabaseId string, Day string, HourUtc int)(*models.DedicatedDatabase, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}/maintenance")
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	params["day"] = Day
 	params["hourUtc"] = HourUtc
 	headers := map[string]interface{}{
@@ -1797,14 +1768,13 @@ func (srv *Postgresql) WithCreateMigrationSpecification(v string) CreateMigratio
 // to shared converts to a serverless instance that scales to zero when idle.
 // Data is copied to the target with a brief read-only window during cutover.
 func (srv *Postgresql) CreateMigration(DatabaseId string, TargetType string, optionalSetters ...CreateMigrationOption)(*models.DedicatedDatabase, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}/migrations")
 	options := CreateMigrationOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	params["targetType"] = TargetType
 	if options.enabledSetters["Specification"] {
 		params["specification"] = options.Specification
@@ -1878,14 +1848,13 @@ func (srv *Postgresql) WithListOperationsOffset(v int) ListOperationsOption {
 // replication action is recorded here with its outcome, including an attempt
 // that was abandoned because another worker took over the database.
 func (srv *Postgresql) ListOperations(DatabaseId string, optionalSetters ...ListOperationsOption)(*models.DedicatedDatabaseOperationList, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}/operations")
 	options := ListOperationsOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	if options.enabledSetters["Status"] {
 		params["status"] = options.Status
 	}
@@ -1928,10 +1897,9 @@ func (srv *Postgresql) ListOperations(DatabaseId string, optionalSetters ...List
 // GetPitr get available point-in-time recovery windows for a dedicated
 // database. Returns the earliest and latest recovery points.
 func (srv *Postgresql) GetPitr(DatabaseId string)(*models.DedicatedDatabasePITRWindows, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}/pitr")
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -1965,10 +1933,9 @@ func (srv *Postgresql) GetPitr(DatabaseId string)(*models.DedicatedDatabasePITRW
 // GetPooler get the connection pooler configuration for a dedicated database.
 // Returns pooler mode, max connections, and pool size settings.
 func (srv *Postgresql) GetPooler(DatabaseId string)(*models.DedicatedDatabasePooler, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}/pooler")
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -2075,14 +2042,13 @@ func (srv *Postgresql) WithUpdatePoolerPoolerMemoryLimit(v string) UpdatePoolerO
 // UpdatePooler update the connection pooler configuration for a dedicated
 // database. Configure pool mode, max connections, and pool sizes.
 func (srv *Postgresql) UpdatePooler(DatabaseId string, optionalSetters ...UpdatePoolerOption)(*models.DedicatedDatabasePooler, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}/pooler")
 	options := UpdatePoolerOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	if options.enabledSetters["Mode"] {
 		params["mode"] = options.Mode
 	}
@@ -2141,10 +2107,9 @@ func (srv *Postgresql) UpdatePooler(DatabaseId string, optionalSetters ...Update
 // GetReplicas get high availability status for a dedicated database. Returns
 // replica statuses, replication lag, and sync mode.
 func (srv *Postgresql) GetReplicas(DatabaseId string)(*models.DedicatedDatabaseReplicas, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}/replicas")
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -2219,14 +2184,13 @@ func (srv *Postgresql) WithListRestorationsOffset(v int) ListRestorationsOption 
 // ListRestorations list all restorations for a dedicated database. Results
 // can be filtered by status and type.
 func (srv *Postgresql) ListRestorations(DatabaseId string, optionalSetters ...ListRestorationsOption)(*models.DedicatedDatabaseRestorationList, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}/restorations")
 	options := ListRestorationsOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	if options.enabledSetters["Status"] {
 		params["status"] = options.Status
 	}
@@ -2307,14 +2271,13 @@ func (srv *Postgresql) WithCreateRestorationTargetTime(v string) CreateRestorati
 // provide a targetTime as an ISO 8601 datetime. PITR requires the database to
 // have PITR enabled and is only available for enterprise databases.
 func (srv *Postgresql) CreateRestoration(DatabaseId string, optionalSetters ...CreateRestorationOption)(*models.DedicatedDatabaseRestoration, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}/restorations")
 	options := CreateRestorationOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	if options.enabledSetters["Type"] {
 		params["type"] = options.Type
 	}
@@ -2358,11 +2321,9 @@ func (srv *Postgresql) CreateRestoration(DatabaseId string, optionalSetters ...C
 // GetRestoration get details of a specific database restoration including its
 // status, type, and timestamps.
 func (srv *Postgresql) GetRestoration(DatabaseId string, RestorationId string)(*models.DedicatedDatabaseRestoration, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId, "{restorationId}", RestorationId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId), "{restorationId}", url.PathEscape(RestorationId))
 	path := r.Replace("/postgresql/{databaseId}/restorations/{restorationId}")
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
-	params["restorationId"] = RestorationId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -2397,10 +2358,9 @@ func (srv *Postgresql) GetRestoration(DatabaseId string, RestorationId string)(*
 // database. Returns health status, readiness, uptime, connection info,
 // replica status, and volume information.
 func (srv *Postgresql) GetStatus(DatabaseId string)(*models.DatabaseStatus, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}/status")
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -2434,10 +2394,9 @@ func (srv *Postgresql) GetStatus(DatabaseId string)(*models.DatabaseStatus, erro
 // CreateUpgrade upgrade a dedicated database to a new engine version. Uses
 // blue-green deployment for zero-downtime cutover.
 func (srv *Postgresql) CreateUpgrade(DatabaseId string, TargetVersion string)(*models.DedicatedDatabase, error) {
-	r := strings.NewReplacer("{databaseId}", DatabaseId)
+	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
 	path := r.Replace("/postgresql/{databaseId}/upgrades")
 	params := map[string]interface{}{}
-	params["databaseId"] = DatabaseId
 	params["targetVersion"] = TargetVersion
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],

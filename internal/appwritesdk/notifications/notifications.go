@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/models"
+	"net/url"
 	"strings"
 )
 
@@ -83,10 +84,9 @@ func (srv *Notifications) List(optionalSetters ...ListOption)(*models.Notificati
 // Update update a notification by its unique ID. Use the `read` parameter to
 // mark the notification as read or unread.
 func (srv *Notifications) Update(NotificationId string, Read bool)(*models.Notification, error) {
-	r := strings.NewReplacer("{notificationId}", NotificationId)
+	r := strings.NewReplacer("{notificationId}", url.PathEscape(NotificationId))
 	path := r.Replace("/notifications/{notificationId}")
 	params := map[string]interface{}{}
-	params["notificationId"] = NotificationId
 	params["read"] = Read
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],

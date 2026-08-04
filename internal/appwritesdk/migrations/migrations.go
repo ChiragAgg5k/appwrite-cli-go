@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/models"
+	"net/url"
 	"strings"
 )
 
@@ -928,10 +929,9 @@ func (srv *Migrations) GetSupabaseReport(Resources []string, Endpoint string, Ap
 // information about a specific migration including its current status,
 // progress, and any errors that occurred during the migration process.
 func (srv *Migrations) Get(MigrationId string)(*models.Migration, error) {
-	r := strings.NewReplacer("{migrationId}", MigrationId)
+	r := strings.NewReplacer("{migrationId}", url.PathEscape(MigrationId))
 	path := r.Replace("/migrations/{migrationId}")
 	params := map[string]interface{}{}
-	params["migrationId"] = MigrationId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -965,10 +965,9 @@ func (srv *Migrations) Get(MigrationId string)(*models.Migration, error) {
 // Retry retry a failed migration. This endpoint allows you to retry a
 // migration that has previously failed.
 func (srv *Migrations) Retry(MigrationId string)(*models.Migration, error) {
-	r := strings.NewReplacer("{migrationId}", MigrationId)
+	r := strings.NewReplacer("{migrationId}", url.PathEscape(MigrationId))
 	path := r.Replace("/migrations/{migrationId}")
 	params := map[string]interface{}{}
-	params["migrationId"] = MigrationId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -1003,10 +1002,9 @@ func (srv *Migrations) Retry(MigrationId string)(*models.Migration, error) {
 // Delete delete a migration by its unique ID. This endpoint allows you to
 // remove a migration from your project's migration history.
 func (srv *Migrations) Delete(MigrationId string)(*interface{}, error) {
-	r := strings.NewReplacer("{migrationId}", MigrationId)
+	r := strings.NewReplacer("{migrationId}", url.PathEscape(MigrationId))
 	path := r.Replace("/migrations/{migrationId}")
 	params := map[string]interface{}{}
-	params["migrationId"] = MigrationId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",

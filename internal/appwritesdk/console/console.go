@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/models"
+	"net/url"
 	"strings"
 )
 
@@ -22,10 +23,9 @@ func New(clt client.Client) *Console {
 	
 // GetCampaign receive the details of a campaign using its ID.
 func (srv *Console) GetCampaign(CampaignId string)(*models.Campaign, error) {
-	r := strings.NewReplacer("{campaignId}", CampaignId)
+	r := strings.NewReplacer("{campaignId}", url.PathEscape(CampaignId))
 	path := r.Replace("/console/campaigns/{campaignId}")
 	params := map[string]interface{}{}
-	params["campaignId"] = CampaignId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -58,10 +58,9 @@ func (srv *Console) GetCampaign(CampaignId string)(*models.Campaign, error) {
 	
 // GetCoupon get the details of a coupon using it's coupon ID.
 func (srv *Console) GetCoupon(CouponId string)(*models.Coupon, error) {
-	r := strings.NewReplacer("{couponId}", CouponId)
+	r := strings.NewReplacer("{couponId}", url.PathEscape(CouponId))
 	path := r.Replace("/console/coupons/{couponId}")
 	params := map[string]interface{}{}
-	params["couponId"] = CouponId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -270,10 +269,9 @@ func (srv *Console) GetPlans(optionalSetters ...GetPlansOption)(*models.BillingP
 	
 // GetPlan get the details of a plan using its plan ID.
 func (srv *Console) GetPlan(PlanId string)(*models.BillingPlan, error) {
-	r := strings.NewReplacer("{planId}", PlanId)
+	r := strings.NewReplacer("{planId}", url.PathEscape(PlanId))
 	path := r.Replace("/console/plans/{planId}")
 	params := map[string]interface{}{}
-	params["planId"] = PlanId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -341,10 +339,9 @@ func (srv *Console) ListPostgresExtensions()(*models.PostgresExtensionList, erro
 	
 // GetProgram receive the details of a program using its ID.
 func (srv *Console) GetProgram(ProgramId string)(*models.Program, error) {
-	r := strings.NewReplacer("{programId}", ProgramId)
+	r := strings.NewReplacer("{programId}", url.PathEscape(ProgramId))
 	path := r.Replace("/console/programs/{programId}")
 	params := map[string]interface{}{}
-	params["programId"] = ProgramId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -378,10 +375,9 @@ func (srv *Console) GetProgram(ProgramId string)(*models.Program, error) {
 // CreateProgramMembership create a new membership for an account to a
 // program.
 func (srv *Console) CreateProgramMembership(ProgramId string)(*models.Organization, error) {
-	r := strings.NewReplacer("{programId}", ProgramId)
+	r := strings.NewReplacer("{programId}", url.PathEscape(ProgramId))
 	path := r.Replace("/console/programs/{programId}/memberships")
 	params := map[string]interface{}{}
-	params["programId"] = ProgramId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -911,14 +907,13 @@ func (srv *Console) WithGetEmailTemplateLocale(v string) GetEmailTemplateOption 
 // specified type and locale. Always returns the unmodified default, ignoring
 // any custom project overrides.
 func (srv *Console) GetEmailTemplate(TemplateId string, optionalSetters ...GetEmailTemplateOption)(*models.EmailTemplate, error) {
-	r := strings.NewReplacer("{templateId}", TemplateId)
+	r := strings.NewReplacer("{templateId}", url.PathEscape(TemplateId))
 	path := r.Replace("/console/templates/email/{templateId}")
 	options := GetEmailTemplateOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["templateId"] = TemplateId
 	if options.enabledSetters["Locale"] {
 		params["locale"] = options.Locale
 	}

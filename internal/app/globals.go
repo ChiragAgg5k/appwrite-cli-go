@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/output"
+	"github.com/ChiragAgg5k/appwrite-cli-go/internal/sdk"
 	"github.com/spf13/cobra"
 )
 
@@ -23,6 +24,7 @@ type Globals struct {
 	Verbose     bool
 	Force       bool
 	All         bool
+	Report      bool
 }
 
 var globals = &Globals{}
@@ -37,9 +39,13 @@ func RegisterGlobalFlags(root *cobra.Command) {
 	flags.BoolVarP(&globals.Raw, "raw", "R", false, "Output the unfiltered response as JSON.")
 	flags.BoolVar(&globals.ShowSecrets, "show-secrets", false,
 		"Show secret values in full instead of masking them.")
-	flags.BoolVar(&globals.Verbose, "verbose", false, "Show detailed output for debugging.")
+	flags.BoolVarP(&globals.Verbose, "verbose", "V", false, "Show detailed output for debugging.")
 	flags.BoolVarP(&globals.Force, "force", "f", false, "Skip confirmation prompts.")
-	flags.BoolVar(&globals.All, "all", false, "Apply the command to every matching resource.")
+	// -a is the TypeScript's shorthand on push and pull. Registering it here
+	// rather than there costs nothing and keeps one spelling of --all.
+	flags.BoolVarP(&globals.All, "all", "a", false, "Apply the command to every matching resource.")
+	flags.BoolVar(&globals.Report, "report", false,
+		"Print a prefilled bug report link on error.")
 }
 
 // Renderer builds an output renderer from the current global flags.
@@ -64,13 +70,29 @@ func Renderer() *output.Renderer {
 
 // Render writes an SDK result through the configured renderer.
 //
-// The SDK returns typed structs. They are round-tripped through JSON so the
-// output path sees the same ordered shape the API sent rather than Go's struct
-// field order.
+// The response the API sent is preferred over the typed struct. --raw promises
+// "the full raw JSON response" and --json filters that response, so rendering
+// the struct instead silently dropped every field the generated model does not
+// declare. The struct is the fallback for commands that produce a result
+// without a request behind it.
+//
+// Either way the bytes are decoded through DecodeOrdered so the output path
+// sees the API's key order rather than Go's struct field order.
 func Render(value any) error {
-	encoded, err := output.MarshalOrdered(value)
-	if err != nil {
-		return err
+	return render(Renderer(), value)
+}
+
+// render is Render against an explicit renderer, so it can be exercised without
+// the process-wide global flags.
+func render(renderer *output.Renderer, value any) error {
+	encoded := sdk.LastResponse.Take()
+
+	if len(encoded) == 0 {
+		marshalled, err := output.MarshalOrdered(value)
+		if err != nil {
+			return err
+		}
+		encoded = marshalled
 	}
 
 	decoded, err := output.DecodeOrdered(encoded)
@@ -78,5 +100,5 @@ func Render(value any) error {
 		return err
 	}
 
-	return Renderer().Render(decoded)
+	return renderer.Render(decoded)
 }

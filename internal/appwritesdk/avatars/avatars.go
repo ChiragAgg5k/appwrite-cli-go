@@ -66,14 +66,13 @@ func (srv *Avatars) WithGetBrowserQuality(v int) GetBrowserOption {
 // image at source quality. If dimensions are not specified, the default size
 // of image returned is 100x100px.
 func (srv *Avatars) GetBrowser(Code string, optionalSetters ...GetBrowserOption)(*[]byte, error) {
-	r := strings.NewReplacer("{code}", Code)
+	r := strings.NewReplacer("{code}", url.PathEscape(Code))
 	path := r.Replace("/avatars/browsers/{code}")
 	options := GetBrowserOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["code"] = Code
 	if options.enabledSetters["Width"] {
 		params["width"] = options.Width
 	}
@@ -124,7 +123,7 @@ func (srv *Avatars) GetBrowser(Code string, optionalSetters ...GetBrowserOption)
 // of image returned is 100x100px.
 // Returns the URL for the resource instead of the content.
 func (srv *Avatars) GetBrowserURL(Code string, optionalSetters ...GetBrowserOption) (*string, error) {
-	r := strings.NewReplacer("{code}", Code)
+	r := strings.NewReplacer("{code}", url.PathEscape(Code))
 	path := r.Replace("/avatars/browsers/{code}")
 	options := GetBrowserOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -191,14 +190,13 @@ func (srv *Avatars) WithGetCreditCardQuality(v int) GetCreditCardOption {
 // image at source quality. If dimensions are not specified, the default size
 // of image returned is 100x100px.
 func (srv *Avatars) GetCreditCard(Code string, optionalSetters ...GetCreditCardOption)(*[]byte, error) {
-	r := strings.NewReplacer("{code}", Code)
+	r := strings.NewReplacer("{code}", url.PathEscape(Code))
 	path := r.Replace("/avatars/credit-cards/{code}")
 	options := GetCreditCardOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["code"] = Code
 	if options.enabledSetters["Width"] {
 		params["width"] = options.Width
 	}
@@ -246,7 +244,7 @@ func (srv *Avatars) GetCreditCard(Code string, optionalSetters ...GetCreditCardO
 // of image returned is 100x100px.
 // Returns the URL for the resource instead of the content.
 func (srv *Avatars) GetCreditCardURL(Code string, optionalSetters ...GetCreditCardOption) (*string, error) {
-	r := strings.NewReplacer("{code}", Code)
+	r := strings.NewReplacer("{code}", url.PathEscape(Code))
 	path := r.Replace("/avatars/credit-cards/{code}")
 	options := GetCreditCardOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -369,14 +367,13 @@ func (srv *Avatars) WithGetFlagQuality(v int) GetFlagOption {
 // image at source quality. If dimensions are not specified, the default size
 // of image returned is 100x100px.
 func (srv *Avatars) GetFlag(Code string, optionalSetters ...GetFlagOption)(*[]byte, error) {
-	r := strings.NewReplacer("{code}", Code)
+	r := strings.NewReplacer("{code}", url.PathEscape(Code))
 	path := r.Replace("/avatars/flags/{code}")
 	options := GetFlagOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["code"] = Code
 	if options.enabledSetters["Width"] {
 		params["width"] = options.Width
 	}
@@ -426,7 +423,7 @@ func (srv *Avatars) GetFlag(Code string, optionalSetters ...GetFlagOption)(*[]by
 // of image returned is 100x100px.
 // Returns the URL for the resource instead of the content.
 func (srv *Avatars) GetFlagURL(Code string, optionalSetters ...GetFlagOption) (*string, error) {
-	r := strings.NewReplacer("{code}", Code)
+	r := strings.NewReplacer("{code}", url.PathEscape(Code))
 	path := r.Replace("/avatars/flags/{code}")
 	options := GetFlagOptions{}.New()
 	for _, opt := range optionalSetters {

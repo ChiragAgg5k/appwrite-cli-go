@@ -1,10 +1,18 @@
 package cmd
 
 import (
+	"fmt"
+	"io"
+	"os"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/app"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/config"
+	"github.com/ChiragAgg5k/appwrite-cli-go/internal/jsonx"
+	"github.com/ChiragAgg5k/appwrite-cli-go/internal/output"
+	"github.com/ChiragAgg5k/appwrite-cli-go/internal/sdk"
 	"github.com/spf13/cobra"
 )
 
@@ -45,11 +53,17 @@ func newClientCommand() *cobra.Command {
 			}
 
 			if reset {
-				for _, id := range global.SessionIDs() {
-					global.DeleteSession(id)
-				}
+				// Same server-side revocation as `logout`: resetting the
+				// configuration is how someone signs out of everything, and
+				// dropping the entries alone left every session live.
+				result := logoutSessions(global, global.SessionIDs())
 				if err := global.Write(); err != nil {
 					return err
+				}
+				if len(result.Failed) > 0 {
+					return fmt.Errorf(
+						"could not sign out of %d session(s), which are still stored: %s",
+						len(result.Failed), strings.Join(result.Errors, "; "))
 				}
 				command.Println("Configuration reset.")
 
@@ -60,19 +74,38 @@ func newClientCommand() *cobra.Command {
 				return printClientDebug(command, global)
 			}
 
-			// `client` configures a session that may not exist yet -- this is
-			// the path someone takes instead of `login`.
-			sessionID := global.CurrentSessionID()
-			if sessionID == "" {
-				sessionID = "default"
-				global.AddSession(sessionID, config.NewObject())
-			}
+			// Captured before anything below can change it: the endpoint
+			// branch decides what to do by comparing against the session that
+			// was current when the command started.
+			previous := global.CurrentSessionID()
 
 			if flags.Changed("endpoint") {
-				global.SetCurrentValue(config.PreferenceEndpoint, endpoint)
+				// Checked before it is stored. Saving an unreachable endpoint
+				// silently made every later command fail somewhere less
+				// obvious than the typo that caused it, and the TypeScript
+				// saves nothing at all when the check fails.
+				if err := verifyEndpoint(endpoint); err != nil {
+					return err
+				}
+				selectSessionForEndpoint(command, global, previous, endpoint)
 			}
+
+			// `client --key` configures a session that may not exist yet --
+			// this is the path someone takes instead of `login`. Created after
+			// the endpoint branch, which makes its own session when it needs
+			// one, so the two cannot both add a session for the same run.
+			if global.CurrentSessionID() == "" {
+				global.AddSession("default", config.NewObject())
+			}
+			// The project belongs to the DIRECTORY, not to the session: it is
+			// the same value `init project` and `pull` write, and the same one
+			// every project-scoped command reads. Writing it into the global
+			// preferences instead left the flag inert -- `client --project-id X`
+			// followed by any command answered "project is not set".
 			if flags.Changed("project-id") {
-				global.SetCurrentValue(config.PreferenceProject, projectID)
+				if err := setLocalProject(projectID); err != nil {
+					return err
+				}
 			}
 			if flags.Changed("key") {
 				global.SetCurrentValue(config.PreferenceKey, key)
@@ -85,7 +118,13 @@ func newClientCommand() *cobra.Command {
 				global.SetCurrentValue(config.PreferenceSelfSigned, parsed)
 			}
 
-			return global.Write()
+			if err := global.Write(); err != nil {
+				return err
+			}
+
+			output.Success(command.OutOrStdout(), "Client configuration updated")
+
+			return nil
 		},
 	}
 
@@ -99,6 +138,143 @@ func newClientCommand() *cobra.Command {
 	flags.BoolVarP(&reset, "reset", "r", false, "Reset the CLI configuration")
 
 	return command
+}
+
+// selectSessionForEndpoint points the CLI at the stored session belonging to a
+// newly configured endpoint.
+//
+// Ports the endpoint branch of the TypeScript's client command
+// (generic.ts:288). Setting the endpoint on whatever session happened to be
+// current re-pointed a signed-in session at a different instance, so the
+// credentials of one server were sent to another until the next login.
+func selectSessionForEndpoint(
+	command *cobra.Command,
+	global *config.Global,
+	previous string,
+	endpoint string,
+) {
+	out := command.OutOrStdout()
+	authenticated, endpointOnly := findSessionForEndpoint(global, endpoint)
+
+	switch {
+	// Already on the best session for this endpoint. Rewriting the value keeps
+	// a regional host as the user typed it.
+	case previous != "" &&
+		config.EndpointsMatch(sessionEndpoint(global, previous), endpoint) &&
+		(isAuthenticatedSession(global, previous) || authenticated == ""):
+
+	case authenticated != "":
+		global.SetCurrentSessionID(authenticated)
+		if email := sessionEmail(global, authenticated); email != "" {
+			output.Log(out, "Using signed-in account %s", email)
+		}
+
+	case endpointOnly != "":
+		global.SetCurrentSessionID(endpointOnly)
+		warnDetachedSession(out, global, previous)
+
+	// An endpoint-only stub is repointed rather than multiplied.
+	case previous != "" && !isAuthenticatedSession(global, previous):
+
+	default:
+		id := strconv.FormatInt(time.Now().UnixMilli(), 10)
+		global.AddSession(id, config.NewObject())
+		global.SetCurrentSessionID(id)
+		warnDetachedSession(out, global, previous)
+	}
+
+	global.SetCurrentValue(config.PreferenceEndpoint, endpoint)
+}
+
+// findSessionForEndpoint returns the first signed-in session for an endpoint
+// and the first endpoint-only one.
+//
+// Ports findSessionForEndpoint (session.ts).
+func findSessionForEndpoint(global *config.Global, endpoint string) (string, string) {
+	authenticated, endpointOnly := "", ""
+
+	for _, id := range global.SessionIDs() {
+		stored := sessionEndpoint(global, id)
+		if stored == "" || !config.EndpointsMatch(stored, endpoint) {
+			continue
+		}
+
+		if isAuthenticatedSession(global, id) {
+			if authenticated == "" {
+				authenticated = id
+			}
+
+			continue
+		}
+		if endpointOnly == "" {
+			endpointOnly = id
+		}
+	}
+
+	return authenticated, endpointOnly
+}
+
+// isAuthenticatedSession reports whether a session carries login credentials
+// rather than just an endpoint.
+func isAuthenticatedSession(global *config.Global, id string) bool {
+	session := global.SessionData(id)
+	if session == nil {
+		return false
+	}
+
+	return session.GetString(config.PreferenceAccessToken) != "" ||
+		session.GetString(config.PreferenceCookie) != ""
+}
+
+func sessionEndpoint(global *config.Global, id string) string {
+	session := global.SessionData(id)
+	if session == nil {
+		return ""
+	}
+
+	return session.GetString(config.PreferenceEndpoint)
+}
+
+func sessionEmail(global *config.Global, id string) string {
+	session := global.SessionData(id)
+	if session == nil {
+		return ""
+	}
+
+	return session.GetString(config.PreferenceEmail)
+}
+
+// warnDetachedSession says that a signed-in account is still stored but is no
+// longer the active one, so the user is not left wondering where it went.
+func warnDetachedSession(out io.Writer, global *config.Global, previous string) {
+	if previous == "" || !isAuthenticatedSession(global, previous) {
+		return
+	}
+
+	email := ""
+	if address := sessionEmail(global, previous); address != "" {
+		email = " (" + address + ")"
+	}
+
+	output.Warn(out, "Signed-in account%s is still available but no longer "+
+		"active. Run `%s login --switch` to return to it.", email, app.ExecutableName)
+}
+
+// setLocalProject records the project in appwrite.config.json.
+//
+// Ports the `--project-id` branch of the TypeScript's client command
+// (generic.ts:341), which calls localConfig.setProject. An existing config
+// anywhere up the tree is updated in place rather than shadowed by a new one
+// in the working directory.
+func setLocalProject(projectID string) error {
+	local, err := config.LoadOrCreateLocal(config.FindLocalPath())
+	if err != nil {
+		return err
+	}
+
+	local.SetProject(projectID, "")
+
+	return local.Write()
 }
 
 // printClientDebug reports the active configuration with credentials masked.
@@ -118,12 +294,41 @@ func printClientDebug(command *cobra.Command, global *config.Global) error {
 		return "********"
 	}
 
-	command.Printf("endpoint     : %s\n", global.CurrentValue(config.PreferenceEndpoint))
-	command.Printf("key          : %s\n", mask(global.CurrentValue(config.PreferenceKey)))
-	command.Printf("accessToken  : %s\n", mask(global.CurrentValue(config.PreferenceAccessToken)))
-	command.Printf("selfSigned   : %s\n", global.CurrentValue(config.PreferenceSelfSigned))
-	command.Printf("projectId    : %s\n", global.CurrentValue(config.PreferenceProject))
-	command.Printf("version      : %s\n", app.Version)
+	// The project and organization come from the PROJECT CONFIG, which is where
+	// they live. Reading them off the global preferences reported an empty
+	// projectId while sitting in a directory whose config named one -- the
+	// least useful thing a diagnostic can do.
+	projectID, projectName, organizationID := "", "", ""
+	if local, err := config.LoadLocal(config.FindLocalPath()); err == nil {
+		projectID = local.Data.GetString("projectId")
+		projectName = local.Data.GetString("projectName")
+		organizationID = local.Data.GetString("organizationId")
+	}
+	if environment := os.Getenv(sdk.EnvProjectID); environment != "" {
+		projectID = environment
+	}
+	if environment := os.Getenv(sdk.EnvOrganizationID); environment != "" {
+		organizationID = environment
+	}
 
-	return nil
+	// Rendered rather than printed, so --json and --raw work here as they do
+	// everywhere else and the redaction hint comes from the same place.
+	report := jsonx.NewObject()
+	report.Set("endpoint", global.CurrentValue(config.PreferenceEndpoint))
+	report.Set("key", mask(global.CurrentValue(config.PreferenceKey)))
+	report.Set("accessToken", mask(global.CurrentValue(config.PreferenceAccessToken)))
+	// A real boolean, not the string form: the renderer drops blank strings, so
+	// an unset selfSigned would vanish from the report rather than read false.
+	selfSignedValue := false
+	if session := global.Current(); session != nil {
+		if raw, ok := session.Get(config.PreferenceSelfSigned); ok {
+			selfSignedValue, _ = raw.(bool)
+		}
+	}
+	report.Set("selfSigned", selfSignedValue)
+	report.Set("organizationId", organizationID)
+	report.Set("projectId", projectID)
+	report.Set("projectName", projectName)
+
+	return app.Render(report)
 }

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/models"
+	"net/url"
 	"strings"
 )
 
@@ -80,10 +81,9 @@ func (srv *Activities) ListEvents(optionalSetters ...ListEventsOption)(*models.A
 	
 // GetEvent get event by ID.
 func (srv *Activities) GetEvent(EventId string)(*models.ActivityEvent, error) {
-	r := strings.NewReplacer("{eventId}", EventId)
+	r := strings.NewReplacer("{eventId}", url.PathEscape(EventId))
 	path := r.Replace("/activities/events/{eventId}")
 	params := map[string]interface{}{}
-	params["eventId"] = EventId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",

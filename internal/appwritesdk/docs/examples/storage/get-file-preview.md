@@ -1,0 +1,33 @@
+```go
+package main
+
+import (
+    "fmt"
+    "github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
+    "github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/storage"
+)
+
+client := client.New(
+    client.WithEndpoint("https://<REGION>.cloud.appwrite.io/v1")
+    client.WithProject("<YOUR_PROJECT_ID>")
+)
+
+service := storage.New(client)
+
+response, error := service.GetFilePreview(
+    "<BUCKET_ID>",
+    "<FILE_ID>",
+    storage.WithGetFilePreviewWidth(0),
+    storage.WithGetFilePreviewHeight(0),
+    storage.WithGetFilePreviewGravity("center"),
+    storage.WithGetFilePreviewQuality(-1),
+    storage.WithGetFilePreviewBorderWidth(0),
+    storage.WithGetFilePreviewBorderColor(""),
+    storage.WithGetFilePreviewBorderRadius(0),
+    storage.WithGetFilePreviewOpacity(0),
+    storage.WithGetFilePreviewRotation(-360),
+    storage.WithGetFilePreviewBackground(""),
+    storage.WithGetFilePreviewOutput("jpg"),
+    storage.WithGetFilePreviewToken("<TOKEN>"),
+)
+```

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/models"
+	"net/url"
 	"strings"
 )
 
@@ -175,10 +176,9 @@ func (srv *Manager) DeleteBlock(ProjectId string, ResourceType string, optionalS
 	
 // ListBlocks lists all resource blocks for a project.
 func (srv *Manager) ListBlocks(ProjectId string)(*models.BlockList, error) {
-	r := strings.NewReplacer("{projectId}", ProjectId)
+	r := strings.NewReplacer("{projectId}", url.PathEscape(ProjectId))
 	path := r.Replace("/manager/blocks/{projectId}")
 	params := map[string]interface{}{}
-	params["projectId"] = ProjectId
 	headers := map[string]interface{}{
 		"accept": "application/json",
 	}
@@ -373,13 +373,13 @@ func (srv *Manager) UpdateUserStatus(Status bool, optionalSetters ...UpdateUserS
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["status"] = Status
 	if options.enabledSetters["UserId"] {
 		params["userId"] = options.UserId
 	}
 	if options.enabledSetters["Email"] {
 		params["email"] = options.Email
 	}
+	params["status"] = Status
 	if options.enabledSetters["Reason"] {
 		params["reason"] = options.Reason
 	}

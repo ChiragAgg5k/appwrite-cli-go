@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/models"
+	"net/url"
 	"fmt"
 	"strings"
 )
@@ -45,14 +46,13 @@ func (srv *Vcs) WithCreateRepositoryDetectionProviderRootDirectory(v string) Cre
 // must be properly configured and the repository must be accessible through
 // your installation for this endpoint to work.
 func (srv *Vcs) CreateRepositoryDetection(InstallationId string, ProviderRepositoryId string, Type string, optionalSetters ...CreateRepositoryDetectionOption)(models.Model, error) {
-	r := strings.NewReplacer("{installationId}", InstallationId)
+	r := strings.NewReplacer("{installationId}", url.PathEscape(InstallationId))
 	path := r.Replace("/vcs/github/installations/{installationId}/detections")
 	options := CreateRepositoryDetectionOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["installationId"] = InstallationId
 	params["providerRepositoryId"] = ProviderRepositoryId
 	params["type"] = Type
 	if options.enabledSetters["ProviderRootDirectory"] {
@@ -135,14 +135,13 @@ func (srv *Vcs) WithListRepositoriesQueries(v []string) ListRepositoriesOption {
 // statistics. The GitHub installation must be properly configured for this
 // endpoint to work.
 func (srv *Vcs) ListRepositories(InstallationId string, Type string, optionalSetters ...ListRepositoriesOption)(models.Model, error) {
-	r := strings.NewReplacer("{installationId}", InstallationId)
+	r := strings.NewReplacer("{installationId}", url.PathEscape(InstallationId))
 	path := r.Replace("/vcs/github/installations/{installationId}/providerRepositories")
 	options := ListRepositoriesOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["installationId"] = InstallationId
 	params["type"] = Type
 	if options.enabledSetters["Search"] {
 		params["search"] = options.Search
@@ -217,14 +216,13 @@ func (srv *Vcs) WithCreateRepositoryProviderNamespace(v string) CreateRepository
 // installation type. The GitHub installation must be properly configured and
 // have the necessary permissions for repository creation.
 func (srv *Vcs) CreateRepository(InstallationId string, Name string, Private bool, optionalSetters ...CreateRepositoryOption)(*models.ProviderRepository, error) {
-	r := strings.NewReplacer("{installationId}", InstallationId)
+	r := strings.NewReplacer("{installationId}", url.PathEscape(InstallationId))
 	path := r.Replace("/vcs/github/installations/{installationId}/providerRepositories")
 	options := CreateRepositoryOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["installationId"] = InstallationId
 	params["name"] = Name
 	params["private"] = Private
 	if options.enabledSetters["ProviderNamespace"] {
@@ -267,11 +265,9 @@ func (srv *Vcs) CreateRepository(InstallationId string, Name string, Private boo
 // GitHub installation must be properly configured and have access to the
 // requested repository for this endpoint to work.
 func (srv *Vcs) GetRepository(InstallationId string, ProviderRepositoryId string)(*models.ProviderRepository, error) {
-	r := strings.NewReplacer("{installationId}", InstallationId, "{providerRepositoryId}", ProviderRepositoryId)
+	r := strings.NewReplacer("{installationId}", url.PathEscape(InstallationId), "{providerRepositoryId}", url.PathEscape(ProviderRepositoryId))
 	path := r.Replace("/vcs/github/installations/{installationId}/providerRepositories/{providerRepositoryId}")
 	params := map[string]interface{}{}
-	params["installationId"] = InstallationId
-	params["providerRepositoryId"] = ProviderRepositoryId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -335,15 +331,13 @@ func (srv *Vcs) WithListRepositoryBranchesQueries(v []string) ListRepositoryBran
 // properly configured and have access to the requested repository for this
 // endpoint to work.
 func (srv *Vcs) ListRepositoryBranches(InstallationId string, ProviderRepositoryId string, optionalSetters ...ListRepositoryBranchesOption)(*models.BranchList, error) {
-	r := strings.NewReplacer("{installationId}", InstallationId, "{providerRepositoryId}", ProviderRepositoryId)
+	r := strings.NewReplacer("{installationId}", url.PathEscape(InstallationId), "{providerRepositoryId}", url.PathEscape(ProviderRepositoryId))
 	path := r.Replace("/vcs/github/installations/{installationId}/providerRepositories/{providerRepositoryId}/branches")
 	options := ListRepositoryBranchesOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["installationId"] = InstallationId
-	params["providerRepositoryId"] = ProviderRepositoryId
 	if options.enabledSetters["Search"] {
 		params["search"] = options.Search
 	}
@@ -412,15 +406,13 @@ func (srv *Vcs) WithGetRepositoryContentsProviderReference(v string) GetReposito
 // configured and the repository must be accessible through your installation
 // for this endpoint to work.
 func (srv *Vcs) GetRepositoryContents(InstallationId string, ProviderRepositoryId string, optionalSetters ...GetRepositoryContentsOption)(*models.VcsContentList, error) {
-	r := strings.NewReplacer("{installationId}", InstallationId, "{providerRepositoryId}", ProviderRepositoryId)
+	r := strings.NewReplacer("{installationId}", url.PathEscape(InstallationId), "{providerRepositoryId}", url.PathEscape(ProviderRepositoryId))
 	path := r.Replace("/vcs/github/installations/{installationId}/providerRepositories/{providerRepositoryId}/contents")
 	options := GetRepositoryContentsOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["installationId"] = InstallationId
-	params["providerRepositoryId"] = ProviderRepositoryId
 	if options.enabledSetters["ProviderRootDirectory"] {
 		params["providerRootDirectory"] = options.ProviderRootDirectory
 	}
@@ -464,11 +456,9 @@ func (srv *Vcs) GetRepositoryContents(InstallationId string, ProviderRepositoryI
 // authorized. The GitHub installation must be properly configured and have
 // access to both the repository and pull request for this endpoint to work.
 func (srv *Vcs) UpdateExternalDeployments(InstallationId string, RepositoryId string, ProviderPullRequestId string)(*interface{}, error) {
-	r := strings.NewReplacer("{installationId}", InstallationId, "{repositoryId}", RepositoryId)
+	r := strings.NewReplacer("{installationId}", url.PathEscape(InstallationId), "{repositoryId}", url.PathEscape(RepositoryId))
 	path := r.Replace("/vcs/github/installations/{installationId}/repositories/{repositoryId}")
 	params := map[string]interface{}{}
-	params["installationId"] = InstallationId
-	params["repositoryId"] = RepositoryId
 	params["providerPullRequestId"] = ProviderPullRequestId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
@@ -586,10 +576,9 @@ func (srv *Vcs) ListInstallations(optionalSetters ...ListInstallationsOption)(*m
 // returns the installation's details including its provider, organization,
 // and configuration.
 func (srv *Vcs) GetInstallation(InstallationId string)(*models.Installation, error) {
-	r := strings.NewReplacer("{installationId}", InstallationId)
+	r := strings.NewReplacer("{installationId}", url.PathEscape(InstallationId))
 	path := r.Replace("/vcs/installations/{installationId}")
 	params := map[string]interface{}{}
-	params["installationId"] = InstallationId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"accept": "application/json",
@@ -624,10 +613,9 @@ func (srv *Vcs) GetInstallation(InstallationId string)(*models.Installation, err
 // endpoint removes the installation and all its associated repositories from
 // the project.
 func (srv *Vcs) DeleteInstallation(InstallationId string)(*interface{}, error) {
-	r := strings.NewReplacer("{installationId}", InstallationId)
+	r := strings.NewReplacer("{installationId}", url.PathEscape(InstallationId))
 	path := r.Replace("/vcs/installations/{installationId}")
 	params := map[string]interface{}{}
-	params["installationId"] = InstallationId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
 		"content-type": "application/json",
@@ -686,14 +674,13 @@ func (srv *Vcs) WithListNamespacesQueries(v []string) ListNamespacesOption {
 // This can include the user personal namespace and any groups or
 // organizations the installation can browse.
 func (srv *Vcs) ListNamespaces(InstallationId string, optionalSetters ...ListNamespacesOption)(*models.VcsNamespaceList, error) {
-	r := strings.NewReplacer("{installationId}", InstallationId)
+	r := strings.NewReplacer("{installationId}", url.PathEscape(InstallationId))
 	path := r.Replace("/vcs/installations/{installationId}/namespaces")
 	options := ListNamespacesOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
-	params["installationId"] = InstallationId
 	if options.enabledSetters["Search"] {
 		params["search"] = options.Search
 	}
