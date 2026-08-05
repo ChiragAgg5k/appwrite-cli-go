@@ -74,11 +74,10 @@ known, and not worth reporting.
 
 ## Known gaps
 
-- `run --with-variables` warns instead of fetching remote variables, and `run`
-  has no JWT manager
 - `init project` has no autopull prompt and does not install skills
-- Per-resource output formatting is not ported
-- Keyring round-trips are verified on macOS and Linux; **Windows is unverified**
+- Output formatting is partially ported: timestamps, durations and per-section
+  field selection are done; per-resource selection of the top-level fields, and
+  the aligned-column layout, are not
 
 ## Build from source
 
