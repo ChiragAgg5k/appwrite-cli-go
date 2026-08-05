@@ -9,7 +9,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/query"
 )
 
-
 // NewPresencesCommand builds the `presences` command tree.
 func NewPresencesCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -60,13 +59,13 @@ func newPresencesListCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -108,7 +107,6 @@ func newPresencesListCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -142,7 +140,6 @@ func newPresencesGetUsageCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&rangeArg, "range", "", "Date range.")
-
 	return cmd
 }
 
@@ -159,7 +156,7 @@ func newPresencesGetCommand() *cobra.Command {
 			}
 			service := presences.New(client)
 
-			result, err := service.Get(presenceId, )
+			result, err := service.Get(presenceId)
 			if err != nil {
 				return err
 			}
@@ -170,7 +167,6 @@ func newPresencesGetCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&presenceId, "presence-id", "", "Presence unique ID.")
 	_ = cmd.MarkFlagRequired("presence-id")
-
 	return cmd
 }
 
@@ -224,7 +220,6 @@ func newPresencesUpsertCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, only the current user is granted all permissions. Learn more about permissions (https://appwrite.io/docs/permissions).")
 	cmd.Flags().StringVar(&expiresAt, "expires-at", "", "Presence expiry datetime.")
 	cmd.Flags().StringVar(&metadata, "metadata", "", "Presence metadata object.")
-
 	return cmd
 }
 
@@ -286,7 +281,6 @@ func newPresencesUpdateCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, only the current user is granted all permissions. Learn more about permissions (https://appwrite.io/docs/permissions).")
 	cmd.Flags().BoolVar(&purge, "purge", false, "When true, purge cached responses used by list presences endpoint.")
 	cmd.Flags().Lookup("purge").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -303,7 +297,7 @@ func newPresencesDeleteCommand() *cobra.Command {
 			}
 			service := presences.New(client)
 
-			result, err := service.Delete(presenceId, )
+			result, err := service.Delete(presenceId)
 			if err != nil {
 				return err
 			}
@@ -314,7 +308,5 @@ func newPresencesDeleteCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&presenceId, "presence-id", "", "Presence unique ID.")
 	_ = cmd.MarkFlagRequired("presence-id")
-
 	return cmd
 }
-

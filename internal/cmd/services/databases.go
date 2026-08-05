@@ -9,7 +9,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/query"
 )
 
-
 // NewDatabasesCommand builds the `databases` command tree.
 func NewDatabasesCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -125,13 +124,13 @@ func newDatabasesListCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -173,7 +172,6 @@ func newDatabasesListCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -214,7 +212,6 @@ func newDatabasesCreateCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is the database enabled? When set to 'disabled', users cannot access the database but Server SDKs with an API key can still read and write to the database. No data is lost when this is toggled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -249,13 +246,13 @@ func newDatabasesListTransactionsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -288,7 +285,6 @@ func newDatabasesListTransactionsCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -322,7 +318,6 @@ func newDatabasesCreateTransactionCommand() *cobra.Command {
 	}
 
 	cmd.Flags().IntVar(&ttl, "ttl", 0, "Seconds before the transaction expires.")
-
 	return cmd
 }
 
@@ -339,7 +334,7 @@ func newDatabasesGetTransactionCommand() *cobra.Command {
 			}
 			service := databases.New(client)
 
-			result, err := service.GetTransaction(transactionId, )
+			result, err := service.GetTransaction(transactionId)
 			if err != nil {
 				return err
 			}
@@ -350,7 +345,6 @@ func newDatabasesGetTransactionCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID.")
 	_ = cmd.MarkFlagRequired("transaction-id")
-
 	return cmd
 }
 
@@ -394,7 +388,6 @@ func newDatabasesUpdateTransactionCommand() *cobra.Command {
 	cmd.Flags().Lookup("commit").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&rollback, "rollback", false, "Rollback transaction?")
 	cmd.Flags().Lookup("rollback").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -411,7 +404,7 @@ func newDatabasesDeleteTransactionCommand() *cobra.Command {
 			}
 			service := databases.New(client)
 
-			result, err := service.DeleteTransaction(transactionId, )
+			result, err := service.DeleteTransaction(transactionId)
 			if err != nil {
 				return err
 			}
@@ -422,7 +415,6 @@ func newDatabasesDeleteTransactionCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID.")
 	_ = cmd.MarkFlagRequired("transaction-id")
-
 	return cmd
 }
 
@@ -459,7 +451,6 @@ func newDatabasesCreateOperationsCommand() *cobra.Command {
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID.")
 	_ = cmd.MarkFlagRequired("transaction-id")
 	cmd.Flags().StringArrayVar(&operations, "operations", nil, "Array of staged operations.")
-
 	return cmd
 }
 
@@ -476,7 +467,7 @@ func newDatabasesGetCommand() *cobra.Command {
 			}
 			service := databases.New(client)
 
-			result, err := service.Get(databaseId, )
+			result, err := service.Get(databaseId)
 			if err != nil {
 				return err
 			}
@@ -487,7 +478,6 @@ func newDatabasesGetCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
 	_ = cmd.MarkFlagRequired("database-id")
-
 	return cmd
 }
 
@@ -530,7 +520,6 @@ func newDatabasesUpdateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&name, "name", "", "Database name. Max length: 128 chars.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is database enabled? When set to 'disabled', users cannot access the database but Server SDKs with an API key can still read and write to the database. No data is lost when this is toggled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -547,7 +536,7 @@ func newDatabasesDeleteCommand() *cobra.Command {
 			}
 			service := databases.New(client)
 
-			result, err := service.Delete(databaseId, )
+			result, err := service.Delete(databaseId)
 			if err != nil {
 				return err
 			}
@@ -558,7 +547,6 @@ func newDatabasesDeleteCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
 	_ = cmd.MarkFlagRequired("database-id")
-
 	return cmd
 }
 
@@ -596,13 +584,13 @@ func newDatabasesListCollectionsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -646,7 +634,6 @@ func newDatabasesListCollectionsCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -711,7 +698,6 @@ func newDatabasesCreateCollectionCommand() *cobra.Command {
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&attributes, "attributes", nil, "Array of attribute definitions to create. Each attribute should contain: key (string), type (string: string, integer, float, boolean, datetime), size (integer, required for string type), required (boolean, optional), default (mixed, optional), array (boolean, optional), and type-specific options.")
 	cmd.Flags().StringArrayVar(&indexes, "indexes", nil, "Array of index definitions to create. Each index should contain: key (string), type (string: key, fulltext, unique, spatial), attributes (array of attribute keys), orders (array of ASC/DESC, optional), and lengths (array of integers, optional).")
-
 	return cmd
 }
 
@@ -729,7 +715,7 @@ func newDatabasesGetCollectionCommand() *cobra.Command {
 			}
 			service := databases.New(client)
 
-			result, err := service.GetCollection(databaseId, collectionId, )
+			result, err := service.GetCollection(databaseId, collectionId)
 			if err != nil {
 				return err
 			}
@@ -742,7 +728,6 @@ func newDatabasesGetCollectionCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&collectionId, "collection-id", "", "Collection ID.")
 	_ = cmd.MarkFlagRequired("collection-id")
-
 	return cmd
 }
 
@@ -805,7 +790,6 @@ func newDatabasesUpdateCollectionCommand() *cobra.Command {
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&purge, "purge", false, "When true, purge all cached list responses for this collection as part of the update. Use this to force readers to see fresh data immediately instead of waiting for the cache TTL to expire.")
 	cmd.Flags().Lookup("purge").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -823,7 +807,7 @@ func newDatabasesDeleteCollectionCommand() *cobra.Command {
 			}
 			service := databases.New(client)
 
-			result, err := service.DeleteCollection(databaseId, collectionId, )
+			result, err := service.DeleteCollection(databaseId, collectionId)
 			if err != nil {
 				return err
 			}
@@ -836,7 +820,6 @@ func newDatabasesDeleteCollectionCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&collectionId, "collection-id", "", "Collection ID.")
 	_ = cmd.MarkFlagRequired("collection-id")
-
 	return cmd
 }
 
@@ -874,13 +857,13 @@ func newDatabasesListAttributesCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -922,7 +905,6 @@ func newDatabasesListAttributesCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -984,7 +966,6 @@ func newDatabasesCreateBigIntAttributeCommand() *cobra.Command {
 	cmd.Flags().IntVar(&xdefault, "xdefault", 0, "Default value. Cannot be set when attribute is required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is attribute an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -1043,7 +1024,6 @@ func newDatabasesUpdateBigIntAttributeCommand() *cobra.Command {
 	cmd.Flags().IntVar(&minArg, "min", 0, "Minimum value")
 	cmd.Flags().IntVar(&maxArg, "max", 0, "Maximum value")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
-
 	return cmd
 }
 
@@ -1096,7 +1076,6 @@ func newDatabasesCreateBooleanAttributeCommand() *cobra.Command {
 	cmd.Flags().Lookup("xdefault").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&array, "array", false, "Is attribute an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -1145,7 +1124,6 @@ func newDatabasesUpdateBooleanAttributeCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&xdefault, "xdefault", false, "Default value for attribute when not provided. Cannot be set when attribute is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New attribute key.")
-
 	return cmd
 }
 
@@ -1197,7 +1175,6 @@ func newDatabasesCreateDatetimeAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for the attribute in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Cannot be set when attribute is required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is attribute an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -1246,7 +1223,6 @@ func newDatabasesUpdateDatetimeAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for attribute when not provided. Cannot be set when attribute is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New attribute key.")
-
 	return cmd
 }
 
@@ -1298,7 +1274,6 @@ func newDatabasesCreateEmailAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for attribute when not provided. Cannot be set when attribute is required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is attribute an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -1347,7 +1322,6 @@ func newDatabasesUpdateEmailAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for attribute when not provided. Cannot be set when attribute is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
-
 	return cmd
 }
 
@@ -1402,7 +1376,6 @@ func newDatabasesCreateEnumAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for attribute when not provided. Cannot be set when attribute is required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is attribute an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -1454,7 +1427,6 @@ func newDatabasesUpdateEnumAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for attribute when not provided. Cannot be set when attribute is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
-
 	return cmd
 }
 
@@ -1516,7 +1488,6 @@ func newDatabasesCreateFloatAttributeCommand() *cobra.Command {
 	cmd.Flags().Float64Var(&xdefault, "xdefault", 0, "Default value. Cannot be set when required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is attribute an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -1575,7 +1546,6 @@ func newDatabasesUpdateFloatAttributeCommand() *cobra.Command {
 	cmd.Flags().Float64Var(&minArg, "min", 0, "Minimum value.")
 	cmd.Flags().Float64Var(&maxArg, "max", 0, "Maximum value.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
-
 	return cmd
 }
 
@@ -1637,7 +1607,6 @@ func newDatabasesCreateIntegerAttributeCommand() *cobra.Command {
 	cmd.Flags().IntVar(&xdefault, "xdefault", 0, "Default value. Cannot be set when attribute is required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is attribute an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -1696,7 +1665,6 @@ func newDatabasesUpdateIntegerAttributeCommand() *cobra.Command {
 	cmd.Flags().IntVar(&minArg, "min", 0, "Minimum value")
 	cmd.Flags().IntVar(&maxArg, "max", 0, "Maximum value")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
-
 	return cmd
 }
 
@@ -1748,7 +1716,6 @@ func newDatabasesCreateIpAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value. Cannot be set when attribute is required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is attribute an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -1797,7 +1764,6 @@ func newDatabasesUpdateIpAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value. Cannot be set when attribute is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
-
 	return cmd
 }
 
@@ -1847,7 +1813,6 @@ func newDatabasesCreateLineAttributeCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&required, "required", false, "Is attribute required?")
 	_ = cmd.MarkFlagRequired("required")
 	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, two-dimensional array of coordinate pairs, [[longitude, latitude], [longitude, latitude], …], listing the vertices of the line in order. Cannot be set when attribute is required.")
-
 	return cmd
 }
 
@@ -1902,7 +1867,6 @@ func newDatabasesUpdateLineAttributeCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("required")
 	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, two-dimensional array of coordinate pairs, [[longitude, latitude], [longitude, latitude], …], listing the vertices of the line in order. Cannot be set when attribute is required.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New attribute key.")
-
 	return cmd
 }
 
@@ -1960,7 +1924,6 @@ func newDatabasesCreateLongtextAttributeCommand() *cobra.Command {
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&encrypt, "encrypt", false, "Toggle encryption for the attribute. Encryption enhances security by not storing any plain text values in the database. However, encrypted attributes cannot be queried.")
 	cmd.Flags().Lookup("encrypt").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -2009,7 +1972,6 @@ func newDatabasesUpdateLongtextAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for attribute when not provided. Cannot be set when attribute is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
-
 	return cmd
 }
 
@@ -2067,7 +2029,6 @@ func newDatabasesCreateMediumtextAttributeCommand() *cobra.Command {
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&encrypt, "encrypt", false, "Toggle encryption for the attribute. Encryption enhances security by not storing any plain text values in the database. However, encrypted attributes cannot be queried.")
 	cmd.Flags().Lookup("encrypt").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -2116,7 +2077,6 @@ func newDatabasesUpdateMediumtextAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for attribute when not provided. Cannot be set when attribute is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
-
 	return cmd
 }
 
@@ -2166,7 +2126,6 @@ func newDatabasesCreatePointAttributeCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&required, "required", false, "Is attribute required?")
 	_ = cmd.MarkFlagRequired("required")
 	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, array of two numbers [longitude, latitude], representing a single coordinate. Cannot be set when attribute is required.")
-
 	return cmd
 }
 
@@ -2221,7 +2180,6 @@ func newDatabasesUpdatePointAttributeCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("required")
 	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, array of two numbers [longitude, latitude], representing a single coordinate. Cannot be set when attribute is required.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New attribute key.")
-
 	return cmd
 }
 
@@ -2271,7 +2229,6 @@ func newDatabasesCreatePolygonAttributeCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&required, "required", false, "Is attribute required?")
 	_ = cmd.MarkFlagRequired("required")
 	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, three-dimensional array where the outer array holds one or more linear rings, [[[longitude, latitude], …], …], the first ring is the exterior boundary, any additional rings are interior holes, and each ring must start and end with the same coordinate pair. Cannot be set when attribute is required.")
-
 	return cmd
 }
 
@@ -2326,7 +2283,6 @@ func newDatabasesUpdatePolygonAttributeCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("required")
 	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, three-dimensional array where the outer array holds one or more linear rings, [[[longitude, latitude], …], …], the first ring is the exterior boundary, any additional rings are interior holes, and each ring must start and end with the same coordinate pair. Cannot be set when attribute is required.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New attribute key.")
-
 	return cmd
 }
 
@@ -2388,7 +2344,6 @@ func newDatabasesCreateRelationshipAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&key, "key", "", "Attribute Key.")
 	cmd.Flags().StringVar(&twoWayKey, "two-way-key", "", "Two Way Attribute Key.")
 	cmd.Flags().StringVar(&onDelete, "on-delete", "", "Constraints option")
-
 	return cmd
 }
 
@@ -2436,7 +2391,6 @@ func newDatabasesUpdateRelationshipAttributeCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("key")
 	cmd.Flags().StringVar(&onDelete, "on-delete", "", "Constraints option")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
-
 	return cmd
 }
 
@@ -2497,7 +2451,6 @@ func newDatabasesCreateStringAttributeCommand() *cobra.Command {
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&encrypt, "encrypt", false, "Toggle encryption for the attribute. Encryption enhances security by not storing any plain text values in the database. However, encrypted attributes cannot be queried.")
 	cmd.Flags().Lookup("encrypt").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -2551,7 +2504,6 @@ func newDatabasesUpdateStringAttributeCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().IntVar(&size, "size", 0, "Maximum size of the string attribute.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
-
 	return cmd
 }
 
@@ -2609,7 +2561,6 @@ func newDatabasesCreateTextAttributeCommand() *cobra.Command {
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&encrypt, "encrypt", false, "Toggle encryption for the attribute. Encryption enhances security by not storing any plain text values in the database. However, encrypted attributes cannot be queried.")
 	cmd.Flags().Lookup("encrypt").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -2658,7 +2609,6 @@ func newDatabasesUpdateTextAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for attribute when not provided. Cannot be set when attribute is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
-
 	return cmd
 }
 
@@ -2710,7 +2660,6 @@ func newDatabasesCreateUrlAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for attribute when not provided. Cannot be set when attribute is required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is attribute an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -2759,7 +2708,6 @@ func newDatabasesUpdateUrlAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for attribute when not provided. Cannot be set when attribute is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
-
 	return cmd
 }
 
@@ -2820,7 +2768,6 @@ func newDatabasesCreateVarcharAttributeCommand() *cobra.Command {
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&encrypt, "encrypt", false, "Toggle encryption for the attribute. Encryption enhances security by not storing any plain text values in the database. However, encrypted attributes cannot be queried.")
 	cmd.Flags().Lookup("encrypt").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -2874,7 +2821,6 @@ func newDatabasesUpdateVarcharAttributeCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().IntVar(&size, "size", 0, "Maximum size of the varchar attribute.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
-
 	return cmd
 }
 
@@ -2893,7 +2839,7 @@ func newDatabasesGetAttributeCommand() *cobra.Command {
 			}
 			service := databases.New(client)
 
-			result, err := service.GetAttribute(databaseId, collectionId, key, )
+			result, err := service.GetAttribute(databaseId, collectionId, key)
 			if err != nil {
 				return err
 			}
@@ -2908,7 +2854,6 @@ func newDatabasesGetAttributeCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("collection-id")
 	cmd.Flags().StringVar(&key, "key", "", "Attribute Key.")
 	_ = cmd.MarkFlagRequired("key")
-
 	return cmd
 }
 
@@ -2927,7 +2872,7 @@ func newDatabasesDeleteAttributeCommand() *cobra.Command {
 			}
 			service := databases.New(client)
 
-			result, err := service.DeleteAttribute(databaseId, collectionId, key, )
+			result, err := service.DeleteAttribute(databaseId, collectionId, key)
 			if err != nil {
 				return err
 			}
@@ -2942,7 +2887,6 @@ func newDatabasesDeleteAttributeCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("collection-id")
 	cmd.Flags().StringVar(&key, "key", "", "Attribute Key.")
 	_ = cmd.MarkFlagRequired("key")
-
 	return cmd
 }
 
@@ -2983,16 +2927,16 @@ func newDatabasesListDocumentsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
-				Select: selectAttributes,
+				Select:       selectAttributes,
 			})
 			if err != nil {
 				return err
@@ -3041,7 +2985,6 @@ func newDatabasesListDocumentsCommand() *cobra.Command {
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
 	cmd.Flags().StringArrayVar(&selectAttributes, "select", nil, "Attribute to include in the response. Repeat for multiple attributes.")
-
 	return cmd
 }
 
@@ -3096,7 +3039,6 @@ func newDatabasesCreateDocumentCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("data")
 	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, only the current user is granted all permissions. Learn more about permissions (https://appwrite.io/docs/permissions).")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
-
 	return cmd
 }
 
@@ -3139,7 +3081,6 @@ func newDatabasesCreateDocumentsCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&documents, "documents", nil, "Array of documents data as JSON objects.")
 	_ = cmd.MarkFlagRequired("documents")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
-
 	return cmd
 }
 
@@ -3182,7 +3123,6 @@ func newDatabasesUpsertDocumentsCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&documents, "documents", nil, "Array of document data as JSON objects. May contain partial documents.")
 	_ = cmd.MarkFlagRequired("documents")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
-
 	return cmd
 }
 
@@ -3225,13 +3165,13 @@ func newDatabasesUpdateDocumentsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -3276,7 +3216,6 @@ func newDatabasesUpdateDocumentsCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -3314,13 +3253,13 @@ func newDatabasesDeleteDocumentsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -3361,7 +3300,6 @@ func newDatabasesDeleteDocumentsCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -3383,10 +3321,9 @@ func newDatabasesGetDocumentCommand() *cobra.Command {
 			}
 			service := databases.New(client)
 
-
 			queries, err := query.Build(query.Options{
 				Queries: queries,
-				Select: selectAttributes,
+				Select:  selectAttributes,
 			})
 			if err != nil {
 				return err
@@ -3420,7 +3357,6 @@ func newDatabasesGetDocumentCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID to read uncommitted changes within the transaction.")
 	cmd.Flags().StringArrayVar(&selectAttributes, "select", nil, "Attribute to include in the response. Repeat for multiple attributes.")
-
 	return cmd
 }
 
@@ -3477,7 +3413,6 @@ func newDatabasesUpsertDocumentCommand() *cobra.Command {
 	cmd.Flags().StringVar(&data, "data", "", "Document data as JSON object. Include all required attributes of the document to be created or updated.")
 	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions).")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
-
 	return cmd
 }
 
@@ -3534,7 +3469,6 @@ func newDatabasesUpdateDocumentCommand() *cobra.Command {
 	cmd.Flags().StringVar(&data, "data", "", "Document data as JSON object. Include only attribute and value pairs to be updated.")
 	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions).")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
-
 	return cmd
 }
 
@@ -3577,7 +3511,6 @@ func newDatabasesDeleteDocumentCommand() *cobra.Command {
 	cmd.Flags().StringVar(&documentId, "document-id", "", "Document ID.")
 	_ = cmd.MarkFlagRequired("document-id")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
-
 	return cmd
 }
 
@@ -3633,7 +3566,6 @@ func newDatabasesDecrementDocumentAttributeCommand() *cobra.Command {
 	cmd.Flags().Float64Var(&value, "value", 0, "Value to increment the attribute by. The value must be a number.")
 	cmd.Flags().Float64Var(&minArg, "min", 0, "Minimum value for the attribute. If the current value is lesser than this value, an exception will be thrown.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
-
 	return cmd
 }
 
@@ -3689,7 +3621,6 @@ func newDatabasesIncrementDocumentAttributeCommand() *cobra.Command {
 	cmd.Flags().Float64Var(&value, "value", 0, "Value to increment the attribute by. The value must be a number.")
 	cmd.Flags().Float64Var(&maxArg, "max", 0, "Maximum value for the attribute. If the current value is greater than this value, an error will be thrown.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
-
 	return cmd
 }
 
@@ -3727,13 +3658,13 @@ func newDatabasesListIndexesCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -3775,7 +3706,6 @@ func newDatabasesListIndexesCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -3833,7 +3763,6 @@ func newDatabasesCreateIndexCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("attributes")
 	cmd.Flags().StringArrayVar(&orders, "orders", nil, "Array of index orders. Maximum of 100 orders are allowed.")
 	cmd.Flags().StringArrayVar(&lengths, "lengths", nil, "Length of index. Maximum of 100")
-
 	return cmd
 }
 
@@ -3852,7 +3781,7 @@ func newDatabasesGetIndexCommand() *cobra.Command {
 			}
 			service := databases.New(client)
 
-			result, err := service.GetIndex(databaseId, collectionId, key, )
+			result, err := service.GetIndex(databaseId, collectionId, key)
 			if err != nil {
 				return err
 			}
@@ -3867,7 +3796,6 @@ func newDatabasesGetIndexCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("collection-id")
 	cmd.Flags().StringVar(&key, "key", "", "Index Key.")
 	_ = cmd.MarkFlagRequired("key")
-
 	return cmd
 }
 
@@ -3886,7 +3814,7 @@ func newDatabasesDeleteIndexCommand() *cobra.Command {
 			}
 			service := databases.New(client)
 
-			result, err := service.DeleteIndex(databaseId, collectionId, key, )
+			result, err := service.DeleteIndex(databaseId, collectionId, key)
 			if err != nil {
 				return err
 			}
@@ -3901,7 +3829,5 @@ func newDatabasesDeleteIndexCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("collection-id")
 	cmd.Flags().StringVar(&key, "key", "", "Index Key.")
 	_ = cmd.MarkFlagRequired("key")
-
 	return cmd
 }
-

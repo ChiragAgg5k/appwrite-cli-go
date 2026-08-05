@@ -9,7 +9,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/query"
 )
 
-
 // NewFunctionsCommand builds the `functions` command tree.
 func NewFunctionsCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -82,13 +81,13 @@ func newFunctionsListCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -130,7 +129,6 @@ func newFunctionsListCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -266,7 +264,6 @@ func newFunctionsCreateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&buildSpecification, "build-specification", "", "Build specification for the function deployments.")
 	cmd.Flags().StringVar(&runtimeSpecification, "runtime-specification", "", "Runtime specification for the function executions.")
 	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.")
-
 	return cmd
 }
 
@@ -290,7 +287,6 @@ func newFunctionsListRuntimesCommand() *cobra.Command {
 			return app.Render(result)
 		},
 	}
-
 
 	return cmd
 }
@@ -325,7 +321,6 @@ func newFunctionsListSpecificationsCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&typeArg, "type", "", "Specification type to list. Can be one of: runtimes, builds.")
-
 	return cmd
 }
 
@@ -380,7 +375,6 @@ func newFunctionsListTemplatesCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Offset the list of returned templates. Maximum offset is 5000.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -397,7 +391,7 @@ func newFunctionsGetTemplateCommand() *cobra.Command {
 			}
 			service := functions.New(client)
 
-			result, err := service.GetTemplate(templateId, )
+			result, err := service.GetTemplate(templateId)
 			if err != nil {
 				return err
 			}
@@ -408,7 +402,6 @@ func newFunctionsGetTemplateCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&templateId, "template-id", "", "Template ID.")
 	_ = cmd.MarkFlagRequired("template-id")
-
 	return cmd
 }
 
@@ -425,7 +418,7 @@ func newFunctionsGetCommand() *cobra.Command {
 			}
 			service := functions.New(client)
 
-			result, err := service.Get(functionId, )
+			result, err := service.Get(functionId)
 			if err != nil {
 				return err
 			}
@@ -436,7 +429,6 @@ func newFunctionsGetCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&functionId, "function-id", "", "Function ID.")
 	_ = cmd.MarkFlagRequired("function-id")
-
 	return cmd
 }
 
@@ -574,7 +566,6 @@ func newFunctionsUpdateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&buildSpecification, "build-specification", "", "Build specification for the function deployments.")
 	cmd.Flags().StringVar(&runtimeSpecification, "runtime-specification", "", "Runtime specification for the function executions.")
 	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.")
-
 	return cmd
 }
 
@@ -591,7 +582,7 @@ func newFunctionsDeleteCommand() *cobra.Command {
 			}
 			service := functions.New(client)
 
-			result, err := service.Delete(functionId, )
+			result, err := service.Delete(functionId)
 			if err != nil {
 				return err
 			}
@@ -602,7 +593,6 @@ func newFunctionsDeleteCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&functionId, "function-id", "", "Function ID.")
 	_ = cmd.MarkFlagRequired("function-id")
-
 	return cmd
 }
 
@@ -620,7 +610,7 @@ func newFunctionsUpdateFunctionDeploymentCommand() *cobra.Command {
 			}
 			service := functions.New(client)
 
-			result, err := service.UpdateFunctionDeployment(functionId, deploymentId, )
+			result, err := service.UpdateFunctionDeployment(functionId, deploymentId)
 			if err != nil {
 				return err
 			}
@@ -633,7 +623,6 @@ func newFunctionsUpdateFunctionDeploymentCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("function-id")
 	cmd.Flags().StringVar(&deploymentId, "deployment-id", "", "Deployment ID.")
 	_ = cmd.MarkFlagRequired("deployment-id")
-
 	return cmd
 }
 
@@ -671,13 +660,13 @@ func newFunctionsListDeploymentsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -721,7 +710,6 @@ func newFunctionsListDeploymentsCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -773,7 +761,6 @@ func newFunctionsCreateDeploymentCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("activate")
 	cmd.Flags().StringVar(&entrypoint, "entrypoint", "", "Entrypoint File.")
 	cmd.Flags().StringVar(&commands, "commands", "", "Build Commands.")
-
 	return cmd
 }
 
@@ -813,7 +800,6 @@ func newFunctionsCreateDuplicateDeploymentCommand() *cobra.Command {
 	cmd.Flags().StringVar(&deploymentId, "deployment-id", "", "Deployment ID.")
 	_ = cmd.MarkFlagRequired("deployment-id")
 	cmd.Flags().StringVar(&buildId, "build-id", "", "Build unique ID.")
-
 	return cmd
 }
 
@@ -866,7 +852,6 @@ func newFunctionsCreateTemplateDeploymentCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("reference")
 	cmd.Flags().BoolVar(&activate, "activate", false, "Automatically activate the deployment when it is finished building.")
 	cmd.Flags().Lookup("activate").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -910,7 +895,6 @@ func newFunctionsCreateVcsDeploymentCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("reference")
 	cmd.Flags().BoolVar(&activate, "activate", false, "Automatically activate the deployment when it is finished building.")
 	cmd.Flags().Lookup("activate").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -928,7 +912,7 @@ func newFunctionsGetDeploymentCommand() *cobra.Command {
 			}
 			service := functions.New(client)
 
-			result, err := service.GetDeployment(functionId, deploymentId, )
+			result, err := service.GetDeployment(functionId, deploymentId)
 			if err != nil {
 				return err
 			}
@@ -941,7 +925,6 @@ func newFunctionsGetDeploymentCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("function-id")
 	cmd.Flags().StringVar(&deploymentId, "deployment-id", "", "Deployment ID.")
 	_ = cmd.MarkFlagRequired("deployment-id")
-
 	return cmd
 }
 
@@ -959,7 +942,7 @@ func newFunctionsDeleteDeploymentCommand() *cobra.Command {
 			}
 			service := functions.New(client)
 
-			result, err := service.DeleteDeployment(functionId, deploymentId, )
+			result, err := service.DeleteDeployment(functionId, deploymentId)
 			if err != nil {
 				return err
 			}
@@ -972,7 +955,6 @@ func newFunctionsDeleteDeploymentCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("function-id")
 	cmd.Flags().StringVar(&deploymentId, "deployment-id", "", "Deployment ID.")
 	_ = cmd.MarkFlagRequired("deployment-id")
-
 	return cmd
 }
 
@@ -1022,7 +1004,6 @@ func newFunctionsGetDeploymentDownloadCommand() *cobra.Command {
 	cmd.Flags().StringVar(&token, "token", "", "Presigned source-download token for accessing this deployment without a session (jobs-service).")
 	cmd.Flags().StringVar(&destination, "destination", "", "Path to save the file to.")
 	_ = cmd.MarkFlagRequired("destination")
-
 	return cmd
 }
 
@@ -1040,7 +1021,7 @@ func newFunctionsUpdateDeploymentStatusCommand() *cobra.Command {
 			}
 			service := functions.New(client)
 
-			result, err := service.UpdateDeploymentStatus(functionId, deploymentId, )
+			result, err := service.UpdateDeploymentStatus(functionId, deploymentId)
 			if err != nil {
 				return err
 			}
@@ -1053,7 +1034,6 @@ func newFunctionsUpdateDeploymentStatusCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("function-id")
 	cmd.Flags().StringVar(&deploymentId, "deployment-id", "", "Deployment ID.")
 	_ = cmd.MarkFlagRequired("deployment-id")
-
 	return cmd
 }
 
@@ -1090,13 +1070,13 @@ func newFunctionsListExecutionsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -1136,7 +1116,6 @@ func newFunctionsListExecutionsCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -1203,7 +1182,6 @@ func newFunctionsCreateExecutionCommand() *cobra.Command {
 	cmd.Flags().StringVar(&method, "method", "", "HTTP method of execution. Default value is POST.")
 	cmd.Flags().StringVar(&headers, "headers", "", "HTTP headers of execution. Defaults to empty.")
 	cmd.Flags().StringVar(&scheduledAt, "scheduled-at", "", "Scheduled execution time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future with precision in minutes.")
-
 	return cmd
 }
 
@@ -1221,7 +1199,7 @@ func newFunctionsGetExecutionCommand() *cobra.Command {
 			}
 			service := functions.New(client)
 
-			result, err := service.GetExecution(functionId, executionId, )
+			result, err := service.GetExecution(functionId, executionId)
 			if err != nil {
 				return err
 			}
@@ -1234,7 +1212,6 @@ func newFunctionsGetExecutionCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("function-id")
 	cmd.Flags().StringVar(&executionId, "execution-id", "", "Execution ID.")
 	_ = cmd.MarkFlagRequired("execution-id")
-
 	return cmd
 }
 
@@ -1252,7 +1229,7 @@ func newFunctionsDeleteExecutionCommand() *cobra.Command {
 			}
 			service := functions.New(client)
 
-			result, err := service.DeleteExecution(functionId, executionId, )
+			result, err := service.DeleteExecution(functionId, executionId)
 			if err != nil {
 				return err
 			}
@@ -1265,7 +1242,6 @@ func newFunctionsDeleteExecutionCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("function-id")
 	cmd.Flags().StringVar(&executionId, "execution-id", "", "Execution ID.")
 	_ = cmd.MarkFlagRequired("execution-id")
-
 	return cmd
 }
 
@@ -1302,13 +1278,13 @@ func newFunctionsListVariablesCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -1348,7 +1324,6 @@ func newFunctionsListVariablesCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -1395,7 +1370,6 @@ func newFunctionsCreateVariableCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("value")
 	cmd.Flags().BoolVar(&secret, "secret", false, "Secret variables can be updated or deleted, but only functions can read them during build and runtime.")
 	cmd.Flags().Lookup("secret").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -1413,7 +1387,7 @@ func newFunctionsGetVariableCommand() *cobra.Command {
 			}
 			service := functions.New(client)
 
-			result, err := service.GetVariable(functionId, variableId, )
+			result, err := service.GetVariable(functionId, variableId)
 			if err != nil {
 				return err
 			}
@@ -1426,7 +1400,6 @@ func newFunctionsGetVariableCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("function-id")
 	cmd.Flags().StringVar(&variableId, "variable-id", "", "Variable unique ID.")
 	_ = cmd.MarkFlagRequired("variable-id")
-
 	return cmd
 }
 
@@ -1477,7 +1450,6 @@ func newFunctionsUpdateVariableCommand() *cobra.Command {
 	cmd.Flags().StringVar(&value, "value", "", "Variable value. Max length: 8192 chars.")
 	cmd.Flags().BoolVar(&secret, "secret", false, "Secret variables can be updated or deleted, but only functions can read them during build and runtime.")
 	cmd.Flags().Lookup("secret").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -1495,7 +1467,7 @@ func newFunctionsDeleteVariableCommand() *cobra.Command {
 			}
 			service := functions.New(client)
 
-			result, err := service.DeleteVariable(functionId, variableId, )
+			result, err := service.DeleteVariable(functionId, variableId)
 			if err != nil {
 				return err
 			}
@@ -1508,7 +1480,5 @@ func newFunctionsDeleteVariableCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("function-id")
 	cmd.Flags().StringVar(&variableId, "variable-id", "", "Variable unique ID.")
 	_ = cmd.MarkFlagRequired("variable-id")
-
 	return cmd
 }
-

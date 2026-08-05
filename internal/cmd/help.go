@@ -10,6 +10,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"golang.org/x/term"
+
+	"github.com/ChiragAgg5k/appwrite-cli-go/internal/output"
 )
 
 // The main help screen, ported from templates/cli/lib/help.ts.
@@ -308,7 +310,7 @@ func RenderMainHelp(root *cobra.Command) string {
 			// screens differ -- it only keeps the Go one clean where a service
 			// arrives without a description.
 			line := strings.TrimRight(
-				helpIndent+pad(row.name, nameWidth)+strings.Repeat(" ", helpGap)+row.summary, " ")
+				helpIndent+output.Pad(row.name, nameWidth)+strings.Repeat(" ", helpGap)+row.summary, " ")
 			if section.dim {
 				line = helpDimStyle.Render(line)
 			}
@@ -463,7 +465,7 @@ func renderHelpOptions(root *cobra.Command) string {
 	lines := make([]string, 0, len(options))
 	for _, entry := range options {
 		lines = append(lines, strings.TrimRight(
-			helpIndent+pad(entry.term, termWidth)+strings.Repeat(" ", helpGap)+entry.usage, " "))
+			helpIndent+output.Pad(entry.term, termWidth)+strings.Repeat(" ", helpGap)+entry.usage, " "))
 	}
 
 	return strings.Join(lines, "\n")
@@ -579,14 +581,6 @@ func wrapChunks(text string, limit int) []string {
 	}
 
 	return chunks
-}
-
-func pad(value string, width int) string {
-	if len(value) >= width {
-		return value
-	}
-
-	return value + strings.Repeat(" ", width-len(value))
 }
 
 // helpWidth is the terminal's width, capped at helpMaxWidth. A terminal that

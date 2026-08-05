@@ -9,7 +9,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/query"
 )
 
-
 // NewUsersCommand builds the `users` command tree.
 func NewUsersCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -98,13 +97,13 @@ func newUsersListCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -146,7 +145,6 @@ func newUsersListCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -198,7 +196,6 @@ func newUsersCreateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&phone, "phone", "", "Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.")
 	cmd.Flags().StringVar(&password, "password", "", "Plain text user password. Must be at least 8 chars.")
 	cmd.Flags().StringVar(&name, "name", "", "User name. Max length: 128 chars.")
-
 	return cmd
 }
 
@@ -241,7 +238,6 @@ func newUsersCreateArgon2UserCommand() *cobra.Command {
 	cmd.Flags().StringVar(&password, "password", "", "User password hashed using Argon2.")
 	_ = cmd.MarkFlagRequired("password")
 	cmd.Flags().StringVar(&name, "name", "", "User name. Max length: 128 chars.")
-
 	return cmd
 }
 
@@ -284,7 +280,6 @@ func newUsersCreateBcryptUserCommand() *cobra.Command {
 	cmd.Flags().StringVar(&password, "password", "", "User password hashed using Bcrypt.")
 	_ = cmd.MarkFlagRequired("password")
 	cmd.Flags().StringVar(&name, "name", "", "User name. Max length: 128 chars.")
-
 	return cmd
 }
 
@@ -321,13 +316,13 @@ func newUsersListIdentitiesCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -369,7 +364,6 @@ func newUsersListIdentitiesCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -386,7 +380,7 @@ func newUsersDeleteIdentityCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.DeleteIdentity(identityId, )
+			result, err := service.DeleteIdentity(identityId)
 			if err != nil {
 				return err
 			}
@@ -397,7 +391,6 @@ func newUsersDeleteIdentityCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&identityId, "identity-id", "", "Identity ID.")
 	_ = cmd.MarkFlagRequired("identity-id")
-
 	return cmd
 }
 
@@ -440,7 +433,6 @@ func newUsersCreateMD5UserCommand() *cobra.Command {
 	cmd.Flags().StringVar(&password, "password", "", "User password hashed using MD5.")
 	_ = cmd.MarkFlagRequired("password")
 	cmd.Flags().StringVar(&name, "name", "", "User name. Max length: 128 chars.")
-
 	return cmd
 }
 
@@ -483,7 +475,6 @@ func newUsersCreatePHPassUserCommand() *cobra.Command {
 	cmd.Flags().StringVar(&password, "password", "", "User password hashed using PHPass.")
 	_ = cmd.MarkFlagRequired("password")
 	cmd.Flags().StringVar(&name, "name", "", "User name. Max length: 128 chars.")
-
 	return cmd
 }
 
@@ -541,7 +532,6 @@ func newUsersCreateScryptUserCommand() *cobra.Command {
 	cmd.Flags().IntVar(&passwordLength, "password-length", 0, "Optional hash length used to hash password.")
 	_ = cmd.MarkFlagRequired("password-length")
 	cmd.Flags().StringVar(&name, "name", "", "User name. Max length: 128 chars.")
-
 	return cmd
 }
 
@@ -593,7 +583,6 @@ func newUsersCreateScryptModifiedUserCommand() *cobra.Command {
 	cmd.Flags().StringVar(&passwordSignerKey, "password-signer-key", "", "Signer key used to hash password.")
 	_ = cmd.MarkFlagRequired("password-signer-key")
 	cmd.Flags().StringVar(&name, "name", "", "User name. Max length: 128 chars.")
-
 	return cmd
 }
 
@@ -641,7 +630,6 @@ func newUsersCreateSHAUserCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("password")
 	cmd.Flags().StringVar(&passwordVersion, "password-version", "", "Optional SHA version used to hash password. Allowed values are: 'sha1', 'sha224', 'sha256', 'sha384', 'sha512/224', 'sha512/256', 'sha512', 'sha3-224', 'sha3-256', 'sha3-384', 'sha3-512'")
 	cmd.Flags().StringVar(&name, "name", "", "User name. Max length: 128 chars.")
-
 	return cmd
 }
 
@@ -675,7 +663,6 @@ func newUsersGetUsageCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&rangeArg, "range", "", "Date range.")
-
 	return cmd
 }
 
@@ -692,7 +679,7 @@ func newUsersGetCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.Get(userId, )
+			result, err := service.Get(userId)
 			if err != nil {
 				return err
 			}
@@ -703,7 +690,6 @@ func newUsersGetCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&userId, "user-id", "", "User ID.")
 	_ = cmd.MarkFlagRequired("user-id")
-
 	return cmd
 }
 
@@ -720,7 +706,7 @@ func newUsersDeleteCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.Delete(userId, )
+			result, err := service.Delete(userId)
 			if err != nil {
 				return err
 			}
@@ -731,7 +717,6 @@ func newUsersDeleteCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&userId, "user-id", "", "User ID.")
 	_ = cmd.MarkFlagRequired("user-id")
-
 	return cmd
 }
 
@@ -749,7 +734,7 @@ func newUsersUpdateEmailCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.UpdateEmail(userId, email, )
+			result, err := service.UpdateEmail(userId, email)
 			if err != nil {
 				return err
 			}
@@ -762,7 +747,6 @@ func newUsersUpdateEmailCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringVar(&email, "email", "", "User email.")
 	_ = cmd.MarkFlagRequired("email")
-
 	return cmd
 }
 
@@ -780,7 +764,7 @@ func newUsersUpdateImpersonatorCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.UpdateImpersonator(userId, impersonator, )
+			result, err := service.UpdateImpersonator(userId, impersonator)
 			if err != nil {
 				return err
 			}
@@ -793,7 +777,6 @@ func newUsersUpdateImpersonatorCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().BoolVar(&impersonator, "impersonator", false, "Whether the user can impersonate other users. When true, the user can browse project users to choose a target and can pass impersonation headers to act as that user. Internal audit logs still attribute impersonated actions to the original impersonator and store the target user details only in internal audit payload data.")
 	_ = cmd.MarkFlagRequired("impersonator")
-
 	return cmd
 }
 
@@ -835,7 +818,6 @@ func newUsersCreateJWTCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringVar(&sessionId, "session-id", "", "Session ID. Use the string 'recent' to use the most recent session. Defaults to the most recent session.")
 	cmd.Flags().IntVar(&duration, "duration", 0, "Time in seconds before JWT expires. Default duration is 900 seconds, and maximum is 3600 seconds.")
-
 	return cmd
 }
 
@@ -853,7 +835,7 @@ func newUsersUpdateLabelsCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.UpdateLabels(userId, labels, )
+			result, err := service.UpdateLabels(userId, labels)
 			if err != nil {
 				return err
 			}
@@ -866,7 +848,6 @@ func newUsersUpdateLabelsCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringArrayVar(&labels, "labels", nil, "Array of user labels. Replaces the previous labels. Maximum of 1000 labels are allowed, each up to 36 alphanumeric characters long.")
 	_ = cmd.MarkFlagRequired("labels")
-
 	return cmd
 }
 
@@ -887,11 +868,10 @@ func newUsersListLogsCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-
 			queries, err := query.Build(query.Options{
 				Queries: queries,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Limit:   app.FlagInt(cmd, "limit", limit),
+				Offset:  app.FlagInt(cmd, "offset", offset),
 			})
 			if err != nil {
 				return err
@@ -923,7 +903,6 @@ func newUsersListLogsCommand() *cobra.Command {
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
-
 	return cmd
 }
 
@@ -961,13 +940,13 @@ func newUsersListMembershipsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -1011,7 +990,6 @@ func newUsersListMembershipsCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -1029,7 +1007,7 @@ func newUsersUpdateMfaCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.UpdateMfa(userId, mfa, )
+			result, err := service.UpdateMfa(userId, mfa)
 			if err != nil {
 				return err
 			}
@@ -1042,7 +1020,6 @@ func newUsersUpdateMfaCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().BoolVar(&mfa, "mfa", false, "Enable or disable MFA.")
 	_ = cmd.MarkFlagRequired("mfa")
-
 	return cmd
 }
 
@@ -1060,7 +1037,7 @@ func newUsersDeleteMfaAuthenticatorCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.DeleteMfaAuthenticator(userId, typeArg, )
+			result, err := service.DeleteMfaAuthenticator(userId, typeArg)
 			if err != nil {
 				return err
 			}
@@ -1073,7 +1050,6 @@ func newUsersDeleteMfaAuthenticatorCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringVar(&typeArg, "type", "", "Type of authenticator.")
 	_ = cmd.MarkFlagRequired("type")
-
 	return cmd
 }
 
@@ -1090,7 +1066,7 @@ func newUsersListMfaFactorsCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.ListMfaFactors(userId, )
+			result, err := service.ListMfaFactors(userId)
 			if err != nil {
 				return err
 			}
@@ -1101,7 +1077,6 @@ func newUsersListMfaFactorsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&userId, "user-id", "", "User ID.")
 	_ = cmd.MarkFlagRequired("user-id")
-
 	return cmd
 }
 
@@ -1118,7 +1093,7 @@ func newUsersGetMfaRecoveryCodesCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.GetMfaRecoveryCodes(userId, )
+			result, err := service.GetMfaRecoveryCodes(userId)
 			if err != nil {
 				return err
 			}
@@ -1129,7 +1104,6 @@ func newUsersGetMfaRecoveryCodesCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&userId, "user-id", "", "User ID.")
 	_ = cmd.MarkFlagRequired("user-id")
-
 	return cmd
 }
 
@@ -1146,7 +1120,7 @@ func newUsersUpdateMfaRecoveryCodesCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.UpdateMfaRecoveryCodes(userId, )
+			result, err := service.UpdateMfaRecoveryCodes(userId)
 			if err != nil {
 				return err
 			}
@@ -1157,7 +1131,6 @@ func newUsersUpdateMfaRecoveryCodesCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&userId, "user-id", "", "User ID.")
 	_ = cmd.MarkFlagRequired("user-id")
-
 	return cmd
 }
 
@@ -1174,7 +1147,7 @@ func newUsersCreateMfaRecoveryCodesCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.CreateMfaRecoveryCodes(userId, )
+			result, err := service.CreateMfaRecoveryCodes(userId)
 			if err != nil {
 				return err
 			}
@@ -1185,7 +1158,6 @@ func newUsersCreateMfaRecoveryCodesCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&userId, "user-id", "", "User ID.")
 	_ = cmd.MarkFlagRequired("user-id")
-
 	return cmd
 }
 
@@ -1203,7 +1175,7 @@ func newUsersUpdateNameCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.UpdateName(userId, name, )
+			result, err := service.UpdateName(userId, name)
 			if err != nil {
 				return err
 			}
@@ -1216,7 +1188,6 @@ func newUsersUpdateNameCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringVar(&name, "name", "", "User name. Max length: 128 chars.")
 	_ = cmd.MarkFlagRequired("name")
-
 	return cmd
 }
 
@@ -1234,7 +1205,7 @@ func newUsersUpdatePasswordCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.UpdatePassword(userId, password, )
+			result, err := service.UpdatePassword(userId, password)
 			if err != nil {
 				return err
 			}
@@ -1247,7 +1218,6 @@ func newUsersUpdatePasswordCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringVar(&password, "password", "", "New user password. Must be at least 8 chars.")
 	_ = cmd.MarkFlagRequired("password")
-
 	return cmd
 }
 
@@ -1265,7 +1235,7 @@ func newUsersUpdatePhoneCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.UpdatePhone(userId, number, )
+			result, err := service.UpdatePhone(userId, number)
 			if err != nil {
 				return err
 			}
@@ -1278,7 +1248,6 @@ func newUsersUpdatePhoneCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringVar(&number, "number", "", "User phone number.")
 	_ = cmd.MarkFlagRequired("number")
-
 	return cmd
 }
 
@@ -1295,7 +1264,7 @@ func newUsersGetPrefsCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.GetPrefs(userId, )
+			result, err := service.GetPrefs(userId)
 			if err != nil {
 				return err
 			}
@@ -1306,7 +1275,6 @@ func newUsersGetPrefsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&userId, "user-id", "", "User ID.")
 	_ = cmd.MarkFlagRequired("user-id")
-
 	return cmd
 }
 
@@ -1328,7 +1296,7 @@ func newUsersUpdatePrefsCommand() *cobra.Command {
 				return err
 			}
 
-			result, err := service.UpdatePrefs(userId, prefsValue, )
+			result, err := service.UpdatePrefs(userId, prefsValue)
 			if err != nil {
 				return err
 			}
@@ -1341,7 +1309,6 @@ func newUsersUpdatePrefsCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringVar(&prefs, "prefs", "", "Prefs key-value JSON object.")
 	_ = cmd.MarkFlagRequired("prefs")
-
 	return cmd
 }
 
@@ -1379,7 +1346,6 @@ func newUsersListSessionsCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -1396,7 +1362,7 @@ func newUsersCreateSessionCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.CreateSession(userId, )
+			result, err := service.CreateSession(userId)
 			if err != nil {
 				return err
 			}
@@ -1407,7 +1373,6 @@ func newUsersCreateSessionCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&userId, "user-id", "", "User ID. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.")
 	_ = cmd.MarkFlagRequired("user-id")
-
 	return cmd
 }
 
@@ -1424,7 +1389,7 @@ func newUsersDeleteSessionsCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.DeleteSessions(userId, )
+			result, err := service.DeleteSessions(userId)
 			if err != nil {
 				return err
 			}
@@ -1435,7 +1400,6 @@ func newUsersDeleteSessionsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&userId, "user-id", "", "User ID.")
 	_ = cmd.MarkFlagRequired("user-id")
-
 	return cmd
 }
 
@@ -1453,7 +1417,7 @@ func newUsersDeleteSessionCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.DeleteSession(userId, sessionId, )
+			result, err := service.DeleteSession(userId, sessionId)
 			if err != nil {
 				return err
 			}
@@ -1466,7 +1430,6 @@ func newUsersDeleteSessionCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringVar(&sessionId, "session-id", "", "Session ID.")
 	_ = cmd.MarkFlagRequired("session-id")
-
 	return cmd
 }
 
@@ -1484,7 +1447,7 @@ func newUsersUpdateStatusCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.UpdateStatus(userId, status, )
+			result, err := service.UpdateStatus(userId, status)
 			if err != nil {
 				return err
 			}
@@ -1497,7 +1460,6 @@ func newUsersUpdateStatusCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().BoolVar(&status, "status", false, "User Status. To activate the user pass `true` and to block the user pass `false`.")
 	_ = cmd.MarkFlagRequired("status")
-
 	return cmd
 }
 
@@ -1534,13 +1496,13 @@ func newUsersListTargetsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -1580,7 +1542,6 @@ func newUsersListTargetsCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -1631,7 +1592,6 @@ func newUsersCreateTargetCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("identifier")
 	cmd.Flags().StringVar(&providerId, "provider-id", "", "Provider ID. Message will be sent to this target from the specified provider ID. If no provider ID is set the first setup provider will be used.")
 	cmd.Flags().StringVar(&name, "name", "", "Target name. Max length: 128 chars. For example: My Awesome App Galaxy S23.")
-
 	return cmd
 }
 
@@ -1649,7 +1609,7 @@ func newUsersGetTargetCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.GetTarget(userId, targetId, )
+			result, err := service.GetTarget(userId, targetId)
 			if err != nil {
 				return err
 			}
@@ -1662,7 +1622,6 @@ func newUsersGetTargetCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringVar(&targetId, "target-id", "", "Target ID.")
 	_ = cmd.MarkFlagRequired("target-id")
-
 	return cmd
 }
 
@@ -1712,7 +1671,6 @@ func newUsersUpdateTargetCommand() *cobra.Command {
 	cmd.Flags().StringVar(&identifier, "identifier", "", "The target identifier (token, email, phone etc.)")
 	cmd.Flags().StringVar(&providerId, "provider-id", "", "Provider ID. Message will be sent to this target from the specified provider ID. If no provider ID is set the first setup provider will be used.")
 	cmd.Flags().StringVar(&name, "name", "", "Target name. Max length: 128 chars. For example: My Awesome App Galaxy S23.")
-
 	return cmd
 }
 
@@ -1730,7 +1688,7 @@ func newUsersDeleteTargetCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.DeleteTarget(userId, targetId, )
+			result, err := service.DeleteTarget(userId, targetId)
 			if err != nil {
 				return err
 			}
@@ -1743,7 +1701,6 @@ func newUsersDeleteTargetCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringVar(&targetId, "target-id", "", "Target ID.")
 	_ = cmd.MarkFlagRequired("target-id")
-
 	return cmd
 }
 
@@ -1785,7 +1742,6 @@ func newUsersCreateTokenCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().IntVar(&length, "length", 0, "Token length in characters. The default length is 6 characters")
 	cmd.Flags().IntVar(&expire, "expire", 0, "Token expiration period in seconds. The default expiration is 15 minutes.")
-
 	return cmd
 }
 
@@ -1803,7 +1759,7 @@ func newUsersUpdateEmailVerificationCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.UpdateEmailVerification(userId, emailVerification, )
+			result, err := service.UpdateEmailVerification(userId, emailVerification)
 			if err != nil {
 				return err
 			}
@@ -1816,7 +1772,6 @@ func newUsersUpdateEmailVerificationCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().BoolVar(&emailVerification, "email-verification", false, "User email verification status.")
 	_ = cmd.MarkFlagRequired("email-verification")
-
 	return cmd
 }
 
@@ -1834,7 +1789,7 @@ func newUsersUpdatePhoneVerificationCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.UpdatePhoneVerification(userId, phoneVerification, )
+			result, err := service.UpdatePhoneVerification(userId, phoneVerification)
 			if err != nil {
 				return err
 			}
@@ -1847,7 +1802,5 @@ func newUsersUpdatePhoneVerificationCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().BoolVar(&phoneVerification, "phone-verification", false, "User phone verification status.")
 	_ = cmd.MarkFlagRequired("phone-verification")
-
 	return cmd
 }
-

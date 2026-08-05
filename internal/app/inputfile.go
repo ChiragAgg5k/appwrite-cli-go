@@ -27,4 +27,3 @@ func InputFile(path string) (sdkfile.InputFile, error) {
 
 	return sdkfile.NewInputFile(resolved, filepath.Base(resolved)), nil
 }
-

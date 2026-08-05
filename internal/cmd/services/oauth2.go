@@ -8,7 +8,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/app"
 )
 
-
 // NewOauth2Command builds the `oauth2` command tree.
 func NewOauth2Command() *cobra.Command {
 	cmd := &cobra.Command{
@@ -147,7 +146,6 @@ func newOauth2AuthorizeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&resource, "resource", "", "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.")
 	cmd.Flags().StringVar(&audience, "audience", "", "Compatibility alias for a single OAuth2 resource indicator URI.")
 	cmd.Flags().StringVar(&requestUri, "request-uri", "", "OAuth2 authorization request handle returned by the pushed authorization request endpoint.")
-
 	return cmd
 }
 
@@ -246,7 +244,6 @@ func newOauth2AuthorizePostCommand() *cobra.Command {
 	cmd.Flags().StringVar(&resource, "resource", "", "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.")
 	cmd.Flags().StringVar(&audience, "audience", "", "Compatibility alias for a single OAuth2 resource indicator URI.")
 	cmd.Flags().StringVar(&requestUri, "request-uri", "", "OAuth2 authorization request handle returned by the pushed authorization request endpoint.")
-
 	return cmd
 }
 
@@ -300,7 +297,6 @@ func newOauth2CreateDeviceAuthorizationCommand() *cobra.Command {
 	cmd.Flags().StringVar(&authorizationDetails, "authorization-details", "", "Rich authorization request. JSON array of objects, each with a `type` and project-defined fields")
 	cmd.Flags().StringVar(&resource, "resource", "", "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.")
 	cmd.Flags().StringVar(&audience, "audience", "", "Compatibility alias for a single OAuth2 resource indicator URI.")
-
 	return cmd
 }
 
@@ -317,7 +313,7 @@ func newOauth2CreateGrantCommand() *cobra.Command {
 			}
 			service := oauth2.New(client)
 
-			result, err := service.CreateGrant(userCode, )
+			result, err := service.CreateGrant(userCode)
 			if err != nil {
 				return err
 			}
@@ -328,7 +324,6 @@ func newOauth2CreateGrantCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&userCode, "user-code", "", "User code displayed on the device.")
 	_ = cmd.MarkFlagRequired("user-code")
-
 	return cmd
 }
 
@@ -345,7 +340,7 @@ func newOauth2GetGrantCommand() *cobra.Command {
 			}
 			service := oauth2.New(client)
 
-			result, err := service.GetGrant(grantId, )
+			result, err := service.GetGrant(grantId)
 			if err != nil {
 				return err
 			}
@@ -356,7 +351,6 @@ func newOauth2GetGrantCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&grantId, "grant-id", "", "Grant ID made during authorization, provided to consent screen in URL search params.")
 	_ = cmd.MarkFlagRequired("grant-id")
-
 	return cmd
 }
 
@@ -415,7 +409,6 @@ func newOauth2LogoutCommand() *cobra.Command {
 	cmd.Flags().StringVar(&postLogoutRedirectUri, "post-logout-redirect-uri", "", "URI to redirect the user to after logout. Must exactly match a URI registered in the app's `postLogoutRedirectUris`.")
 	cmd.Flags().StringVar(&state, "state", "", "Opaque value passed back unchanged in the `state` query param of the post-logout redirect.")
 	cmd.Flags().StringVar(&uiLocales, "ui-locales", "", "Preferred languages for any logout UI, as space-separated BCP47 tags. Accepted for OIDC compatibility.")
-
 	return cmd
 }
 
@@ -474,7 +467,6 @@ func newOauth2LogoutPostCommand() *cobra.Command {
 	cmd.Flags().StringVar(&postLogoutRedirectUri, "post-logout-redirect-uri", "", "URI to redirect the user to after logout. Must exactly match a URI registered in the app's `postLogoutRedirectUris`.")
 	cmd.Flags().StringVar(&state, "state", "", "Opaque value passed back unchanged in the `state` query param of the post-logout redirect.")
 	cmd.Flags().StringVar(&uiLocales, "ui-locales", "", "Preferred languages for any logout UI, as space-separated BCP47 tags. Accepted for OIDC compatibility.")
-
 	return cmd
 }
 
@@ -484,8 +476,8 @@ func newOauth2ListOrganizationsCommand() *cobra.Command {
 	var search string
 
 	cmd := &cobra.Command{
-		Use:   "list-organizations",
-		Short: "List the organizations the OAuth2 access token can access. Resolves the token's `organization` authorization details, expanding the `*` wildcard into the concrete set of organizations the user can see.",
+		Use:    "list-organizations",
+		Short:  "List the organizations the OAuth2 access token can access. Resolves the token's `organization` authorization details, expanding the `*` wildcard into the concrete set of organizations the user can see.",
 		Hidden: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 
@@ -502,7 +494,6 @@ func newOauth2ListOrganizationsCommand() *cobra.Command {
 	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of organizations to return. Between 1 and 5000.")
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of organizations to skip before returning results. Used for pagination.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
-
 	return cmd
 }
 
@@ -590,7 +581,6 @@ func newOauth2CreatePARCommand() *cobra.Command {
 	cmd.Flags().StringVar(&authorizationDetails, "authorization-details", "", "Rich authorization request. JSON array of objects, each with a `type` and project-defined fields")
 	cmd.Flags().StringVar(&resource, "resource", "", "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.")
 	cmd.Flags().StringVar(&audience, "audience", "", "Compatibility alias for a single OAuth2 resource indicator URI.")
-
 	return cmd
 }
 
@@ -600,8 +590,8 @@ func newOauth2ListProjectsCommand() *cobra.Command {
 	var search string
 
 	cmd := &cobra.Command{
-		Use:   "list-projects",
-		Short: "List the projects the OAuth2 access token can access. Resolves the token's `project` authorization details, expanding the `*` wildcard into the concrete set of projects the user can see.",
+		Use:    "list-projects",
+		Short:  "List the projects the OAuth2 access token can access. Resolves the token's `project` authorization details, expanding the `*` wildcard into the concrete set of projects the user can see.",
 		Hidden: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 
@@ -618,7 +608,6 @@ func newOauth2ListProjectsCommand() *cobra.Command {
 	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of projects to return. Between 1 and 5000.")
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of projects to skip before returning results. Used for pagination.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
-
 	return cmd
 }
 
@@ -635,7 +624,7 @@ func newOauth2RejectCommand() *cobra.Command {
 			}
 			service := oauth2.New(client)
 
-			result, err := service.Reject(grantId, )
+			result, err := service.Reject(grantId)
 			if err != nil {
 				return err
 			}
@@ -646,7 +635,6 @@ func newOauth2RejectCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&grantId, "grant-id", "", "Grant ID made during authorization, provided to consent screen in URL search params.")
 	_ = cmd.MarkFlagRequired("grant-id")
-
 	return cmd
 }
 
@@ -693,7 +681,6 @@ func newOauth2RevokeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&tokenTypeHint, "token-type-hint", "", "Type of token to revoke (access_token or refresh_token).")
 	cmd.Flags().StringVar(&clientId, "client-id", "", "OAuth2 client ID. Either a registered app ID or an HTTPS client ID metadata document URL.")
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "OAuth2 client secret. Required for confidential apps; omitted for public apps.")
-
 	return cmd
 }
 
@@ -770,7 +757,5 @@ func newOauth2CreateTokenCommand() *cobra.Command {
 	cmd.Flags().StringVar(&redirectUri, "redirect-uri", "", "Redirect URI. Required for `authorization_code` grant type.")
 	cmd.Flags().StringVar(&resource, "resource", "", "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.")
 	cmd.Flags().StringVar(&audience, "audience", "", "Compatibility alias for a single OAuth2 resource indicator URI.")
-
 	return cmd
 }
-

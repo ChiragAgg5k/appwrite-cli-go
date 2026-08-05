@@ -9,7 +9,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/query"
 )
 
-
 // NewMigrationsCommand builds the `migrations` command tree.
 func NewMigrationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -70,13 +69,13 @@ func newMigrationsListCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -118,7 +117,6 @@ func newMigrationsListCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -164,7 +162,6 @@ func newMigrationsCreateAppwriteMigrationCommand() *cobra.Command {
 	cmd.Flags().StringVar(&apiKey, "api-key", "", "Source API Key")
 	_ = cmd.MarkFlagRequired("api-key")
 	cmd.Flags().StringVar(&onDuplicate, "on-duplicate", "", "Behavior when a row with an existing $id is encountered. \"fail\" (default): abort on first conflict. \"skip\": silently ignore. \"overwrite\": replace existing row.")
-
 	return cmd
 }
 
@@ -184,7 +181,7 @@ func newMigrationsGetAppwriteReportCommand() *cobra.Command {
 			}
 			service := migrations.New(client)
 
-			result, err := service.GetAppwriteReport(resources, endpoint, projectId, key, )
+			result, err := service.GetAppwriteReport(resources, endpoint, projectId, key)
 			if err != nil {
 				return err
 			}
@@ -201,7 +198,6 @@ func newMigrationsGetAppwriteReportCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("project-id")
 	cmd.Flags().StringVar(&key, "key", "", "Source's API Key")
 	_ = cmd.MarkFlagRequired("key")
-
 	return cmd
 }
 
@@ -249,13 +245,13 @@ func newMigrationsCreateCSVExportCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -320,7 +316,6 @@ func newMigrationsCreateCSVExportCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -372,7 +367,6 @@ func newMigrationsCreateCSVImportCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&internalFile, "internal-file", false, "Is the file stored in an internal bucket?")
 	cmd.Flags().Lookup("internal-file").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&onDuplicate, "on-duplicate", "", "Behavior when a row with an existing $id is encountered. \"fail\" (default): abort on first conflict. \"skip\": silently ignore. \"overwrite\": replace existing row.")
-
 	return cmd
 }
 
@@ -390,7 +384,7 @@ func newMigrationsCreateFirebaseMigrationCommand() *cobra.Command {
 			}
 			service := migrations.New(client)
 
-			result, err := service.CreateFirebaseMigration(resources, serviceAccount, )
+			result, err := service.CreateFirebaseMigration(resources, serviceAccount)
 			if err != nil {
 				return err
 			}
@@ -403,7 +397,6 @@ func newMigrationsCreateFirebaseMigrationCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("resources")
 	cmd.Flags().StringVar(&serviceAccount, "service-account", "", "JSON of the Firebase service account credentials")
 	_ = cmd.MarkFlagRequired("service-account")
-
 	return cmd
 }
 
@@ -421,7 +414,7 @@ func newMigrationsGetFirebaseReportCommand() *cobra.Command {
 			}
 			service := migrations.New(client)
 
-			result, err := service.GetFirebaseReport(resources, serviceAccount, )
+			result, err := service.GetFirebaseReport(resources, serviceAccount)
 			if err != nil {
 				return err
 			}
@@ -434,7 +427,6 @@ func newMigrationsGetFirebaseReportCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("resources")
 	cmd.Flags().StringVar(&serviceAccount, "service-account", "", "JSON of the Firebase service account credentials")
 	_ = cmd.MarkFlagRequired("service-account")
-
 	return cmd
 }
 
@@ -478,13 +470,13 @@ func newMigrationsCreateJSONExportCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -532,7 +524,6 @@ func newMigrationsCreateJSONExportCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -584,7 +575,6 @@ func newMigrationsCreateJSONImportCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&internalFile, "internal-file", false, "Is the file stored in an internal bucket?")
 	cmd.Flags().Lookup("internal-file").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&onDuplicate, "on-duplicate", "", "Behavior when a row with an existing $id is encountered. \"fail\" (default): abort on first conflict. \"skip\": silently ignore. \"overwrite\": replace existing row.")
-
 	return cmd
 }
 
@@ -639,7 +629,6 @@ func newMigrationsCreateNHostMigrationCommand() *cobra.Command {
 	cmd.Flags().StringVar(&password, "password", "", "Source's Database Password")
 	_ = cmd.MarkFlagRequired("password")
 	cmd.Flags().IntVar(&port, "port", 0, "Source's Database Port")
-
 	return cmd
 }
 
@@ -694,7 +683,6 @@ func newMigrationsGetNHostReportCommand() *cobra.Command {
 	cmd.Flags().StringVar(&password, "password", "", "Source's Database Password.")
 	_ = cmd.MarkFlagRequired("password")
 	cmd.Flags().IntVar(&port, "port", 0, "Source's Database Port.")
-
 	return cmd
 }
 
@@ -746,7 +734,6 @@ func newMigrationsCreateSupabaseMigrationCommand() *cobra.Command {
 	cmd.Flags().StringVar(&password, "password", "", "Source's Database Password")
 	_ = cmd.MarkFlagRequired("password")
 	cmd.Flags().IntVar(&port, "port", 0, "Source's Database Port")
-
 	return cmd
 }
 
@@ -798,7 +785,6 @@ func newMigrationsGetSupabaseReportCommand() *cobra.Command {
 	cmd.Flags().StringVar(&password, "password", "", "Source's Database Password.")
 	_ = cmd.MarkFlagRequired("password")
 	cmd.Flags().IntVar(&port, "port", 0, "Source's Database Port.")
-
 	return cmd
 }
 
@@ -815,7 +801,7 @@ func newMigrationsGetCommand() *cobra.Command {
 			}
 			service := migrations.New(client)
 
-			result, err := service.Get(migrationId, )
+			result, err := service.Get(migrationId)
 			if err != nil {
 				return err
 			}
@@ -826,7 +812,6 @@ func newMigrationsGetCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&migrationId, "migration-id", "", "Migration unique ID.")
 	_ = cmd.MarkFlagRequired("migration-id")
-
 	return cmd
 }
 
@@ -843,7 +828,7 @@ func newMigrationsRetryCommand() *cobra.Command {
 			}
 			service := migrations.New(client)
 
-			result, err := service.Retry(migrationId, )
+			result, err := service.Retry(migrationId)
 			if err != nil {
 				return err
 			}
@@ -854,7 +839,6 @@ func newMigrationsRetryCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&migrationId, "migration-id", "", "Migration unique ID.")
 	_ = cmd.MarkFlagRequired("migration-id")
-
 	return cmd
 }
 
@@ -871,7 +855,7 @@ func newMigrationsDeleteCommand() *cobra.Command {
 			}
 			service := migrations.New(client)
 
-			result, err := service.Delete(migrationId, )
+			result, err := service.Delete(migrationId)
 			if err != nil {
 				return err
 			}
@@ -882,7 +866,5 @@ func newMigrationsDeleteCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&migrationId, "migration-id", "", "Migration ID.")
 	_ = cmd.MarkFlagRequired("migration-id")
-
 	return cmd
 }
-

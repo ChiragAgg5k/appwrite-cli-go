@@ -8,7 +8,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/app"
 )
 
-
 // NewGraphqlCommand builds the `graphql` command tree.
 func NewGraphqlCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -39,7 +38,7 @@ func newGraphqlQueryCommand() *cobra.Command {
 				return err
 			}
 
-			result, err := service.Query(queryValue, )
+			result, err := service.Query(queryValue)
 			if err != nil {
 				return err
 			}
@@ -50,7 +49,6 @@ func newGraphqlQueryCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&query, "query", "", "The query or queries to execute.")
 	_ = cmd.MarkFlagRequired("query")
-
 	return cmd
 }
 
@@ -71,7 +69,7 @@ func newGraphqlMutationCommand() *cobra.Command {
 				return err
 			}
 
-			result, err := service.Mutation(queryValue, )
+			result, err := service.Mutation(queryValue)
 			if err != nil {
 				return err
 			}
@@ -82,7 +80,5 @@ func newGraphqlMutationCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&query, "query", "", "The query or queries to execute.")
 	_ = cmd.MarkFlagRequired("query")
-
 	return cmd
 }
-

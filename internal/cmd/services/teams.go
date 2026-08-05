@@ -9,7 +9,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/query"
 )
 
-
 // NewTeamsCommand builds the `teams` command tree.
 func NewTeamsCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -73,13 +72,13 @@ func newTeamsListCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -121,7 +120,6 @@ func newTeamsListCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -161,7 +159,6 @@ func newTeamsCreateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&name, "name", "", "Team name. Max length: 128 chars.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringArrayVar(&roles, "roles", nil, "Array of strings. Use this param to set the roles in the team for the user who created it. The default role is owner. A role can be any string. Learn more about roles and permissions (https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 32 characters long.")
-
 	return cmd
 }
 
@@ -178,7 +175,7 @@ func newTeamsGetCommand() *cobra.Command {
 			}
 			service := teams.New(client)
 
-			result, err := service.Get(teamId, )
+			result, err := service.Get(teamId)
 			if err != nil {
 				return err
 			}
@@ -189,7 +186,6 @@ func newTeamsGetCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&teamId, "team-id", "", "Team ID.")
 	_ = cmd.MarkFlagRequired("team-id")
-
 	return cmd
 }
 
@@ -207,7 +203,7 @@ func newTeamsUpdateNameCommand() *cobra.Command {
 			}
 			service := teams.New(client)
 
-			result, err := service.UpdateName(teamId, name, )
+			result, err := service.UpdateName(teamId, name)
 			if err != nil {
 				return err
 			}
@@ -220,7 +216,6 @@ func newTeamsUpdateNameCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("team-id")
 	cmd.Flags().StringVar(&name, "name", "", "New team name. Max length: 128 chars.")
 	_ = cmd.MarkFlagRequired("name")
-
 	return cmd
 }
 
@@ -237,7 +232,7 @@ func newTeamsDeleteCommand() *cobra.Command {
 			}
 			service := teams.New(client)
 
-			result, err := service.Delete(teamId, )
+			result, err := service.Delete(teamId)
 			if err != nil {
 				return err
 			}
@@ -248,7 +243,6 @@ func newTeamsDeleteCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&teamId, "team-id", "", "Team ID.")
 	_ = cmd.MarkFlagRequired("team-id")
-
 	return cmd
 }
 
@@ -285,13 +279,13 @@ func newTeamsListInstallationsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -331,7 +325,6 @@ func newTeamsListInstallationsCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -371,7 +364,6 @@ func newTeamsCreateInstallationCommand() *cobra.Command {
 	cmd.Flags().StringVar(&appId, "app-id", "", "Application unique ID.")
 	_ = cmd.MarkFlagRequired("app-id")
 	cmd.Flags().StringVar(&authorizationDetails, "authorization-details", "", "Authorization details granted to the installation as a JSON array of objects, each with a `type` and app-defined fields. The Appwrite Console stores authorized project IDs here.")
-
 	return cmd
 }
 
@@ -389,7 +381,7 @@ func newTeamsGetInstallationCommand() *cobra.Command {
 			}
 			service := teams.New(client)
 
-			result, err := service.GetInstallation(teamId, installationId, )
+			result, err := service.GetInstallation(teamId, installationId)
 			if err != nil {
 				return err
 			}
@@ -402,7 +394,6 @@ func newTeamsGetInstallationCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("team-id")
 	cmd.Flags().StringVar(&installationId, "installation-id", "", "Installation unique ID.")
 	_ = cmd.MarkFlagRequired("installation-id")
-
 	return cmd
 }
 
@@ -442,7 +433,6 @@ func newTeamsUpdateInstallationCommand() *cobra.Command {
 	cmd.Flags().StringVar(&installationId, "installation-id", "", "Installation unique ID.")
 	_ = cmd.MarkFlagRequired("installation-id")
 	cmd.Flags().StringVar(&authorizationDetails, "authorization-details", "", "Authorization details granted to the installation as a JSON array of objects, each with a `type` and app-defined fields. Omit to keep the current value.")
-
 	return cmd
 }
 
@@ -460,7 +450,7 @@ func newTeamsDeleteInstallationCommand() *cobra.Command {
 			}
 			service := teams.New(client)
 
-			result, err := service.DeleteInstallation(teamId, installationId, )
+			result, err := service.DeleteInstallation(teamId, installationId)
 			if err != nil {
 				return err
 			}
@@ -473,7 +463,6 @@ func newTeamsDeleteInstallationCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("team-id")
 	cmd.Flags().StringVar(&installationId, "installation-id", "", "Installation unique ID.")
 	_ = cmd.MarkFlagRequired("installation-id")
-
 	return cmd
 }
 
@@ -494,11 +483,10 @@ func newTeamsListLogsCommand() *cobra.Command {
 			}
 			service := teams.New(client)
 
-
 			queries, err := query.Build(query.Options{
 				Queries: queries,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Limit:   app.FlagInt(cmd, "limit", limit),
+				Offset:  app.FlagInt(cmd, "offset", offset),
 			})
 			if err != nil {
 				return err
@@ -530,7 +518,6 @@ func newTeamsListLogsCommand() *cobra.Command {
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
-
 	return cmd
 }
 
@@ -568,13 +555,13 @@ func newTeamsListMembershipsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -618,7 +605,6 @@ func newTeamsListMembershipsCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -678,7 +664,6 @@ func newTeamsCreateMembershipCommand() *cobra.Command {
 	cmd.Flags().StringVar(&phone, "phone", "", "Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.")
 	cmd.Flags().StringVar(&url, "url", "", "URL to redirect the user back to your app from the invitation email. This parameter is not required when an API key is supplied. Only URLs from hostnames in your project platform list are allowed. This requirement helps to prevent an open redirect (https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.")
 	cmd.Flags().StringVar(&name, "name", "", "Name of the new team member. Max length: 128 chars.")
-
 	return cmd
 }
 
@@ -696,7 +681,7 @@ func newTeamsGetMembershipCommand() *cobra.Command {
 			}
 			service := teams.New(client)
 
-			result, err := service.GetMembership(teamId, membershipId, )
+			result, err := service.GetMembership(teamId, membershipId)
 			if err != nil {
 				return err
 			}
@@ -709,7 +694,6 @@ func newTeamsGetMembershipCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("team-id")
 	cmd.Flags().StringVar(&membershipId, "membership-id", "", "Membership ID.")
 	_ = cmd.MarkFlagRequired("membership-id")
-
 	return cmd
 }
 
@@ -728,7 +712,7 @@ func newTeamsUpdateMembershipCommand() *cobra.Command {
 			}
 			service := teams.New(client)
 
-			result, err := service.UpdateMembership(teamId, membershipId, roles, )
+			result, err := service.UpdateMembership(teamId, membershipId, roles)
 			if err != nil {
 				return err
 			}
@@ -743,7 +727,6 @@ func newTeamsUpdateMembershipCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("membership-id")
 	cmd.Flags().StringArrayVar(&roles, "roles", nil, "An array of strings. Use this param to set the user's roles in the team. A role can be any string. Learn more about roles and permissions (https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 81 characters long.")
 	_ = cmd.MarkFlagRequired("roles")
-
 	return cmd
 }
 
@@ -761,7 +744,7 @@ func newTeamsDeleteMembershipCommand() *cobra.Command {
 			}
 			service := teams.New(client)
 
-			result, err := service.DeleteMembership(teamId, membershipId, )
+			result, err := service.DeleteMembership(teamId, membershipId)
 			if err != nil {
 				return err
 			}
@@ -774,7 +757,6 @@ func newTeamsDeleteMembershipCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("team-id")
 	cmd.Flags().StringVar(&membershipId, "membership-id", "", "Membership ID.")
 	_ = cmd.MarkFlagRequired("membership-id")
-
 	return cmd
 }
 
@@ -794,7 +776,7 @@ func newTeamsUpdateMembershipStatusCommand() *cobra.Command {
 			}
 			service := teams.New(client)
 
-			result, err := service.UpdateMembershipStatus(teamId, membershipId, userId, secret, )
+			result, err := service.UpdateMembershipStatus(teamId, membershipId, userId, secret)
 			if err != nil {
 				return err
 			}
@@ -811,7 +793,6 @@ func newTeamsUpdateMembershipStatusCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringVar(&secret, "secret", "", "Secret key.")
 	_ = cmd.MarkFlagRequired("secret")
-
 	return cmd
 }
 
@@ -828,7 +809,7 @@ func newTeamsGetPrefsCommand() *cobra.Command {
 			}
 			service := teams.New(client)
 
-			result, err := service.GetPrefs(teamId, )
+			result, err := service.GetPrefs(teamId)
 			if err != nil {
 				return err
 			}
@@ -839,7 +820,6 @@ func newTeamsGetPrefsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&teamId, "team-id", "", "Team ID.")
 	_ = cmd.MarkFlagRequired("team-id")
-
 	return cmd
 }
 
@@ -861,7 +841,7 @@ func newTeamsUpdatePrefsCommand() *cobra.Command {
 				return err
 			}
 
-			result, err := service.UpdatePrefs(teamId, prefsValue, )
+			result, err := service.UpdatePrefs(teamId, prefsValue)
 			if err != nil {
 				return err
 			}
@@ -874,7 +854,5 @@ func newTeamsUpdatePrefsCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("team-id")
 	cmd.Flags().StringVar(&prefs, "prefs", "", "Prefs key-value JSON object.")
 	_ = cmd.MarkFlagRequired("prefs")
-
 	return cmd
 }
-

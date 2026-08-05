@@ -6,8 +6,9 @@ import (
 	"math"
 	"strconv"
 
-	"github.com/ChiragAgg5k/appwrite-cli-go/internal/jsonx"
 	"github.com/charmbracelet/lipgloss"
+
+	"github.com/ChiragAgg5k/appwrite-cli-go/internal/jsonx"
 )
 
 // dimStyle is the parenthesised aside -- the compact form of a number, the

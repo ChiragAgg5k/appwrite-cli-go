@@ -9,7 +9,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/query"
 )
 
-
 // NewSitesCommand builds the `sites` command tree.
 func NewSitesCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -81,13 +80,13 @@ func newSitesListCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -129,7 +128,6 @@ func newSitesListCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -268,7 +266,6 @@ func newSitesCreateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&buildSpecification, "build-specification", "", "Build specification for the site deployments.")
 	cmd.Flags().StringVar(&runtimeSpecification, "runtime-specification", "", "Runtime specification for the SSR executions.")
 	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.")
-
 	return cmd
 }
 
@@ -292,7 +289,6 @@ func newSitesListFrameworksCommand() *cobra.Command {
 			return app.Render(result)
 		},
 	}
-
 
 	return cmd
 }
@@ -327,7 +323,6 @@ func newSitesListSpecificationsCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&typeArg, "type", "", "Specification type to list. Can be one of: runtimes, builds.")
-
 	return cmd
 }
 
@@ -376,7 +371,6 @@ func newSitesListTemplatesCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&useCases, "use-cases", nil, "List of use cases allowed for filtering site templates. Maximum of 100 use cases are allowed.")
 	cmd.Flags().IntVar(&limit, "limit", 0, "Limit the number of templates returned in the response. Default limit is 25, and maximum limit is 5000.")
 	cmd.Flags().IntVar(&offset, "offset", 0, "Offset the list of returned templates. Maximum offset is 5000.")
-
 	return cmd
 }
 
@@ -393,7 +387,7 @@ func newSitesGetTemplateCommand() *cobra.Command {
 			}
 			service := sites.New(client)
 
-			result, err := service.GetTemplate(templateId, )
+			result, err := service.GetTemplate(templateId)
 			if err != nil {
 				return err
 			}
@@ -404,7 +398,6 @@ func newSitesGetTemplateCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&templateId, "template-id", "", "Template ID.")
 	_ = cmd.MarkFlagRequired("template-id")
-
 	return cmd
 }
 
@@ -421,7 +414,7 @@ func newSitesGetCommand() *cobra.Command {
 			}
 			service := sites.New(client)
 
-			result, err := service.Get(siteId, )
+			result, err := service.Get(siteId)
 			if err != nil {
 				return err
 			}
@@ -432,7 +425,6 @@ func newSitesGetCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&siteId, "site-id", "", "Site ID.")
 	_ = cmd.MarkFlagRequired("site-id")
-
 	return cmd
 }
 
@@ -573,7 +565,6 @@ func newSitesUpdateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&buildSpecification, "build-specification", "", "Build specification for the site deployments.")
 	cmd.Flags().StringVar(&runtimeSpecification, "runtime-specification", "", "Runtime specification for the SSR executions.")
 	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.")
-
 	return cmd
 }
 
@@ -590,7 +581,7 @@ func newSitesDeleteCommand() *cobra.Command {
 			}
 			service := sites.New(client)
 
-			result, err := service.Delete(siteId, )
+			result, err := service.Delete(siteId)
 			if err != nil {
 				return err
 			}
@@ -601,7 +592,6 @@ func newSitesDeleteCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&siteId, "site-id", "", "Site ID.")
 	_ = cmd.MarkFlagRequired("site-id")
-
 	return cmd
 }
 
@@ -619,7 +609,7 @@ func newSitesUpdateSiteDeploymentCommand() *cobra.Command {
 			}
 			service := sites.New(client)
 
-			result, err := service.UpdateSiteDeployment(siteId, deploymentId, )
+			result, err := service.UpdateSiteDeployment(siteId, deploymentId)
 			if err != nil {
 				return err
 			}
@@ -632,7 +622,6 @@ func newSitesUpdateSiteDeploymentCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("site-id")
 	cmd.Flags().StringVar(&deploymentId, "deployment-id", "", "Deployment ID.")
 	_ = cmd.MarkFlagRequired("deployment-id")
-
 	return cmd
 }
 
@@ -670,13 +659,13 @@ func newSitesListDeploymentsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -720,7 +709,6 @@ func newSitesListDeploymentsCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -780,7 +768,6 @@ func newSitesCreateDeploymentCommand() *cobra.Command {
 	cmd.Flags().StringVar(&outputDirectory, "output-directory", "", "Output Directory.")
 	cmd.Flags().BoolVar(&activate, "activate", false, "Automatically activate the deployment when it is finished building.")
 	cmd.Flags().Lookup("activate").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -798,7 +785,7 @@ func newSitesCreateDuplicateDeploymentCommand() *cobra.Command {
 			}
 			service := sites.New(client)
 
-			result, err := service.CreateDuplicateDeployment(siteId, deploymentId, )
+			result, err := service.CreateDuplicateDeployment(siteId, deploymentId)
 			if err != nil {
 				return err
 			}
@@ -811,7 +798,6 @@ func newSitesCreateDuplicateDeploymentCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("site-id")
 	cmd.Flags().StringVar(&deploymentId, "deployment-id", "", "Deployment ID.")
 	_ = cmd.MarkFlagRequired("deployment-id")
-
 	return cmd
 }
 
@@ -864,7 +850,6 @@ func newSitesCreateTemplateDeploymentCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("reference")
 	cmd.Flags().BoolVar(&activate, "activate", false, "Automatically activate the deployment when it is finished building.")
 	cmd.Flags().Lookup("activate").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -908,7 +893,6 @@ func newSitesCreateVcsDeploymentCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("reference")
 	cmd.Flags().BoolVar(&activate, "activate", false, "Automatically activate the deployment when it is finished building.")
 	cmd.Flags().Lookup("activate").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -926,7 +910,7 @@ func newSitesGetDeploymentCommand() *cobra.Command {
 			}
 			service := sites.New(client)
 
-			result, err := service.GetDeployment(siteId, deploymentId, )
+			result, err := service.GetDeployment(siteId, deploymentId)
 			if err != nil {
 				return err
 			}
@@ -939,7 +923,6 @@ func newSitesGetDeploymentCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("site-id")
 	cmd.Flags().StringVar(&deploymentId, "deployment-id", "", "Deployment ID.")
 	_ = cmd.MarkFlagRequired("deployment-id")
-
 	return cmd
 }
 
@@ -957,7 +940,7 @@ func newSitesDeleteDeploymentCommand() *cobra.Command {
 			}
 			service := sites.New(client)
 
-			result, err := service.DeleteDeployment(siteId, deploymentId, )
+			result, err := service.DeleteDeployment(siteId, deploymentId)
 			if err != nil {
 				return err
 			}
@@ -970,7 +953,6 @@ func newSitesDeleteDeploymentCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("site-id")
 	cmd.Flags().StringVar(&deploymentId, "deployment-id", "", "Deployment ID.")
 	_ = cmd.MarkFlagRequired("deployment-id")
-
 	return cmd
 }
 
@@ -1020,7 +1002,6 @@ func newSitesGetDeploymentDownloadCommand() *cobra.Command {
 	cmd.Flags().StringVar(&token, "token", "", "Presigned source-download token for accessing this deployment without a session (jobs-service).")
 	cmd.Flags().StringVar(&destination, "destination", "", "Path to save the file to.")
 	_ = cmd.MarkFlagRequired("destination")
-
 	return cmd
 }
 
@@ -1038,7 +1019,7 @@ func newSitesUpdateDeploymentStatusCommand() *cobra.Command {
 			}
 			service := sites.New(client)
 
-			result, err := service.UpdateDeploymentStatus(siteId, deploymentId, )
+			result, err := service.UpdateDeploymentStatus(siteId, deploymentId)
 			if err != nil {
 				return err
 			}
@@ -1051,7 +1032,6 @@ func newSitesUpdateDeploymentStatusCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("site-id")
 	cmd.Flags().StringVar(&deploymentId, "deployment-id", "", "Deployment ID.")
 	_ = cmd.MarkFlagRequired("deployment-id")
-
 	return cmd
 }
 
@@ -1088,13 +1068,13 @@ func newSitesListLogsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -1134,7 +1114,6 @@ func newSitesListLogsCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -1152,7 +1131,7 @@ func newSitesGetLogCommand() *cobra.Command {
 			}
 			service := sites.New(client)
 
-			result, err := service.GetLog(siteId, logId, )
+			result, err := service.GetLog(siteId, logId)
 			if err != nil {
 				return err
 			}
@@ -1165,7 +1144,6 @@ func newSitesGetLogCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("site-id")
 	cmd.Flags().StringVar(&logId, "log-id", "", "Log ID.")
 	_ = cmd.MarkFlagRequired("log-id")
-
 	return cmd
 }
 
@@ -1183,7 +1161,7 @@ func newSitesDeleteLogCommand() *cobra.Command {
 			}
 			service := sites.New(client)
 
-			result, err := service.DeleteLog(siteId, logId, )
+			result, err := service.DeleteLog(siteId, logId)
 			if err != nil {
 				return err
 			}
@@ -1196,7 +1174,6 @@ func newSitesDeleteLogCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("site-id")
 	cmd.Flags().StringVar(&logId, "log-id", "", "Log ID.")
 	_ = cmd.MarkFlagRequired("log-id")
-
 	return cmd
 }
 
@@ -1233,13 +1210,13 @@ func newSitesListVariablesCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -1279,7 +1256,6 @@ func newSitesListVariablesCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -1326,7 +1302,6 @@ func newSitesCreateVariableCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("value")
 	cmd.Flags().BoolVar(&secret, "secret", false, "Secret variables can be updated or deleted, but only sites can read them during build and runtime.")
 	cmd.Flags().Lookup("secret").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -1344,7 +1319,7 @@ func newSitesGetVariableCommand() *cobra.Command {
 			}
 			service := sites.New(client)
 
-			result, err := service.GetVariable(siteId, variableId, )
+			result, err := service.GetVariable(siteId, variableId)
 			if err != nil {
 				return err
 			}
@@ -1357,7 +1332,6 @@ func newSitesGetVariableCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("site-id")
 	cmd.Flags().StringVar(&variableId, "variable-id", "", "Variable unique ID.")
 	_ = cmd.MarkFlagRequired("variable-id")
-
 	return cmd
 }
 
@@ -1408,7 +1382,6 @@ func newSitesUpdateVariableCommand() *cobra.Command {
 	cmd.Flags().StringVar(&value, "value", "", "Variable value. Max length: 8192 chars.")
 	cmd.Flags().BoolVar(&secret, "secret", false, "Secret variables can be updated or deleted, but only sites can read them during build and runtime.")
 	cmd.Flags().Lookup("secret").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -1426,7 +1399,7 @@ func newSitesDeleteVariableCommand() *cobra.Command {
 			}
 			service := sites.New(client)
 
-			result, err := service.DeleteVariable(siteId, variableId, )
+			result, err := service.DeleteVariable(siteId, variableId)
 			if err != nil {
 				return err
 			}
@@ -1439,7 +1412,5 @@ func newSitesDeleteVariableCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("site-id")
 	cmd.Flags().StringVar(&variableId, "variable-id", "", "Variable unique ID.")
 	_ = cmd.MarkFlagRequired("variable-id")
-
 	return cmd
 }
-

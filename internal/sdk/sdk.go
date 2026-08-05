@@ -6,9 +6,10 @@ import (
 	"os"
 	"runtime"
 
+	sdkclient "github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
+
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/auth"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/config"
-	sdkclient "github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
 )
 
 // Ports templates/cli/lib/sdks.ts onto the generated Go SDK's client.

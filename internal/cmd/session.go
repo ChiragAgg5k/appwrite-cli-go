@@ -7,13 +7,14 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/charmbracelet/lipgloss"
+	"github.com/spf13/cobra"
+
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/app"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/auth"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/client"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/config"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/jsonx"
-	"github.com/charmbracelet/lipgloss"
-	"github.com/spf13/cobra"
 )
 
 // Ports the session half of templates/cli/lib/sdks.ts and the `whoami` command

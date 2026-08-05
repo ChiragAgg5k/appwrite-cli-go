@@ -9,7 +9,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/query"
 )
 
-
 // NewAccountCommand builds the `account` command tree.
 func NewAccountCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -103,7 +102,6 @@ func newAccountGetCommand() *cobra.Command {
 		},
 	}
 
-
 	return cmd
 }
 
@@ -146,7 +144,6 @@ func newAccountCreateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&password, "password", "", "New user password. Must be between 8 and 256 chars.")
 	_ = cmd.MarkFlagRequired("password")
 	cmd.Flags().StringVar(&name, "name", "", "User name. Max length: 128 chars.")
-
 	return cmd
 }
 
@@ -170,7 +167,6 @@ func newAccountDeleteCommand() *cobra.Command {
 			return app.Render(result)
 		},
 	}
-
 
 	return cmd
 }
@@ -207,13 +203,13 @@ func newAccountListConsentsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -251,7 +247,6 @@ func newAccountListConsentsCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -268,7 +263,7 @@ func newAccountGetConsentCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.GetConsent(consentId, )
+			result, err := service.GetConsent(consentId)
 			if err != nil {
 				return err
 			}
@@ -279,7 +274,6 @@ func newAccountGetConsentCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&consentId, "consent-id", "", "Consent unique ID.")
 	_ = cmd.MarkFlagRequired("consent-id")
-
 	return cmd
 }
 
@@ -296,7 +290,7 @@ func newAccountDeleteConsentCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.DeleteConsent(consentId, )
+			result, err := service.DeleteConsent(consentId)
 			if err != nil {
 				return err
 			}
@@ -307,7 +301,6 @@ func newAccountDeleteConsentCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&consentId, "consent-id", "", "Consent unique ID.")
 	_ = cmd.MarkFlagRequired("consent-id")
-
 	return cmd
 }
 
@@ -344,13 +337,13 @@ func newAccountListConsentTokensCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -390,7 +383,6 @@ func newAccountListConsentTokensCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -408,7 +400,7 @@ func newAccountGetConsentTokenCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.GetConsentToken(consentId, tokenId, )
+			result, err := service.GetConsentToken(consentId, tokenId)
 			if err != nil {
 				return err
 			}
@@ -421,7 +413,6 @@ func newAccountGetConsentTokenCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("consent-id")
 	cmd.Flags().StringVar(&tokenId, "token-id", "", "Token unique ID.")
 	_ = cmd.MarkFlagRequired("token-id")
-
 	return cmd
 }
 
@@ -439,7 +430,7 @@ func newAccountDeleteConsentTokenCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.DeleteConsentToken(consentId, tokenId, )
+			result, err := service.DeleteConsentToken(consentId, tokenId)
 			if err != nil {
 				return err
 			}
@@ -452,7 +443,6 @@ func newAccountDeleteConsentTokenCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("consent-id")
 	cmd.Flags().StringVar(&tokenId, "token-id", "", "Token unique ID.")
 	_ = cmd.MarkFlagRequired("token-id")
-
 	return cmd
 }
 
@@ -470,7 +460,7 @@ func newAccountUpdateEmailCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.UpdateEmail(email, password, )
+			result, err := service.UpdateEmail(email, password)
 			if err != nil {
 				return err
 			}
@@ -483,7 +473,6 @@ func newAccountUpdateEmailCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("email")
 	cmd.Flags().StringVar(&password, "password", "", "User password. Must be at least 8 chars.")
 	_ = cmd.MarkFlagRequired("password")
-
 	return cmd
 }
 
@@ -519,13 +508,13 @@ func newAccountListIdentitiesCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -563,7 +552,6 @@ func newAccountListIdentitiesCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -580,7 +568,7 @@ func newAccountDeleteIdentityCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.DeleteIdentity(identityId, )
+			result, err := service.DeleteIdentity(identityId)
 			if err != nil {
 				return err
 			}
@@ -591,7 +579,6 @@ func newAccountDeleteIdentityCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&identityId, "identity-id", "", "Identity ID.")
 	_ = cmd.MarkFlagRequired("identity-id")
-
 	return cmd
 }
 
@@ -625,7 +612,6 @@ func newAccountCreateJWTCommand() *cobra.Command {
 	}
 
 	cmd.Flags().IntVar(&duration, "duration", 0, "Time in seconds before JWT expires. Default duration is 900 seconds, and maximum is 3600 seconds.")
-
 	return cmd
 }
 
@@ -660,7 +646,6 @@ func newAccountListKeysCommand() *cobra.Command {
 
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -700,7 +685,6 @@ func newAccountCreateKeyCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "Key scopes list. Maximum of 200 scopes are allowed.")
 	_ = cmd.MarkFlagRequired("scopes")
 	cmd.Flags().StringVar(&expire, "expire", "", "Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.")
-
 	return cmd
 }
 
@@ -717,7 +701,7 @@ func newAccountGetKeyCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.GetKey(keyId, )
+			result, err := service.GetKey(keyId)
 			if err != nil {
 				return err
 			}
@@ -728,7 +712,6 @@ func newAccountGetKeyCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&keyId, "key-id", "", "Key unique ID.")
 	_ = cmd.MarkFlagRequired("key-id")
-
 	return cmd
 }
 
@@ -771,7 +754,6 @@ func newAccountUpdateKeyCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "Key scopes list. Maximum of 200 scopes are allowed.")
 	_ = cmd.MarkFlagRequired("scopes")
 	cmd.Flags().StringVar(&expire, "expire", "", "Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.")
-
 	return cmd
 }
 
@@ -788,7 +770,7 @@ func newAccountDeleteKeyCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.DeleteKey(keyId, )
+			result, err := service.DeleteKey(keyId)
 			if err != nil {
 				return err
 			}
@@ -799,7 +781,6 @@ func newAccountDeleteKeyCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&keyId, "key-id", "", "Key unique ID.")
 	_ = cmd.MarkFlagRequired("key-id")
-
 	return cmd
 }
 
@@ -819,11 +800,10 @@ func newAccountListLogsCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-
 			queries, err := query.Build(query.Options{
 				Queries: queries,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Limit:   app.FlagInt(cmd, "limit", limit),
+				Offset:  app.FlagInt(cmd, "offset", offset),
 			})
 			if err != nil {
 				return err
@@ -853,7 +833,6 @@ func newAccountListLogsCommand() *cobra.Command {
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
-
 	return cmd
 }
 
@@ -870,7 +849,7 @@ func newAccountUpdateMFACommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.UpdateMFA(mfa, )
+			result, err := service.UpdateMFA(mfa)
 			if err != nil {
 				return err
 			}
@@ -881,7 +860,6 @@ func newAccountUpdateMFACommand() *cobra.Command {
 
 	cmd.Flags().BoolVar(&mfa, "mfa", false, "Enable or disable MFA.")
 	_ = cmd.MarkFlagRequired("mfa")
-
 	return cmd
 }
 
@@ -898,7 +876,7 @@ func newAccountCreateMfaAuthenticatorCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.CreateMfaAuthenticator(typeArg, )
+			result, err := service.CreateMfaAuthenticator(typeArg)
 			if err != nil {
 				return err
 			}
@@ -909,7 +887,6 @@ func newAccountCreateMfaAuthenticatorCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&typeArg, "type", "", "Type of authenticator. Must be `totp`")
 	_ = cmd.MarkFlagRequired("type")
-
 	return cmd
 }
 
@@ -927,7 +904,7 @@ func newAccountUpdateMfaAuthenticatorCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.UpdateMfaAuthenticator(typeArg, otp, )
+			result, err := service.UpdateMfaAuthenticator(typeArg, otp)
 			if err != nil {
 				return err
 			}
@@ -940,7 +917,6 @@ func newAccountUpdateMfaAuthenticatorCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("type")
 	cmd.Flags().StringVar(&otp, "otp", "", "Valid verification token.")
 	_ = cmd.MarkFlagRequired("otp")
-
 	return cmd
 }
 
@@ -957,7 +933,7 @@ func newAccountDeleteMfaAuthenticatorCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.DeleteMfaAuthenticator(typeArg, )
+			result, err := service.DeleteMfaAuthenticator(typeArg)
 			if err != nil {
 				return err
 			}
@@ -968,7 +944,6 @@ func newAccountDeleteMfaAuthenticatorCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&typeArg, "type", "", "Type of authenticator.")
 	_ = cmd.MarkFlagRequired("type")
-
 	return cmd
 }
 
@@ -985,7 +960,7 @@ func newAccountCreateMfaChallengeCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.CreateMfaChallenge(factor, )
+			result, err := service.CreateMfaChallenge(factor)
 			if err != nil {
 				return err
 			}
@@ -996,7 +971,6 @@ func newAccountCreateMfaChallengeCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&factor, "factor", "", "Factor used for verification. Must be one of following: `email`, `phone`, `totp`, `recoveryCode`.")
 	_ = cmd.MarkFlagRequired("factor")
-
 	return cmd
 }
 
@@ -1014,7 +988,7 @@ func newAccountUpdateMfaChallengeCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.UpdateMfaChallenge(challengeId, otp, )
+			result, err := service.UpdateMfaChallenge(challengeId, otp)
 			if err != nil {
 				return err
 			}
@@ -1027,7 +1001,6 @@ func newAccountUpdateMfaChallengeCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("challenge-id")
 	cmd.Flags().StringVar(&otp, "otp", "", "Valid verification token.")
 	_ = cmd.MarkFlagRequired("otp")
-
 	return cmd
 }
 
@@ -1051,7 +1024,6 @@ func newAccountListMfaFactorsCommand() *cobra.Command {
 			return app.Render(result)
 		},
 	}
-
 
 	return cmd
 }
@@ -1077,7 +1049,6 @@ func newAccountGetMfaRecoveryCodesCommand() *cobra.Command {
 		},
 	}
 
-
 	return cmd
 }
 
@@ -1101,7 +1072,6 @@ func newAccountCreateMfaRecoveryCodesCommand() *cobra.Command {
 			return app.Render(result)
 		},
 	}
-
 
 	return cmd
 }
@@ -1127,7 +1097,6 @@ func newAccountUpdateMfaRecoveryCodesCommand() *cobra.Command {
 		},
 	}
 
-
 	return cmd
 }
 
@@ -1144,7 +1113,7 @@ func newAccountUpdateNameCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.UpdateName(name, )
+			result, err := service.UpdateName(name)
 			if err != nil {
 				return err
 			}
@@ -1155,7 +1124,6 @@ func newAccountUpdateNameCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&name, "name", "", "User name. Max length: 128 chars.")
 	_ = cmd.MarkFlagRequired("name")
-
 	return cmd
 }
 
@@ -1192,7 +1160,6 @@ func newAccountUpdatePasswordCommand() *cobra.Command {
 	cmd.Flags().StringVar(&password, "password", "", "New user password. Must be at least 8 chars.")
 	_ = cmd.MarkFlagRequired("password")
 	cmd.Flags().StringVar(&oldPassword, "old-password", "", "Current user password. Max length: 256 chars.")
-
 	return cmd
 }
 
@@ -1210,7 +1177,7 @@ func newAccountUpdatePhoneCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.UpdatePhone(phone, password, )
+			result, err := service.UpdatePhone(phone, password)
 			if err != nil {
 				return err
 			}
@@ -1223,7 +1190,6 @@ func newAccountUpdatePhoneCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("phone")
 	cmd.Flags().StringVar(&password, "password", "", "User password. Must be at least 8 chars.")
 	_ = cmd.MarkFlagRequired("password")
-
 	return cmd
 }
 
@@ -1248,7 +1214,6 @@ func newAccountGetPrefsCommand() *cobra.Command {
 		},
 	}
 
-
 	return cmd
 }
 
@@ -1269,7 +1234,7 @@ func newAccountUpdatePrefsCommand() *cobra.Command {
 				return err
 			}
 
-			result, err := service.UpdatePrefs(prefsValue, )
+			result, err := service.UpdatePrefs(prefsValue)
 			if err != nil {
 				return err
 			}
@@ -1280,7 +1245,6 @@ func newAccountUpdatePrefsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&prefs, "prefs", "", "Prefs key-value JSON object.")
 	_ = cmd.MarkFlagRequired("prefs")
-
 	return cmd
 }
 
@@ -1298,7 +1262,7 @@ func newAccountCreateRecoveryCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.CreateRecovery(email, url, )
+			result, err := service.CreateRecovery(email, url)
 			if err != nil {
 				return err
 			}
@@ -1311,7 +1275,6 @@ func newAccountCreateRecoveryCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("email")
 	cmd.Flags().StringVar(&url, "url", "", "URL to redirect the user back to your app from the recovery email. Only URLs from hostnames in your project platform list are allowed. This requirement helps to prevent an open redirect (https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.")
 	_ = cmd.MarkFlagRequired("url")
-
 	return cmd
 }
 
@@ -1330,7 +1293,7 @@ func newAccountUpdateRecoveryCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.UpdateRecovery(userId, secret, password, )
+			result, err := service.UpdateRecovery(userId, secret, password)
 			if err != nil {
 				return err
 			}
@@ -1345,7 +1308,6 @@ func newAccountUpdateRecoveryCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("secret")
 	cmd.Flags().StringVar(&password, "password", "", "New user password. Must be between 8 and 256 chars.")
 	_ = cmd.MarkFlagRequired("password")
-
 	return cmd
 }
 
@@ -1369,7 +1331,6 @@ func newAccountListSessionsCommand() *cobra.Command {
 			return app.Render(result)
 		},
 	}
-
 
 	return cmd
 }
@@ -1395,7 +1356,6 @@ func newAccountDeleteSessionsCommand() *cobra.Command {
 		},
 	}
 
-
 	return cmd
 }
 
@@ -1420,7 +1380,6 @@ func newAccountCreateAnonymousSessionCommand() *cobra.Command {
 		},
 	}
 
-
 	return cmd
 }
 
@@ -1438,7 +1397,7 @@ func newAccountCreateEmailPasswordSessionCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.CreateEmailPasswordSession(email, password, )
+			result, err := service.CreateEmailPasswordSession(email, password)
 			if err != nil {
 				return err
 			}
@@ -1451,7 +1410,6 @@ func newAccountCreateEmailPasswordSessionCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("email")
 	cmd.Flags().StringVar(&password, "password", "", "User password. Must be at least 8 chars.")
 	_ = cmd.MarkFlagRequired("password")
-
 	return cmd
 }
 
@@ -1469,7 +1427,7 @@ func newAccountUpdateMagicURLSessionCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.UpdateMagicURLSession(userId, secret, )
+			result, err := service.UpdateMagicURLSession(userId, secret)
 			if err != nil {
 				return err
 			}
@@ -1482,7 +1440,6 @@ func newAccountUpdateMagicURLSessionCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringVar(&secret, "secret", "", "Valid verification token.")
 	_ = cmd.MarkFlagRequired("secret")
-
 	return cmd
 }
 
@@ -1529,7 +1486,6 @@ func newAccountCreateOAuth2SessionCommand() *cobra.Command {
 	cmd.Flags().StringVar(&success, "success", "", "URL to redirect back to your app after a successful login attempt.  Only URLs from hostnames in your project's platform list are allowed. This requirement helps to prevent an open redirect (https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.")
 	cmd.Flags().StringVar(&failure, "failure", "", "URL to redirect back to your app after a failed login attempt.  Only URLs from hostnames in your project's platform list are allowed. This requirement helps to prevent an open redirect (https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.")
 	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "A list of custom OAuth2 scopes. Check each provider internal docs for a list of supported scopes. Maximum of 100 scopes are allowed, each 4096 characters long.")
-
 	return cmd
 }
 
@@ -1547,7 +1503,7 @@ func newAccountUpdatePhoneSessionCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.UpdatePhoneSession(userId, secret, )
+			result, err := service.UpdatePhoneSession(userId, secret)
 			if err != nil {
 				return err
 			}
@@ -1560,7 +1516,6 @@ func newAccountUpdatePhoneSessionCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringVar(&secret, "secret", "", "Valid verification token.")
 	_ = cmd.MarkFlagRequired("secret")
-
 	return cmd
 }
 
@@ -1578,7 +1533,7 @@ func newAccountCreateSessionCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.CreateSession(userId, secret, )
+			result, err := service.CreateSession(userId, secret)
 			if err != nil {
 				return err
 			}
@@ -1591,7 +1546,6 @@ func newAccountCreateSessionCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringVar(&secret, "secret", "", "Secret of a token generated by login methods. For example, the `createMagicURLToken` or `createPhoneToken` methods.")
 	_ = cmd.MarkFlagRequired("secret")
-
 	return cmd
 }
 
@@ -1608,7 +1562,7 @@ func newAccountGetSessionCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.GetSession(sessionId, )
+			result, err := service.GetSession(sessionId)
 			if err != nil {
 				return err
 			}
@@ -1617,9 +1571,8 @@ func newAccountGetSessionCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&sessionId, "session-id", "", "Session ID. Use the string 'current' to get the current device session.")
+	cmd.Flags().StringVar(&sessionId, "session-id", "", "Session ID. Use the string 'current' to get the current device session. Defaults to 'current'.")
 	_ = cmd.MarkFlagRequired("session-id")
-
 	return cmd
 }
 
@@ -1636,7 +1589,7 @@ func newAccountUpdateSessionCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.UpdateSession(sessionId, )
+			result, err := service.UpdateSession(sessionId)
 			if err != nil {
 				return err
 			}
@@ -1645,9 +1598,8 @@ func newAccountUpdateSessionCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&sessionId, "session-id", "", "Session ID. Use the string 'current' to update the current device session.")
+	cmd.Flags().StringVar(&sessionId, "session-id", "", "Session ID. Use the string 'current' to update the current device session. Defaults to 'current'.")
 	_ = cmd.MarkFlagRequired("session-id")
-
 	return cmd
 }
 
@@ -1664,7 +1616,7 @@ func newAccountDeleteSessionCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.DeleteSession(sessionId, )
+			result, err := service.DeleteSession(sessionId)
 			if err != nil {
 				return err
 			}
@@ -1673,9 +1625,8 @@ func newAccountDeleteSessionCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&sessionId, "session-id", "", "Session ID. Use the string 'current' to delete the current device session.")
+	cmd.Flags().StringVar(&sessionId, "session-id", "", "Session ID. Use the string 'current' to delete the current device session. Defaults to 'current'.")
 	_ = cmd.MarkFlagRequired("session-id")
-
 	return cmd
 }
 
@@ -1699,7 +1650,6 @@ func newAccountUpdateStatusCommand() *cobra.Command {
 			return app.Render(result)
 		},
 	}
-
 
 	return cmd
 }
@@ -1740,7 +1690,6 @@ func newAccountCreatePushTargetCommand() *cobra.Command {
 	cmd.Flags().StringVar(&identifier, "identifier", "", "The target identifier (token, email, phone etc.)")
 	_ = cmd.MarkFlagRequired("identifier")
 	cmd.Flags().StringVar(&providerId, "provider-id", "", "Provider ID. Message will be sent to this target from the specified provider ID. If no provider ID is set the first setup provider will be used.")
-
 	return cmd
 }
 
@@ -1758,7 +1707,7 @@ func newAccountUpdatePushTargetCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.UpdatePushTarget(targetId, identifier, )
+			result, err := service.UpdatePushTarget(targetId, identifier)
 			if err != nil {
 				return err
 			}
@@ -1771,7 +1720,6 @@ func newAccountUpdatePushTargetCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("target-id")
 	cmd.Flags().StringVar(&identifier, "identifier", "", "The target identifier (token, email, phone etc.)")
 	_ = cmd.MarkFlagRequired("identifier")
-
 	return cmd
 }
 
@@ -1788,7 +1736,7 @@ func newAccountDeletePushTargetCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.DeletePushTarget(targetId, )
+			result, err := service.DeletePushTarget(targetId)
 			if err != nil {
 				return err
 			}
@@ -1799,7 +1747,6 @@ func newAccountDeletePushTargetCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&targetId, "target-id", "", "Target ID.")
 	_ = cmd.MarkFlagRequired("target-id")
-
 	return cmd
 }
 
@@ -1840,7 +1787,6 @@ func newAccountCreateEmailTokenCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("email")
 	cmd.Flags().BoolVar(&phrase, "phrase", false, "Toggle for security phrase. If enabled, email will be send with a randomly generated phrase and the phrase will also be included in the response. Confirming phrases match increases the security of your authentication flow.")
 	cmd.Flags().Lookup("phrase").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -1886,7 +1832,6 @@ func newAccountCreateMagicURLTokenCommand() *cobra.Command {
 	cmd.Flags().StringVar(&url, "url", "", "URL to redirect the user back to your app from the magic URL login. Only URLs from hostnames in your project platform list are allowed. This requirement helps to prevent an open redirect (https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.")
 	cmd.Flags().BoolVar(&phrase, "phrase", false, "Toggle for security phrase. If enabled, email will be send with a randomly generated phrase and the phrase will also be included in the response. Confirming phrases match increases the security of your authentication flow.")
 	cmd.Flags().Lookup("phrase").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -1933,7 +1878,6 @@ func newAccountCreateOAuth2TokenCommand() *cobra.Command {
 	cmd.Flags().StringVar(&success, "success", "", "URL to redirect back to your app after a successful login attempt.  Only URLs from hostnames in your project's platform list are allowed. This requirement helps to prevent an open redirect (https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.")
 	cmd.Flags().StringVar(&failure, "failure", "", "URL to redirect back to your app after a failed login attempt.  Only URLs from hostnames in your project's platform list are allowed. This requirement helps to prevent an open redirect (https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.")
 	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "A list of custom OAuth2 scopes. Check each provider internal docs for a list of supported scopes. Maximum of 100 scopes are allowed, each 4096 characters long.")
-
 	return cmd
 }
 
@@ -1951,7 +1895,7 @@ func newAccountCreatePhoneTokenCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.CreatePhoneToken(userId, phone, )
+			result, err := service.CreatePhoneToken(userId, phone)
 			if err != nil {
 				return err
 			}
@@ -1964,7 +1908,6 @@ func newAccountCreatePhoneTokenCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringVar(&phone, "phone", "", "Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.")
 	_ = cmd.MarkFlagRequired("phone")
-
 	return cmd
 }
 
@@ -1981,7 +1924,7 @@ func newAccountCreateEmailVerificationCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.CreateEmailVerification(url, )
+			result, err := service.CreateEmailVerification(url)
 			if err != nil {
 				return err
 			}
@@ -1992,7 +1935,6 @@ func newAccountCreateEmailVerificationCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&url, "url", "", "URL to redirect the user back to your app from the verification email. Only URLs from hostnames in your project platform list are allowed. This requirement helps to prevent an open redirect (https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.")
 	_ = cmd.MarkFlagRequired("url")
-
 	return cmd
 }
 
@@ -2009,7 +1951,7 @@ func newAccountCreateVerificationCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.CreateVerification(url, )
+			result, err := service.CreateVerification(url)
 			if err != nil {
 				return err
 			}
@@ -2020,7 +1962,6 @@ func newAccountCreateVerificationCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&url, "url", "", "URL to redirect the user back to your app from the verification email. Only URLs from hostnames in your project platform list are allowed. This requirement helps to prevent an open redirect (https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.")
 	_ = cmd.MarkFlagRequired("url")
-
 	return cmd
 }
 
@@ -2038,7 +1979,7 @@ func newAccountUpdateEmailVerificationCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.UpdateEmailVerification(userId, secret, )
+			result, err := service.UpdateEmailVerification(userId, secret)
 			if err != nil {
 				return err
 			}
@@ -2051,7 +1992,6 @@ func newAccountUpdateEmailVerificationCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringVar(&secret, "secret", "", "Valid verification token.")
 	_ = cmd.MarkFlagRequired("secret")
-
 	return cmd
 }
 
@@ -2069,7 +2009,7 @@ func newAccountUpdateVerificationCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.UpdateVerification(userId, secret, )
+			result, err := service.UpdateVerification(userId, secret)
 			if err != nil {
 				return err
 			}
@@ -2082,7 +2022,6 @@ func newAccountUpdateVerificationCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringVar(&secret, "secret", "", "Valid verification token.")
 	_ = cmd.MarkFlagRequired("secret")
-
 	return cmd
 }
 
@@ -2107,7 +2046,6 @@ func newAccountCreatePhoneVerificationCommand() *cobra.Command {
 		},
 	}
 
-
 	return cmd
 }
 
@@ -2125,7 +2063,7 @@ func newAccountUpdatePhoneVerificationCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.UpdatePhoneVerification(userId, secret, )
+			result, err := service.UpdatePhoneVerification(userId, secret)
 			if err != nil {
 				return err
 			}
@@ -2138,7 +2076,5 @@ func newAccountUpdatePhoneVerificationCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringVar(&secret, "secret", "", "Valid verification token.")
 	_ = cmd.MarkFlagRequired("secret")
-
 	return cmd
 }
-

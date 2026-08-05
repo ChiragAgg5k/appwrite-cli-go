@@ -8,7 +8,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/app"
 )
 
-
 // NewLocaleCommand builds the `locale` command tree.
 func NewLocaleCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -49,7 +48,6 @@ func newLocaleGetCommand() *cobra.Command {
 		},
 	}
 
-
 	return cmd
 }
 
@@ -73,7 +71,6 @@ func newLocaleListCodesCommand() *cobra.Command {
 			return app.Render(result)
 		},
 	}
-
 
 	return cmd
 }
@@ -99,7 +96,6 @@ func newLocaleListContinentsCommand() *cobra.Command {
 		},
 	}
 
-
 	return cmd
 }
 
@@ -123,7 +119,6 @@ func newLocaleListCountriesCommand() *cobra.Command {
 			return app.Render(result)
 		},
 	}
-
 
 	return cmd
 }
@@ -149,7 +144,6 @@ func newLocaleListCountriesEUCommand() *cobra.Command {
 		},
 	}
 
-
 	return cmd
 }
 
@@ -173,7 +167,6 @@ func newLocaleListCountriesPhonesCommand() *cobra.Command {
 			return app.Render(result)
 		},
 	}
-
 
 	return cmd
 }
@@ -199,7 +192,6 @@ func newLocaleListCurrenciesCommand() *cobra.Command {
 		},
 	}
 
-
 	return cmd
 }
 
@@ -224,7 +216,5 @@ func newLocaleListLanguagesCommand() *cobra.Command {
 		},
 	}
 
-
 	return cmd
 }
-

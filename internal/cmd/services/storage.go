@@ -9,7 +9,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/query"
 )
 
-
 // NewStorageCommand builds the `storage` command tree.
 func NewStorageCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -67,13 +66,13 @@ func newStorageListBucketsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -115,7 +114,6 @@ func newStorageListBucketsCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -200,7 +198,6 @@ func newStorageCreateBucketCommand() *cobra.Command {
 	cmd.Flags().Lookup("antivirus").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&transformations, "transformations", false, "Are image transformations enabled?")
 	cmd.Flags().Lookup("transformations").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -217,7 +214,7 @@ func newStorageGetBucketCommand() *cobra.Command {
 			}
 			service := storage.New(client)
 
-			result, err := service.GetBucket(bucketId, )
+			result, err := service.GetBucket(bucketId)
 			if err != nil {
 				return err
 			}
@@ -228,7 +225,6 @@ func newStorageGetBucketCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&bucketId, "bucket-id", "", "Bucket unique ID.")
 	_ = cmd.MarkFlagRequired("bucket-id")
-
 	return cmd
 }
 
@@ -313,7 +309,6 @@ func newStorageUpdateBucketCommand() *cobra.Command {
 	cmd.Flags().Lookup("antivirus").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&transformations, "transformations", false, "Are image transformations enabled?")
 	cmd.Flags().Lookup("transformations").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -330,7 +325,7 @@ func newStorageDeleteBucketCommand() *cobra.Command {
 			}
 			service := storage.New(client)
 
-			result, err := service.DeleteBucket(bucketId, )
+			result, err := service.DeleteBucket(bucketId)
 			if err != nil {
 				return err
 			}
@@ -341,7 +336,6 @@ func newStorageDeleteBucketCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&bucketId, "bucket-id", "", "Bucket unique ID.")
 	_ = cmd.MarkFlagRequired("bucket-id")
-
 	return cmd
 }
 
@@ -379,13 +373,13 @@ func newStorageListFilesCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -429,7 +423,6 @@ func newStorageListFilesCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -481,7 +474,6 @@ func newStorageCreateFileCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("file")
 	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permission strings. By default, only the current user is granted all permissions. Learn more about permissions (https://appwrite.io/docs/permissions).")
 	cmd.Flags().StringVar(&folder, "folder", "", "Virtual folder to place the file in, for example \"photos/2026\". Nest folders with `/`. Defaults to the bucket root.")
-
 	return cmd
 }
 
@@ -499,7 +491,7 @@ func newStorageGetFileCommand() *cobra.Command {
 			}
 			service := storage.New(client)
 
-			result, err := service.GetFile(bucketId, fileId, )
+			result, err := service.GetFile(bucketId, fileId)
 			if err != nil {
 				return err
 			}
@@ -512,7 +504,6 @@ func newStorageGetFileCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("bucket-id")
 	cmd.Flags().StringVar(&fileId, "file-id", "", "File ID.")
 	_ = cmd.MarkFlagRequired("file-id")
-
 	return cmd
 }
 
@@ -557,7 +548,6 @@ func newStorageUpdateFileCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("file-id")
 	cmd.Flags().StringVar(&name, "name", "", "File name.")
 	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permission strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions).")
-
 	return cmd
 }
 
@@ -575,7 +565,7 @@ func newStorageDeleteFileCommand() *cobra.Command {
 			}
 			service := storage.New(client)
 
-			result, err := service.DeleteFile(bucketId, fileId, )
+			result, err := service.DeleteFile(bucketId, fileId)
 			if err != nil {
 				return err
 			}
@@ -588,7 +578,6 @@ func newStorageDeleteFileCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("bucket-id")
 	cmd.Flags().StringVar(&fileId, "file-id", "", "File ID.")
 	_ = cmd.MarkFlagRequired("file-id")
-
 	return cmd
 }
 
@@ -633,7 +622,6 @@ func newStorageGetFileDownloadCommand() *cobra.Command {
 	cmd.Flags().StringVar(&token, "token", "", "File token for accessing this file.")
 	cmd.Flags().StringVar(&destination, "destination", "", "Path to save the file to.")
 	_ = cmd.MarkFlagRequired("destination")
-
 	return cmd
 }
 
@@ -733,7 +721,6 @@ func newStorageGetFilePreviewCommand() *cobra.Command {
 	cmd.Flags().StringVar(&token, "token", "", "File token for accessing this file.")
 	cmd.Flags().StringVar(&destination, "destination", "", "Path to save the file to.")
 	_ = cmd.MarkFlagRequired("destination")
-
 	return cmd
 }
 
@@ -778,7 +765,5 @@ func newStorageGetFileViewCommand() *cobra.Command {
 	cmd.Flags().StringVar(&token, "token", "", "File token for accessing this file.")
 	cmd.Flags().StringVar(&destination, "destination", "", "Path to save the file to.")
 	_ = cmd.MarkFlagRequired("destination")
-
 	return cmd
 }
-

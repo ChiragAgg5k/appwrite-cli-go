@@ -9,7 +9,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/query"
 )
 
-
 // NewProjectCommand builds the `project` command tree.
 func NewProjectCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -147,7 +146,6 @@ func newProjectGetCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -174,7 +172,6 @@ func newProjectDeleteCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -193,7 +190,7 @@ func newProjectUpdateAuthMethodCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdateAuthMethod(methodId, enabled, )
+			result, err := service.UpdateAuthMethod(methodId, enabled)
 			if err != nil {
 				return err
 			}
@@ -207,7 +204,6 @@ func newProjectUpdateAuthMethodCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Auth method status.")
 	_ = cmd.MarkFlagRequired("enabled")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -244,13 +240,13 @@ func newProjectListKeysCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -289,7 +285,6 @@ func newProjectListKeysCommand() *cobra.Command {
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -334,7 +329,6 @@ func newProjectCreateKeyCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("scopes")
 	cmd.Flags().StringVar(&expire, "expire", "", "Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -353,7 +347,7 @@ func newProjectCreateEphemeralKeyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.CreateEphemeralKey(scopes, duration, )
+			result, err := service.CreateEphemeralKey(scopes, duration)
 			if err != nil {
 				return err
 			}
@@ -367,7 +361,6 @@ func newProjectCreateEphemeralKeyCommand() *cobra.Command {
 	cmd.Flags().IntVar(&duration, "duration", 0, "Time in seconds before ephemeral key expires. Maximum duration is 3600 seconds.")
 	_ = cmd.MarkFlagRequired("duration")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -385,7 +378,7 @@ func newProjectGetKeyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.GetKey(keyId, )
+			result, err := service.GetKey(keyId)
 			if err != nil {
 				return err
 			}
@@ -397,7 +390,6 @@ func newProjectGetKeyCommand() *cobra.Command {
 	cmd.Flags().StringVar(&keyId, "key-id", "", "Key ID.")
 	_ = cmd.MarkFlagRequired("key-id")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -442,7 +434,6 @@ func newProjectUpdateKeyCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("scopes")
 	cmd.Flags().StringVar(&expire, "expire", "", "Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -460,7 +451,7 @@ func newProjectDeleteKeyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.DeleteKey(keyId, )
+			result, err := service.DeleteKey(keyId)
 			if err != nil {
 				return err
 			}
@@ -472,7 +463,6 @@ func newProjectDeleteKeyCommand() *cobra.Command {
 	cmd.Flags().StringVar(&keyId, "key-id", "", "Key ID.")
 	_ = cmd.MarkFlagRequired("key-id")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -490,7 +480,7 @@ func newProjectUpdateLabelsCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdateLabels(labels, )
+			result, err := service.UpdateLabels(labels)
 			if err != nil {
 				return err
 			}
@@ -502,7 +492,6 @@ func newProjectUpdateLabelsCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&labels, "labels", nil, "Array of project labels. Replaces the previous labels. Maximum of 1000 labels are allowed, each up to 36 alphanumeric characters long.")
 	_ = cmd.MarkFlagRequired("labels")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -523,11 +512,10 @@ func newProjectListMockPhonesCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-
 			queries, err := query.Build(query.Options{
 				Queries: queries,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Limit:   app.FlagInt(cmd, "limit", limit),
+				Offset:  app.FlagInt(cmd, "offset", offset),
 			})
 			if err != nil {
 				return err
@@ -558,7 +546,6 @@ func newProjectListMockPhonesCommand() *cobra.Command {
 	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -577,7 +564,7 @@ func newProjectCreateMockPhoneCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.CreateMockPhone(number, otp, )
+			result, err := service.CreateMockPhone(number, otp)
 			if err != nil {
 				return err
 			}
@@ -591,7 +578,6 @@ func newProjectCreateMockPhoneCommand() *cobra.Command {
 	cmd.Flags().StringVar(&otp, "otp", "", "One-time password (OTP) to associate with the mock phone. Must be a 6-digit numeric code.")
 	_ = cmd.MarkFlagRequired("otp")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -609,7 +595,7 @@ func newProjectGetMockPhoneCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.GetMockPhone(number, )
+			result, err := service.GetMockPhone(number)
 			if err != nil {
 				return err
 			}
@@ -621,7 +607,6 @@ func newProjectGetMockPhoneCommand() *cobra.Command {
 	cmd.Flags().StringVar(&number, "number", "", "Phone number associated with the mock phone. Must be a valid E.164 formatted phone number.")
 	_ = cmd.MarkFlagRequired("number")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -640,7 +625,7 @@ func newProjectUpdateMockPhoneCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdateMockPhone(number, otp, )
+			result, err := service.UpdateMockPhone(number, otp)
 			if err != nil {
 				return err
 			}
@@ -654,7 +639,6 @@ func newProjectUpdateMockPhoneCommand() *cobra.Command {
 	cmd.Flags().StringVar(&otp, "otp", "", "One-time password (OTP) to associate with the mock phone. Must be a 6-digit numeric code.")
 	_ = cmd.MarkFlagRequired("otp")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -672,7 +656,7 @@ func newProjectDeleteMockPhoneCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.DeleteMockPhone(number, )
+			result, err := service.DeleteMockPhone(number)
 			if err != nil {
 				return err
 			}
@@ -684,7 +668,6 @@ func newProjectDeleteMockPhoneCommand() *cobra.Command {
 	cmd.Flags().StringVar(&number, "number", "", "Phone number associated with the mock phone. Must be a valid E.164 formatted phone number.")
 	_ = cmd.MarkFlagRequired("number")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -705,11 +688,10 @@ func newProjectListOAuth2ProvidersCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-
 			queries, err := query.Build(query.Options{
 				Queries: queries,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Limit:   app.FlagInt(cmd, "limit", limit),
+				Offset:  app.FlagInt(cmd, "offset", offset),
 			})
 			if err != nil {
 				return err
@@ -740,7 +722,6 @@ func newProjectListOAuth2ProvidersCommand() *cobra.Command {
 	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -843,7 +824,6 @@ func newProjectUpdateOAuth2ServerCommand() *cobra.Command {
 	cmd.Flags().IntVar(&deviceCodeDuration, "device-code-duration", 0, "Lifetime in seconds of device flow device codes and user codes. Device codes are intentionally short-lived. Leave empty to use default 600.")
 	cmd.Flags().StringArrayVar(&defaultScopes, "default-scopes", nil, "List of OAuth2 scopes used when an authorization request omits the scope parameter. Every default scope must also be allowed by the OAuth2 server. Maximum of 100 scopes are allowed, each up to 128 characters long.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -890,7 +870,6 @@ func newProjectUpdateOAuth2AmazonCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -947,7 +926,6 @@ func newProjectUpdateOAuth2AppleCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -994,7 +972,6 @@ func newProjectUpdateOAuth2AppwriteCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -1046,7 +1023,6 @@ func newProjectUpdateOAuth2Auth0Command() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -1098,7 +1074,6 @@ func newProjectUpdateOAuth2AuthentikCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -1145,7 +1120,6 @@ func newProjectUpdateOAuth2AutodeskCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -1192,7 +1166,6 @@ func newProjectUpdateOAuth2BitbucketCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -1239,7 +1212,6 @@ func newProjectUpdateOAuth2BitlyCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -1286,7 +1258,6 @@ func newProjectUpdateOAuth2BoxCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -1333,7 +1304,6 @@ func newProjectUpdateOAuth2DailymotionCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -1380,7 +1350,6 @@ func newProjectUpdateOAuth2DiscordCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -1427,7 +1396,6 @@ func newProjectUpdateOAuth2DisqusCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -1474,7 +1442,6 @@ func newProjectUpdateOAuth2DropboxCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -1521,7 +1488,6 @@ func newProjectUpdateOAuth2EtsyCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -1568,7 +1534,6 @@ func newProjectUpdateOAuth2FacebookCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -1615,7 +1580,6 @@ func newProjectUpdateOAuth2FigmaCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -1667,7 +1631,6 @@ func newProjectUpdateOAuth2FusionAuthCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -1714,7 +1677,6 @@ func newProjectUpdateOAuth2GitHubCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -1766,7 +1728,6 @@ func newProjectUpdateOAuth2GitlabCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -1818,7 +1779,6 @@ func newProjectUpdateOAuth2GoogleCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -1875,7 +1835,6 @@ func newProjectUpdateOAuth2KeycloakCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -1922,7 +1881,6 @@ func newProjectUpdateOAuth2KickCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -1969,7 +1927,6 @@ func newProjectUpdateOAuth2LinkedinCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -2021,7 +1978,6 @@ func newProjectUpdateOAuth2MicrosoftCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -2068,7 +2024,6 @@ func newProjectUpdateOAuth2NotionCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -2145,7 +2100,6 @@ func newProjectUpdateOAuth2OidcCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -2202,7 +2156,6 @@ func newProjectUpdateOAuth2OktaCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -2249,7 +2202,6 @@ func newProjectUpdateOAuth2PaypalCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -2296,7 +2248,6 @@ func newProjectUpdateOAuth2PaypalSandboxCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -2343,7 +2294,6 @@ func newProjectUpdateOAuth2PodioCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -2390,7 +2340,6 @@ func newProjectUpdateOAuth2SalesforceCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -2437,7 +2386,6 @@ func newProjectUpdateOAuth2SlackCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -2484,7 +2432,6 @@ func newProjectUpdateOAuth2SpotifyCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -2531,7 +2478,6 @@ func newProjectUpdateOAuth2StripeCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -2578,7 +2524,6 @@ func newProjectUpdateOAuth2TradeshiftCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -2625,7 +2570,6 @@ func newProjectUpdateOAuth2TradeshiftSandboxCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -2672,7 +2616,6 @@ func newProjectUpdateOAuth2TwitchCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -2719,7 +2662,6 @@ func newProjectUpdateOAuth2WordPressCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -2766,7 +2708,6 @@ func newProjectUpdateOAuth2XCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -2813,7 +2754,6 @@ func newProjectUpdateOAuth2YahooCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -2860,7 +2800,6 @@ func newProjectUpdateOAuth2YandexCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -2907,7 +2846,6 @@ func newProjectUpdateOAuth2ZohoCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -2954,7 +2892,6 @@ func newProjectUpdateOAuth2ZoomCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -2972,7 +2909,7 @@ func newProjectGetOAuth2ProviderCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.GetOAuth2Provider(providerId, )
+			result, err := service.GetOAuth2Provider(providerId)
 			if err != nil {
 				return err
 			}
@@ -2984,7 +2921,6 @@ func newProjectGetOAuth2ProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&providerId, "provider-id", "", "OAuth2 provider key. For example: github, google, apple.")
 	_ = cmd.MarkFlagRequired("provider-id")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3021,13 +2957,13 @@ func newProjectListPlatformsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -3066,7 +3002,6 @@ func newProjectListPlatformsCommand() *cobra.Command {
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3086,7 +3021,7 @@ func newProjectCreateAndroidPlatformCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.CreateAndroidPlatform(platformId, name, applicationId, )
+			result, err := service.CreateAndroidPlatform(platformId, name, applicationId)
 			if err != nil {
 				return err
 			}
@@ -3102,7 +3037,6 @@ func newProjectCreateAndroidPlatformCommand() *cobra.Command {
 	cmd.Flags().StringVar(&applicationId, "application-id", "", "Android application ID. Max length: 256 chars.")
 	_ = cmd.MarkFlagRequired("application-id")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3122,7 +3056,7 @@ func newProjectUpdateAndroidPlatformCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdateAndroidPlatform(platformId, name, applicationId, )
+			result, err := service.UpdateAndroidPlatform(platformId, name, applicationId)
 			if err != nil {
 				return err
 			}
@@ -3138,7 +3072,6 @@ func newProjectUpdateAndroidPlatformCommand() *cobra.Command {
 	cmd.Flags().StringVar(&applicationId, "application-id", "", "Android application ID. Max length: 256 chars.")
 	_ = cmd.MarkFlagRequired("application-id")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3158,7 +3091,7 @@ func newProjectCreateApplePlatformCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.CreateApplePlatform(platformId, name, bundleIdentifier, )
+			result, err := service.CreateApplePlatform(platformId, name, bundleIdentifier)
 			if err != nil {
 				return err
 			}
@@ -3174,7 +3107,6 @@ func newProjectCreateApplePlatformCommand() *cobra.Command {
 	cmd.Flags().StringVar(&bundleIdentifier, "bundle-identifier", "", "Apple bundle identifier. Max length: 256 chars.")
 	_ = cmd.MarkFlagRequired("bundle-identifier")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3194,7 +3126,7 @@ func newProjectUpdateApplePlatformCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdateApplePlatform(platformId, name, bundleIdentifier, )
+			result, err := service.UpdateApplePlatform(platformId, name, bundleIdentifier)
 			if err != nil {
 				return err
 			}
@@ -3210,7 +3142,6 @@ func newProjectUpdateApplePlatformCommand() *cobra.Command {
 	cmd.Flags().StringVar(&bundleIdentifier, "bundle-identifier", "", "Apple bundle identifier. Max length: 256 chars.")
 	_ = cmd.MarkFlagRequired("bundle-identifier")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3230,7 +3161,7 @@ func newProjectCreateLinuxPlatformCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.CreateLinuxPlatform(platformId, name, packageName, )
+			result, err := service.CreateLinuxPlatform(platformId, name, packageName)
 			if err != nil {
 				return err
 			}
@@ -3246,7 +3177,6 @@ func newProjectCreateLinuxPlatformCommand() *cobra.Command {
 	cmd.Flags().StringVar(&packageName, "package-name", "", "Linux package name. Max length: 256 chars.")
 	_ = cmd.MarkFlagRequired("package-name")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3266,7 +3196,7 @@ func newProjectUpdateLinuxPlatformCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdateLinuxPlatform(platformId, name, packageName, )
+			result, err := service.UpdateLinuxPlatform(platformId, name, packageName)
 			if err != nil {
 				return err
 			}
@@ -3282,7 +3212,6 @@ func newProjectUpdateLinuxPlatformCommand() *cobra.Command {
 	cmd.Flags().StringVar(&packageName, "package-name", "", "Linux package name. Max length: 256 chars.")
 	_ = cmd.MarkFlagRequired("package-name")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3302,7 +3231,7 @@ func newProjectCreateWebPlatformCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.CreateWebPlatform(platformId, name, hostname, )
+			result, err := service.CreateWebPlatform(platformId, name, hostname)
 			if err != nil {
 				return err
 			}
@@ -3318,7 +3247,6 @@ func newProjectCreateWebPlatformCommand() *cobra.Command {
 	cmd.Flags().StringVar(&hostname, "hostname", "", "Platform web hostname. Max length: 256 chars.")
 	_ = cmd.MarkFlagRequired("hostname")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3338,7 +3266,7 @@ func newProjectUpdateWebPlatformCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdateWebPlatform(platformId, name, hostname, )
+			result, err := service.UpdateWebPlatform(platformId, name, hostname)
 			if err != nil {
 				return err
 			}
@@ -3354,7 +3282,6 @@ func newProjectUpdateWebPlatformCommand() *cobra.Command {
 	cmd.Flags().StringVar(&hostname, "hostname", "", "Platform web hostname. Max length: 256 chars.")
 	_ = cmd.MarkFlagRequired("hostname")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3374,7 +3301,7 @@ func newProjectCreateWindowsPlatformCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.CreateWindowsPlatform(platformId, name, packageIdentifierName, )
+			result, err := service.CreateWindowsPlatform(platformId, name, packageIdentifierName)
 			if err != nil {
 				return err
 			}
@@ -3390,7 +3317,6 @@ func newProjectCreateWindowsPlatformCommand() *cobra.Command {
 	cmd.Flags().StringVar(&packageIdentifierName, "package-identifier-name", "", "Windows package identifier name. Max length: 256 chars.")
 	_ = cmd.MarkFlagRequired("package-identifier-name")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3410,7 +3336,7 @@ func newProjectUpdateWindowsPlatformCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdateWindowsPlatform(platformId, name, packageIdentifierName, )
+			result, err := service.UpdateWindowsPlatform(platformId, name, packageIdentifierName)
 			if err != nil {
 				return err
 			}
@@ -3426,7 +3352,6 @@ func newProjectUpdateWindowsPlatformCommand() *cobra.Command {
 	cmd.Flags().StringVar(&packageIdentifierName, "package-identifier-name", "", "Windows package identifier name. Max length: 256 chars.")
 	_ = cmd.MarkFlagRequired("package-identifier-name")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3444,7 +3369,7 @@ func newProjectGetPlatformCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.GetPlatform(platformId, )
+			result, err := service.GetPlatform(platformId)
 			if err != nil {
 				return err
 			}
@@ -3456,7 +3381,6 @@ func newProjectGetPlatformCommand() *cobra.Command {
 	cmd.Flags().StringVar(&platformId, "platform-id", "", "Platform ID.")
 	_ = cmd.MarkFlagRequired("platform-id")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3474,7 +3398,7 @@ func newProjectDeletePlatformCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.DeletePlatform(platformId, )
+			result, err := service.DeletePlatform(platformId)
 			if err != nil {
 				return err
 			}
@@ -3486,7 +3410,6 @@ func newProjectDeletePlatformCommand() *cobra.Command {
 	cmd.Flags().StringVar(&platformId, "platform-id", "", "Platform ID.")
 	_ = cmd.MarkFlagRequired("platform-id")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3507,11 +3430,10 @@ func newProjectListPoliciesCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-
 			queries, err := query.Build(query.Options{
 				Queries: queries,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Limit:   app.FlagInt(cmd, "limit", limit),
+				Offset:  app.FlagInt(cmd, "offset", offset),
 			})
 			if err != nil {
 				return err
@@ -3542,7 +3464,6 @@ func newProjectListPoliciesCommand() *cobra.Command {
 	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3560,7 +3481,7 @@ func newProjectUpdateDenyAliasedEmailPolicyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdateDenyAliasedEmailPolicy(enabled, )
+			result, err := service.UpdateDenyAliasedEmailPolicy(enabled)
 			if err != nil {
 				return err
 			}
@@ -3572,7 +3493,6 @@ func newProjectUpdateDenyAliasedEmailPolicyCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set whether or not to block aliased emails during signup and email updates.")
 	_ = cmd.MarkFlagRequired("enabled")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3590,7 +3510,7 @@ func newProjectUpdateDenyCorporateEmailPolicyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdateDenyCorporateEmailPolicy(enabled, )
+			result, err := service.UpdateDenyCorporateEmailPolicy(enabled)
 			if err != nil {
 				return err
 			}
@@ -3602,7 +3522,6 @@ func newProjectUpdateDenyCorporateEmailPolicyCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set whether or not to restrict sign-ups and email updates to corporate email addresses only.")
 	_ = cmd.MarkFlagRequired("enabled")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3620,7 +3539,7 @@ func newProjectUpdateDenyDisposableEmailPolicyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdateDenyDisposableEmailPolicy(enabled, )
+			result, err := service.UpdateDenyDisposableEmailPolicy(enabled)
 			if err != nil {
 				return err
 			}
@@ -3632,7 +3551,6 @@ func newProjectUpdateDenyDisposableEmailPolicyCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set whether or not to block disposable email addresses during signup and email updates.")
 	_ = cmd.MarkFlagRequired("enabled")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3650,7 +3568,7 @@ func newProjectUpdateDenyFreeEmailPolicyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdateDenyFreeEmailPolicy(enabled, )
+			result, err := service.UpdateDenyFreeEmailPolicy(enabled)
 			if err != nil {
 				return err
 			}
@@ -3662,7 +3580,6 @@ func newProjectUpdateDenyFreeEmailPolicyCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set whether or not to block free email addresses during signup and email updates.")
 	_ = cmd.MarkFlagRequired("enabled")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3729,7 +3646,6 @@ func newProjectUpdateMembershipPrivacyPolicyCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&userAccessedAt, "user-accessed-at", false, "Set to true if you want make user last access time visible to all team members, or false to hide it.")
 	cmd.Flags().Lookup("user-accessed-at").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3747,7 +3663,7 @@ func newProjectUpdatePasswordDictionaryPolicyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdatePasswordDictionaryPolicy(enabled, )
+			result, err := service.UpdatePasswordDictionaryPolicy(enabled)
 			if err != nil {
 				return err
 			}
@@ -3759,7 +3675,6 @@ func newProjectUpdatePasswordDictionaryPolicyCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Toggle password dictionary policy. Set to true if you want password change to block passwords in the dictionary, or false to allow them. When changing this policy, existing passwords remain valid.")
 	_ = cmd.MarkFlagRequired("enabled")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3777,7 +3692,7 @@ func newProjectUpdatePasswordHistoryPolicyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdatePasswordHistoryPolicy(total, )
+			result, err := service.UpdatePasswordHistoryPolicy(total)
 			if err != nil {
 				return err
 			}
@@ -3789,7 +3704,6 @@ func newProjectUpdatePasswordHistoryPolicyCommand() *cobra.Command {
 	cmd.Flags().IntVar(&total, "total", 0, "Set the password history length per user. Value can be between 1 and 20, or null to disable the limit.")
 	_ = cmd.MarkFlagRequired("total")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3807,7 +3721,7 @@ func newProjectUpdatePasswordPersonalDataPolicyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdatePasswordPersonalDataPolicy(enabled, )
+			result, err := service.UpdatePasswordPersonalDataPolicy(enabled)
 			if err != nil {
 				return err
 			}
@@ -3819,7 +3733,6 @@ func newProjectUpdatePasswordPersonalDataPolicyCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Toggle password personal data policy. Set to true if you want to block passwords including user's personal data, or false to allow it. When changing this policy, existing passwords remain valid.")
 	_ = cmd.MarkFlagRequired("enabled")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3879,7 +3792,6 @@ func newProjectUpdatePasswordStrengthPolicyCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&symbols, "symbols", false, "Whether passwords must include at least one symbol.")
 	cmd.Flags().Lookup("symbols").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3897,7 +3809,7 @@ func newProjectUpdateSessionAlertPolicyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdateSessionAlertPolicy(enabled, )
+			result, err := service.UpdateSessionAlertPolicy(enabled)
 			if err != nil {
 				return err
 			}
@@ -3909,7 +3821,6 @@ func newProjectUpdateSessionAlertPolicyCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Toggle session alert policy. Set to true if you want users to receive email notifications when a sessions are created for their users, or false to not send email alerts.")
 	_ = cmd.MarkFlagRequired("enabled")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3927,7 +3838,7 @@ func newProjectUpdateSessionDurationPolicyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdateSessionDurationPolicy(duration, )
+			result, err := service.UpdateSessionDurationPolicy(duration)
 			if err != nil {
 				return err
 			}
@@ -3939,7 +3850,6 @@ func newProjectUpdateSessionDurationPolicyCommand() *cobra.Command {
 	cmd.Flags().IntVar(&duration, "duration", 0, "Maximum session length in seconds. Minium allowed value is 60 seconds, and maximum is 1 year, which is 31536000 seconds.")
 	_ = cmd.MarkFlagRequired("duration")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3957,7 +3867,7 @@ func newProjectUpdateSessionInvalidationPolicyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdateSessionInvalidationPolicy(enabled, )
+			result, err := service.UpdateSessionInvalidationPolicy(enabled)
 			if err != nil {
 				return err
 			}
@@ -3969,7 +3879,6 @@ func newProjectUpdateSessionInvalidationPolicyCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Toggle session invalidation policy. Set to true if you want password change to invalidate all sessions of an user, or false to keep sessions active.")
 	_ = cmd.MarkFlagRequired("enabled")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -3987,7 +3896,7 @@ func newProjectUpdateSessionLimitPolicyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdateSessionLimitPolicy(total, )
+			result, err := service.UpdateSessionLimitPolicy(total)
 			if err != nil {
 				return err
 			}
@@ -3999,7 +3908,6 @@ func newProjectUpdateSessionLimitPolicyCommand() *cobra.Command {
 	cmd.Flags().IntVar(&total, "total", 0, "Set the maximum number of sessions allowed per user. Value can be between 1 and 100.")
 	_ = cmd.MarkFlagRequired("total")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -4017,7 +3925,7 @@ func newProjectUpdateUserLimitPolicyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdateUserLimitPolicy(total, )
+			result, err := service.UpdateUserLimitPolicy(total)
 			if err != nil {
 				return err
 			}
@@ -4029,7 +3937,6 @@ func newProjectUpdateUserLimitPolicyCommand() *cobra.Command {
 	cmd.Flags().IntVar(&total, "total", 0, "Set the maximum number of users allowed in the project. Value can be between 0 and 10000. Use 0 or null to disable the limit.")
 	_ = cmd.MarkFlagRequired("total")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -4047,7 +3954,7 @@ func newProjectGetPolicyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.GetPolicy(policyId, )
+			result, err := service.GetPolicy(policyId)
 			if err != nil {
 				return err
 			}
@@ -4059,7 +3966,6 @@ func newProjectGetPolicyCommand() *cobra.Command {
 	cmd.Flags().StringVar(&policyId, "policy-id", "", "Policy ID. Can be one of: password-dictionary, password-history, password-strength, password-personal-data, session-alert, session-duration, session-invalidation, session-limit, user-limit, membership-privacy, deny-aliased-email, deny-disposable-email, deny-free-email, deny-corporate-email.")
 	_ = cmd.MarkFlagRequired("policy-id")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -4078,7 +3984,7 @@ func newProjectUpdateProtocolCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdateProtocol(protocolId, enabled, )
+			result, err := service.UpdateProtocol(protocolId, enabled)
 			if err != nil {
 				return err
 			}
@@ -4092,7 +3998,6 @@ func newProjectUpdateProtocolCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Protocol status.")
 	_ = cmd.MarkFlagRequired("enabled")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -4111,7 +4016,7 @@ func newProjectUpdateServiceCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdateService(serviceId, enabled, )
+			result, err := service.UpdateService(serviceId, enabled)
 			if err != nil {
 				return err
 			}
@@ -4125,7 +4030,6 @@ func newProjectUpdateServiceCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Service status.")
 	_ = cmd.MarkFlagRequired("enabled")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -4207,7 +4111,6 @@ func newProjectUpdateSMTPCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Enable or disable custom SMTP. Custom SMTP is useful for branding purposes, but also allows use of custom email templates.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -4225,7 +4128,7 @@ func newProjectCreateSMTPTestCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.CreateSMTPTest(emails, )
+			result, err := service.CreateSMTPTest(emails)
 			if err != nil {
 				return err
 			}
@@ -4237,7 +4140,6 @@ func newProjectCreateSMTPTestCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&emails, "emails", nil, "Array of emails to send test email to. Maximum of 10 emails are allowed.")
 	_ = cmd.MarkFlagRequired("emails")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -4258,11 +4160,10 @@ func newProjectListEmailTemplatesCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-
 			queries, err := query.Build(query.Options{
 				Queries: queries,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Limit:   app.FlagInt(cmd, "limit", limit),
+				Offset:  app.FlagInt(cmd, "offset", offset),
 			})
 			if err != nil {
 				return err
@@ -4293,7 +4194,6 @@ func newProjectListEmailTemplatesCommand() *cobra.Command {
 	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -4362,7 +4262,6 @@ func newProjectUpdateEmailTemplateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&replyToEmail, "reply-to-email", "", "Reply to email. Pass an empty string to clear a previously set value.")
 	cmd.Flags().StringVar(&replyToName, "reply-to-name", "", "Reply to name.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -4401,7 +4300,6 @@ func newProjectGetEmailTemplateCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("template-id")
 	cmd.Flags().StringVar(&locale, "locale", "", "Custom email template locale. If left empty, the fallback locale (en) will be used.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -4443,7 +4341,6 @@ func newProjectGetUsageCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("end-date")
 	cmd.Flags().StringVar(&period, "period", "", "Period used")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -4480,13 +4377,13 @@ func newProjectListVariablesCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -4525,7 +4422,6 @@ func newProjectListVariablesCommand() *cobra.Command {
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -4571,7 +4467,6 @@ func newProjectCreateVariableCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&secret, "secret", false, "Secret variables can be updated or deleted, but only projects can read them during build and runtime.")
 	cmd.Flags().Lookup("secret").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -4589,7 +4484,7 @@ func newProjectGetVariableCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.GetVariable(variableId, )
+			result, err := service.GetVariable(variableId)
 			if err != nil {
 				return err
 			}
@@ -4601,7 +4496,6 @@ func newProjectGetVariableCommand() *cobra.Command {
 	cmd.Flags().StringVar(&variableId, "variable-id", "", "Variable unique ID.")
 	_ = cmd.MarkFlagRequired("variable-id")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -4651,7 +4545,6 @@ func newProjectUpdateVariableCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&secret, "secret", false, "Secret variables can be updated or deleted, but only projects can read them during build and runtime.")
 	cmd.Flags().Lookup("secret").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -4669,7 +4562,7 @@ func newProjectDeleteVariableCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.DeleteVariable(variableId, )
+			result, err := service.DeleteVariable(variableId)
 			if err != nil {
 				return err
 			}
@@ -4681,7 +4574,5 @@ func newProjectDeleteVariableCommand() *cobra.Command {
 	cmd.Flags().StringVar(&variableId, "variable-id", "", "Variable unique ID.")
 	_ = cmd.MarkFlagRequired("variable-id")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-
 	return cmd
 }
-

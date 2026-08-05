@@ -9,7 +9,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/query"
 )
 
-
 // NewVcsCommand builds the `vcs` command tree.
 func NewVcsCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -71,7 +70,6 @@ func newVcsCreateRepositoryDetectionCommand() *cobra.Command {
 	cmd.Flags().StringVar(&typeArg, "type", "", "Detector type. Must be one of the following: runtime, framework")
 	_ = cmd.MarkFlagRequired("type")
 	cmd.Flags().StringVar(&providerRootDirectory, "provider-root-directory", "", "Path to Root Directory")
-
 	return cmd
 }
 
@@ -109,13 +107,13 @@ func newVcsListRepositoriesCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -156,7 +154,6 @@ func newVcsListRepositoriesCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -199,7 +196,6 @@ func newVcsCreateRepositoryCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&xprivate, "xprivate", false, "Mark repository public or private")
 	_ = cmd.MarkFlagRequired("xprivate")
 	cmd.Flags().StringVar(&providerNamespace, "provider-namespace", "", "Namespace of the git repository. Defaults to the installation's own namespace.")
-
 	return cmd
 }
 
@@ -217,7 +213,7 @@ func newVcsGetRepositoryCommand() *cobra.Command {
 			}
 			service := vcs.New(client)
 
-			result, err := service.GetRepository(installationId, providerRepositoryId, )
+			result, err := service.GetRepository(installationId, providerRepositoryId)
 			if err != nil {
 				return err
 			}
@@ -230,7 +226,6 @@ func newVcsGetRepositoryCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("installation-id")
 	cmd.Flags().StringVar(&providerRepositoryId, "provider-repository-id", "", "Repository Id")
 	_ = cmd.MarkFlagRequired("provider-repository-id")
-
 	return cmd
 }
 
@@ -268,13 +263,13 @@ func newVcsListRepositoryBranchesCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -315,7 +310,6 @@ func newVcsListRepositoryBranchesCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -360,7 +354,6 @@ func newVcsGetRepositoryContentsCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("provider-repository-id")
 	cmd.Flags().StringVar(&providerRootDirectory, "provider-root-directory", "", "Path to get contents of nested directory")
 	cmd.Flags().StringVar(&providerReference, "provider-reference", "", "Git reference (branch, tag, commit) to get contents from")
-
 	return cmd
 }
 
@@ -379,7 +372,7 @@ func newVcsUpdateExternalDeploymentsCommand() *cobra.Command {
 			}
 			service := vcs.New(client)
 
-			result, err := service.UpdateExternalDeployments(installationId, repositoryId, providerPullRequestId, )
+			result, err := service.UpdateExternalDeployments(installationId, repositoryId, providerPullRequestId)
 			if err != nil {
 				return err
 			}
@@ -394,7 +387,6 @@ func newVcsUpdateExternalDeploymentsCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("repository-id")
 	cmd.Flags().StringVar(&providerPullRequestId, "provider-pull-request-id", "", "GitHub Pull Request Id")
 	_ = cmd.MarkFlagRequired("provider-pull-request-id")
-
 	return cmd
 }
 
@@ -431,13 +423,13 @@ func newVcsListInstallationsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -479,7 +471,6 @@ func newVcsListInstallationsCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -496,7 +487,7 @@ func newVcsGetInstallationCommand() *cobra.Command {
 			}
 			service := vcs.New(client)
 
-			result, err := service.GetInstallation(installationId, )
+			result, err := service.GetInstallation(installationId)
 			if err != nil {
 				return err
 			}
@@ -507,7 +498,6 @@ func newVcsGetInstallationCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&installationId, "installation-id", "", "Installation Id")
 	_ = cmd.MarkFlagRequired("installation-id")
-
 	return cmd
 }
 
@@ -524,7 +514,7 @@ func newVcsDeleteInstallationCommand() *cobra.Command {
 			}
 			service := vcs.New(client)
 
-			result, err := service.DeleteInstallation(installationId, )
+			result, err := service.DeleteInstallation(installationId)
 			if err != nil {
 				return err
 			}
@@ -535,7 +525,6 @@ func newVcsDeleteInstallationCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&installationId, "installation-id", "", "Installation Id")
 	_ = cmd.MarkFlagRequired("installation-id")
-
 	return cmd
 }
 
@@ -556,11 +545,10 @@ func newVcsListNamespacesCommand() *cobra.Command {
 			}
 			service := vcs.New(client)
 
-
 			queries, err := query.Build(query.Options{
 				Queries: queries,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Limit:   app.FlagInt(cmd, "limit", limit),
+				Offset:  app.FlagInt(cmd, "offset", offset),
 			})
 			if err != nil {
 				return err
@@ -591,7 +579,5 @@ func newVcsListNamespacesCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset")
 	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
-
 	return cmd
 }
-

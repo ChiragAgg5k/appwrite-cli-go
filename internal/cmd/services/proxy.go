@@ -9,7 +9,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/query"
 )
 
-
 // NewProxyCommand builds the `proxy` command tree.
 func NewProxyCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -61,13 +60,13 @@ func newProxyListRulesCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -105,7 +104,6 @@ func newProxyListRulesCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -122,7 +120,7 @@ func newProxyCreateAPIRuleCommand() *cobra.Command {
 			}
 			service := proxy.New(client)
 
-			result, err := service.CreateAPIRule(domain, )
+			result, err := service.CreateAPIRule(domain)
 			if err != nil {
 				return err
 			}
@@ -133,7 +131,6 @@ func newProxyCreateAPIRuleCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&domain, "domain", "", "Domain name.")
 	_ = cmd.MarkFlagRequired("domain")
-
 	return cmd
 }
 
@@ -173,7 +170,6 @@ func newProxyCreateFunctionRuleCommand() *cobra.Command {
 	cmd.Flags().StringVar(&functionId, "function-id", "", "ID of function to be executed.")
 	_ = cmd.MarkFlagRequired("function-id")
 	cmd.Flags().StringVar(&branch, "branch", "", "Name of VCS branch to deploy changes automatically")
-
 	return cmd
 }
 
@@ -194,7 +190,7 @@ func newProxyCreateRedirectRuleCommand() *cobra.Command {
 			}
 			service := proxy.New(client)
 
-			result, err := service.CreateRedirectRule(domain, url, statusCode, resourceId, resourceType, )
+			result, err := service.CreateRedirectRule(domain, url, statusCode, resourceId, resourceType)
 			if err != nil {
 				return err
 			}
@@ -213,7 +209,6 @@ func newProxyCreateRedirectRuleCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("resource-id")
 	cmd.Flags().StringVar(&resourceType, "resource-type", "", "Type of parent resource.")
 	_ = cmd.MarkFlagRequired("resource-type")
-
 	return cmd
 }
 
@@ -253,7 +248,6 @@ func newProxyCreateSiteRuleCommand() *cobra.Command {
 	cmd.Flags().StringVar(&siteId, "site-id", "", "ID of site to be executed.")
 	_ = cmd.MarkFlagRequired("site-id")
 	cmd.Flags().StringVar(&branch, "branch", "", "Name of VCS branch to deploy changes automatically")
-
 	return cmd
 }
 
@@ -270,7 +264,7 @@ func newProxyGetRuleCommand() *cobra.Command {
 			}
 			service := proxy.New(client)
 
-			result, err := service.GetRule(ruleId, )
+			result, err := service.GetRule(ruleId)
 			if err != nil {
 				return err
 			}
@@ -281,7 +275,6 @@ func newProxyGetRuleCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&ruleId, "rule-id", "", "Rule ID.")
 	_ = cmd.MarkFlagRequired("rule-id")
-
 	return cmd
 }
 
@@ -298,7 +291,7 @@ func newProxyDeleteRuleCommand() *cobra.Command {
 			}
 			service := proxy.New(client)
 
-			result, err := service.DeleteRule(ruleId, )
+			result, err := service.DeleteRule(ruleId)
 			if err != nil {
 				return err
 			}
@@ -309,7 +302,6 @@ func newProxyDeleteRuleCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&ruleId, "rule-id", "", "Rule ID.")
 	_ = cmd.MarkFlagRequired("rule-id")
-
 	return cmd
 }
 
@@ -326,7 +318,7 @@ func newProxyUpdateRuleStatusCommand() *cobra.Command {
 			}
 			service := proxy.New(client)
 
-			result, err := service.UpdateRuleStatus(ruleId, )
+			result, err := service.UpdateRuleStatus(ruleId)
 			if err != nil {
 				return err
 			}
@@ -337,7 +329,5 @@ func newProxyUpdateRuleStatusCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&ruleId, "rule-id", "", "Rule ID.")
 	_ = cmd.MarkFlagRequired("rule-id")
-
 	return cmd
 }
-

@@ -9,7 +9,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/query"
 )
 
-
 // NewWebhooksCommand builds the `webhooks` command tree.
 func NewWebhooksCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -59,13 +58,13 @@ func newWebhooksListCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -103,7 +102,6 @@ func newWebhooksListCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -171,7 +169,6 @@ func newWebhooksCreateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&authUsername, "auth-username", "", "Webhook HTTP user. Max length: 256 chars.")
 	cmd.Flags().StringVar(&authPassword, "auth-password", "", "Webhook HTTP password. Max length: 256 chars.")
 	cmd.Flags().StringVar(&secret, "secret", "", "Webhook secret key. If not provided, a new key will be generated automatically. Key must be at least 8 characters long, and at max 256 characters.")
-
 	return cmd
 }
 
@@ -188,7 +185,7 @@ func newWebhooksGetCommand() *cobra.Command {
 			}
 			service := webhooks.New(client)
 
-			result, err := service.Get(webhookId, )
+			result, err := service.Get(webhookId)
 			if err != nil {
 				return err
 			}
@@ -199,7 +196,6 @@ func newWebhooksGetCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&webhookId, "webhook-id", "", "Webhook ID.")
 	_ = cmd.MarkFlagRequired("webhook-id")
-
 	return cmd
 }
 
@@ -262,7 +258,6 @@ func newWebhooksUpdateCommand() *cobra.Command {
 	cmd.Flags().Lookup("tls").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&authUsername, "auth-username", "", "Webhook HTTP user. Max length: 256 chars.")
 	cmd.Flags().StringVar(&authPassword, "auth-password", "", "Webhook HTTP password. Max length: 256 chars.")
-
 	return cmd
 }
 
@@ -279,7 +274,7 @@ func newWebhooksDeleteCommand() *cobra.Command {
 			}
 			service := webhooks.New(client)
 
-			result, err := service.Delete(webhookId, )
+			result, err := service.Delete(webhookId)
 			if err != nil {
 				return err
 			}
@@ -290,7 +285,6 @@ func newWebhooksDeleteCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&webhookId, "webhook-id", "", "Webhook ID.")
 	_ = cmd.MarkFlagRequired("webhook-id")
-
 	return cmd
 }
 
@@ -327,7 +321,5 @@ func newWebhooksUpdateSecretCommand() *cobra.Command {
 	cmd.Flags().StringVar(&webhookId, "webhook-id", "", "Webhook ID.")
 	_ = cmd.MarkFlagRequired("webhook-id")
 	cmd.Flags().StringVar(&secret, "secret", "", "Webhook secret key. If not provided, a new key will be generated automatically. Key must be at least 8 characters long, and at max 256 characters.")
-
 	return cmd
 }
-

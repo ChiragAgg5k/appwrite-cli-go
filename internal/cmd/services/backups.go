@@ -9,7 +9,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/query"
 )
 
-
 // NewBackupsCommand builds the `backups` command tree.
 func NewBackupsCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -64,13 +63,13 @@ func newBackupsListArchivesCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -103,7 +102,6 @@ func newBackupsListArchivesCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -140,7 +138,6 @@ func newBackupsCreateArchiveCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&services, "services", nil, "Array of services to backup")
 	_ = cmd.MarkFlagRequired("services")
 	cmd.Flags().StringVar(&resourceId, "resource-id", "", "Resource ID. When set, only this single resource will be backed up.")
-
 	return cmd
 }
 
@@ -157,7 +154,7 @@ func newBackupsGetArchiveCommand() *cobra.Command {
 			}
 			service := backups.New(client)
 
-			result, err := service.GetArchive(archiveId, )
+			result, err := service.GetArchive(archiveId)
 			if err != nil {
 				return err
 			}
@@ -168,7 +165,6 @@ func newBackupsGetArchiveCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&archiveId, "archive-id", "", "Archive ID. Choose a custom ID`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.")
 	_ = cmd.MarkFlagRequired("archive-id")
-
 	return cmd
 }
 
@@ -185,7 +181,7 @@ func newBackupsDeleteArchiveCommand() *cobra.Command {
 			}
 			service := backups.New(client)
 
-			result, err := service.DeleteArchive(archiveId, )
+			result, err := service.DeleteArchive(archiveId)
 			if err != nil {
 				return err
 			}
@@ -196,7 +192,6 @@ func newBackupsDeleteArchiveCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&archiveId, "archive-id", "", "Policy ID. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.")
 	_ = cmd.MarkFlagRequired("archive-id")
-
 	return cmd
 }
 
@@ -231,13 +226,13 @@ func newBackupsListPoliciesCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -270,7 +265,6 @@ func newBackupsListPoliciesCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -327,7 +321,6 @@ func newBackupsCreatePolicyCommand() *cobra.Command {
 	cmd.Flags().StringVar(&resourceId, "resource-id", "", "Resource ID. When set, only this single resource will be backed up.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is policy enabled? When set to 'disabled', no backups will be taken")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -344,7 +337,7 @@ func newBackupsGetPolicyCommand() *cobra.Command {
 			}
 			service := backups.New(client)
 
-			result, err := service.GetPolicy(policyId, )
+			result, err := service.GetPolicy(policyId)
 			if err != nil {
 				return err
 			}
@@ -355,7 +348,6 @@ func newBackupsGetPolicyCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&policyId, "policy-id", "", "Policy ID. Choose a custom ID`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.")
 	_ = cmd.MarkFlagRequired("policy-id")
-
 	return cmd
 }
 
@@ -408,7 +400,6 @@ func newBackupsUpdatePolicyCommand() *cobra.Command {
 	cmd.Flags().StringVar(&schedule, "schedule", "", "Cron expression")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is Backup enabled? When set to 'disabled', No backup will be taken")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -425,7 +416,7 @@ func newBackupsDeletePolicyCommand() *cobra.Command {
 			}
 			service := backups.New(client)
 
-			result, err := service.DeletePolicy(policyId, )
+			result, err := service.DeletePolicy(policyId)
 			if err != nil {
 				return err
 			}
@@ -436,7 +427,6 @@ func newBackupsDeletePolicyCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&policyId, "policy-id", "", "Policy ID. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.")
 	_ = cmd.MarkFlagRequired("policy-id")
-
 	return cmd
 }
 
@@ -481,7 +471,6 @@ func newBackupsCreateRestorationCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("services")
 	cmd.Flags().StringVar(&newResourceId, "new-resource-id", "", "Destination resource ID. Omit to restore the archived resource in place, or pass a different ID to restore alongside it as a new resource. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.")
 	cmd.Flags().StringVar(&newResourceName, "new-resource-name", "", "Database name. Max length: 128 chars.")
-
 	return cmd
 }
 
@@ -516,13 +505,13 @@ func newBackupsListRestorationsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -555,7 +544,6 @@ func newBackupsListRestorationsCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -572,7 +560,7 @@ func newBackupsGetRestorationCommand() *cobra.Command {
 			}
 			service := backups.New(client)
 
-			result, err := service.GetRestoration(restorationId, )
+			result, err := service.GetRestoration(restorationId)
 			if err != nil {
 				return err
 			}
@@ -583,7 +571,5 @@ func newBackupsGetRestorationCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&restorationId, "restoration-id", "", "Restoration ID. Choose a custom ID`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.")
 	_ = cmd.MarkFlagRequired("restoration-id")
-
 	return cmd
 }
-

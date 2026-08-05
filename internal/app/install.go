@@ -30,7 +30,9 @@ const (
 	InstallUnknown InstallMethod = ""
 )
 
-// NPMPackageName is the package a legacy install came from.
+// NPMPackageName is the package a legacy install came from. It also prefixes
+// every release asset, so install.sh, install.ps1, .goreleaser.yaml and the
+// scoop manifest all derive their names from this same value.
 const NPMPackageName = "appwrite-cli"
 
 // executablePath resolves the running binary, following a symlink.

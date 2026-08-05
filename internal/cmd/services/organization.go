@@ -9,7 +9,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/query"
 )
 
-
 // NewOrganizationCommand builds the `organization` command tree.
 func NewOrganizationCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -62,7 +61,6 @@ func newOrganizationGetCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -80,7 +78,7 @@ func newOrganizationUpdateCommand() *cobra.Command {
 			}
 			service := organization.New(client)
 
-			result, err := service.Update(name, )
+			result, err := service.Update(name)
 			if err != nil {
 				return err
 			}
@@ -92,7 +90,6 @@ func newOrganizationUpdateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&name, "name", "", "New organization name. Max length: 128 chars.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -119,7 +116,6 @@ func newOrganizationDeleteCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -156,13 +152,13 @@ func newOrganizationListInstallationsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -201,7 +197,6 @@ func newOrganizationListInstallationsCommand() *cobra.Command {
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -240,7 +235,6 @@ func newOrganizationCreateInstallationCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("app-id")
 	cmd.Flags().StringVar(&authorizationDetails, "authorization-details", "", "Authorization details granted to the installation as a JSON array of objects, each with a `type` and app-defined fields. The Appwrite Console stores authorized project IDs here.")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -258,7 +252,7 @@ func newOrganizationGetInstallationCommand() *cobra.Command {
 			}
 			service := organization.New(client)
 
-			result, err := service.GetInstallation(installationId, )
+			result, err := service.GetInstallation(installationId)
 			if err != nil {
 				return err
 			}
@@ -270,7 +264,6 @@ func newOrganizationGetInstallationCommand() *cobra.Command {
 	cmd.Flags().StringVar(&installationId, "installation-id", "", "Installation unique ID.")
 	_ = cmd.MarkFlagRequired("installation-id")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -309,7 +302,6 @@ func newOrganizationUpdateInstallationCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("installation-id")
 	cmd.Flags().StringVar(&authorizationDetails, "authorization-details", "", "Authorization details granted to the installation as a JSON array of objects, each with a `type` and app-defined fields. Omit to keep the current value.")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -327,7 +319,7 @@ func newOrganizationDeleteInstallationCommand() *cobra.Command {
 			}
 			service := organization.New(client)
 
-			result, err := service.DeleteInstallation(installationId, )
+			result, err := service.DeleteInstallation(installationId)
 			if err != nil {
 				return err
 			}
@@ -339,7 +331,6 @@ func newOrganizationDeleteInstallationCommand() *cobra.Command {
 	cmd.Flags().StringVar(&installationId, "installation-id", "", "Installation unique ID.")
 	_ = cmd.MarkFlagRequired("installation-id")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -376,13 +367,13 @@ func newOrganizationListKeysCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -421,7 +412,6 @@ func newOrganizationListKeysCommand() *cobra.Command {
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -466,7 +456,6 @@ func newOrganizationCreateKeyCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("scopes")
 	cmd.Flags().StringVar(&expire, "expire", "", "Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -484,7 +473,7 @@ func newOrganizationGetKeyCommand() *cobra.Command {
 			}
 			service := organization.New(client)
 
-			result, err := service.GetKey(keyId, )
+			result, err := service.GetKey(keyId)
 			if err != nil {
 				return err
 			}
@@ -496,7 +485,6 @@ func newOrganizationGetKeyCommand() *cobra.Command {
 	cmd.Flags().StringVar(&keyId, "key-id", "", "Key unique ID.")
 	_ = cmd.MarkFlagRequired("key-id")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -541,7 +529,6 @@ func newOrganizationUpdateKeyCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("scopes")
 	cmd.Flags().StringVar(&expire, "expire", "", "Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -559,7 +546,7 @@ func newOrganizationDeleteKeyCommand() *cobra.Command {
 			}
 			service := organization.New(client)
 
-			result, err := service.DeleteKey(keyId, )
+			result, err := service.DeleteKey(keyId)
 			if err != nil {
 				return err
 			}
@@ -571,7 +558,6 @@ func newOrganizationDeleteKeyCommand() *cobra.Command {
 	cmd.Flags().StringVar(&keyId, "key-id", "", "Key unique ID.")
 	_ = cmd.MarkFlagRequired("key-id")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -609,13 +595,13 @@ func newOrganizationListMembershipsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -658,7 +644,6 @@ func newOrganizationListMembershipsCommand() *cobra.Command {
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -717,7 +702,6 @@ func newOrganizationCreateMembershipCommand() *cobra.Command {
 	cmd.Flags().StringVar(&url, "url", "", "URL to redirect the user back to your app from the invitation email. This parameter is not required when an API key is supplied.")
 	cmd.Flags().StringVar(&name, "name", "", "Name of the new organization member. Max length: 128 chars.")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -735,7 +719,7 @@ func newOrganizationGetMembershipCommand() *cobra.Command {
 			}
 			service := organization.New(client)
 
-			result, err := service.GetMembership(membershipId, )
+			result, err := service.GetMembership(membershipId)
 			if err != nil {
 				return err
 			}
@@ -747,7 +731,6 @@ func newOrganizationGetMembershipCommand() *cobra.Command {
 	cmd.Flags().StringVar(&membershipId, "membership-id", "", "Membership ID.")
 	_ = cmd.MarkFlagRequired("membership-id")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -766,7 +749,7 @@ func newOrganizationUpdateMembershipCommand() *cobra.Command {
 			}
 			service := organization.New(client)
 
-			result, err := service.UpdateMembership(membershipId, roles, )
+			result, err := service.UpdateMembership(membershipId, roles)
 			if err != nil {
 				return err
 			}
@@ -780,7 +763,6 @@ func newOrganizationUpdateMembershipCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&roles, "roles", nil, "An array of strings. Use this param to set the user's roles in the organization. A role can be any string. Learn more about roles and permissions (https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 81 characters long.")
 	_ = cmd.MarkFlagRequired("roles")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -798,7 +780,7 @@ func newOrganizationDeleteMembershipCommand() *cobra.Command {
 			}
 			service := organization.New(client)
 
-			result, err := service.DeleteMembership(membershipId, )
+			result, err := service.DeleteMembership(membershipId)
 			if err != nil {
 				return err
 			}
@@ -810,7 +792,6 @@ func newOrganizationDeleteMembershipCommand() *cobra.Command {
 	cmd.Flags().StringVar(&membershipId, "membership-id", "", "Membership ID.")
 	_ = cmd.MarkFlagRequired("membership-id")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -848,13 +829,13 @@ func newOrganizationListProjectsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -897,7 +878,6 @@ func newOrganizationListProjectsCommand() *cobra.Command {
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -939,7 +919,6 @@ func newOrganizationCreateProjectCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&region, "region", "", "Project Region.")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -957,7 +936,7 @@ func newOrganizationGetProjectCommand() *cobra.Command {
 			}
 			service := organization.New(client)
 
-			result, err := service.GetProject(projectId, )
+			result, err := service.GetProject(projectId)
 			if err != nil {
 				return err
 			}
@@ -969,7 +948,6 @@ func newOrganizationGetProjectCommand() *cobra.Command {
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project unique ID.")
 	_ = cmd.MarkFlagRequired("project-id")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -988,7 +966,7 @@ func newOrganizationUpdateProjectCommand() *cobra.Command {
 			}
 			service := organization.New(client)
 
-			result, err := service.UpdateProject(projectId, name, )
+			result, err := service.UpdateProject(projectId, name)
 			if err != nil {
 				return err
 			}
@@ -1002,7 +980,6 @@ func newOrganizationUpdateProjectCommand() *cobra.Command {
 	cmd.Flags().StringVar(&name, "name", "", "Project name. Max length: 128 chars.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-
 	return cmd
 }
 
@@ -1020,7 +997,7 @@ func newOrganizationDeleteProjectCommand() *cobra.Command {
 			}
 			service := organization.New(client)
 
-			result, err := service.DeleteProject(projectId, )
+			result, err := service.DeleteProject(projectId)
 			if err != nil {
 				return err
 			}
@@ -1032,7 +1009,5 @@ func newOrganizationDeleteProjectCommand() *cobra.Command {
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project unique ID.")
 	_ = cmd.MarkFlagRequired("project-id")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-
 	return cmd
 }
-

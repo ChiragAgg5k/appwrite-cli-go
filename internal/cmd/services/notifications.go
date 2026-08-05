@@ -9,7 +9,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/query"
 )
 
-
 // NewNotificationsCommand builds the `notifications` command tree.
 func NewNotificationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -54,13 +53,13 @@ func newNotificationsListCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -93,7 +92,6 @@ func newNotificationsListCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -111,7 +109,7 @@ func newNotificationsUpdateCommand() *cobra.Command {
 			}
 			service := notifications.New(client)
 
-			result, err := service.Update(notificationId, read, )
+			result, err := service.Update(notificationId, read)
 			if err != nil {
 				return err
 			}
@@ -124,7 +122,5 @@ func newNotificationsUpdateCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("notification-id")
 	cmd.Flags().BoolVar(&read, "read", false, "Notification read status.")
 	_ = cmd.MarkFlagRequired("read")
-
 	return cmd
 }
-

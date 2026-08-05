@@ -9,7 +9,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/query"
 )
 
-
 // NewTokensCommand builds the `tokens` command tree.
 func NewTokensCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -60,13 +59,13 @@ func newTokensListCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -108,7 +107,6 @@ func newTokensListCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -148,7 +146,6 @@ func newTokensCreateFileTokenCommand() *cobra.Command {
 	cmd.Flags().StringVar(&fileId, "file-id", "", "File unique ID.")
 	_ = cmd.MarkFlagRequired("file-id")
 	cmd.Flags().StringVar(&expire, "expire", "", "Token expiry date")
-
 	return cmd
 }
 
@@ -165,7 +162,7 @@ func newTokensGetCommand() *cobra.Command {
 			}
 			service := tokens.New(client)
 
-			result, err := service.Get(tokenId, )
+			result, err := service.Get(tokenId)
 			if err != nil {
 				return err
 			}
@@ -176,7 +173,6 @@ func newTokensGetCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&tokenId, "token-id", "", "Token ID.")
 	_ = cmd.MarkFlagRequired("token-id")
-
 	return cmd
 }
 
@@ -213,7 +209,6 @@ func newTokensUpdateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&tokenId, "token-id", "", "Token unique ID.")
 	_ = cmd.MarkFlagRequired("token-id")
 	cmd.Flags().StringVar(&expire, "expire", "", "File token expiry date")
-
 	return cmd
 }
 
@@ -230,7 +225,7 @@ func newTokensDeleteCommand() *cobra.Command {
 			}
 			service := tokens.New(client)
 
-			result, err := service.Delete(tokenId, )
+			result, err := service.Delete(tokenId)
 			if err != nil {
 				return err
 			}
@@ -241,7 +236,5 @@ func newTokensDeleteCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&tokenId, "token-id", "", "Token ID.")
 	_ = cmd.MarkFlagRequired("token-id")
-
 	return cmd
 }
-

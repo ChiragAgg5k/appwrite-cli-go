@@ -9,7 +9,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/query"
 )
 
-
 // NewActivitiesCommand builds the `activities` command tree.
 func NewActivitiesCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -54,13 +53,13 @@ func newActivitiesListEventsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -93,7 +92,6 @@ func newActivitiesListEventsCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -110,7 +108,7 @@ func newActivitiesGetEventCommand() *cobra.Command {
 			}
 			service := activities.New(client)
 
-			result, err := service.GetEvent(eventId, )
+			result, err := service.GetEvent(eventId)
 			if err != nil {
 				return err
 			}
@@ -121,7 +119,5 @@ func newActivitiesGetEventCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&eventId, "event-id", "", "Event ID.")
 	_ = cmd.MarkFlagRequired("event-id")
-
 	return cmd
 }
-

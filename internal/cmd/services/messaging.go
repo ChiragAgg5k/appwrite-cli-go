@@ -9,7 +9,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/query"
 )
 
-
 // NewMessagingCommand builds the `messaging` command tree.
 func NewMessagingCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -100,13 +99,13 @@ func newMessagingListMessagesCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -148,7 +147,6 @@ func newMessagingListMessagesCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -233,7 +231,6 @@ func newMessagingCreateEmailCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&html, "html", false, "Is content of type HTML")
 	cmd.Flags().Lookup("html").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&scheduledAt, "scheduled-at", "", "Scheduled delivery time for message in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.")
-
 	return cmd
 }
 
@@ -322,7 +319,6 @@ func newMessagingUpdateEmailCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&bcc, "bcc", nil, "Array of target IDs to be added as BCC.")
 	cmd.Flags().StringVar(&scheduledAt, "scheduled-at", "", "Scheduled delivery time for message in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.")
 	cmd.Flags().StringArrayVar(&attachments, "attachments", nil, "Array of compound ID strings of bucket IDs and file IDs to be attached to the email. They should be formatted as <BUCKET_ID>:<FILE_ID>.")
-
 	return cmd
 }
 
@@ -451,7 +447,6 @@ func newMessagingCreatePushCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&critical, "critical", false, "If set to true, the notification will be marked as critical. This requires the app to have the critical notification entitlement. Available only for iOS Platform.")
 	cmd.Flags().Lookup("critical").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&priority, "priority", "", "Set the notification priority. \"normal\" will consider device state and may not deliver notifications immediately. \"high\" will always attempt to immediately deliver the notification.")
-
 	return cmd
 }
 
@@ -580,7 +575,6 @@ func newMessagingUpdatePushCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&critical, "critical", false, "If set to true, the notification will be marked as critical. This requires the app to have the critical notification entitlement. Available only for iOS Platform.")
 	cmd.Flags().Lookup("critical").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&priority, "priority", "", "Set the notification priority. \"normal\" will consider device battery state and may send notifications later. \"high\" will always attempt to immediately deliver the notification.")
-
 	return cmd
 }
 
@@ -641,7 +635,6 @@ func newMessagingCreateSmsCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&draft, "draft", false, "Is message a draft")
 	cmd.Flags().Lookup("draft").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&scheduledAt, "scheduled-at", "", "Scheduled delivery time for message in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.")
-
 	return cmd
 }
 
@@ -704,7 +697,6 @@ func newMessagingUpdateSmsCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&draft, "draft", false, "Is message a draft")
 	cmd.Flags().Lookup("draft").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&scheduledAt, "scheduled-at", "", "Scheduled delivery time for message in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.")
-
 	return cmd
 }
 
@@ -721,7 +713,7 @@ func newMessagingGetMessageCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			result, err := service.GetMessage(messageId, )
+			result, err := service.GetMessage(messageId)
 			if err != nil {
 				return err
 			}
@@ -732,7 +724,6 @@ func newMessagingGetMessageCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&messageId, "message-id", "", "Message ID.")
 	_ = cmd.MarkFlagRequired("message-id")
-
 	return cmd
 }
 
@@ -749,7 +740,7 @@ func newMessagingDeleteCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			result, err := service.Delete(messageId, )
+			result, err := service.Delete(messageId)
 			if err != nil {
 				return err
 			}
@@ -760,7 +751,6 @@ func newMessagingDeleteCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&messageId, "message-id", "", "Message ID.")
 	_ = cmd.MarkFlagRequired("message-id")
-
 	return cmd
 }
 
@@ -797,13 +787,13 @@ func newMessagingListTargetsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -843,7 +833,6 @@ func newMessagingListTargetsCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -880,13 +869,13 @@ func newMessagingListProvidersCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -928,7 +917,6 @@ func newMessagingListProvidersCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -995,7 +983,6 @@ func newMessagingCreateApnsProviderCommand() *cobra.Command {
 	cmd.Flags().Lookup("sandbox").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set as enabled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -1064,7 +1051,6 @@ func newMessagingUpdateApnsProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&bundleId, "bundle-id", "", "APNS bundle ID.")
 	cmd.Flags().BoolVar(&sandbox, "sandbox", false, "Use APNS sandbox environment.")
 	cmd.Flags().Lookup("sandbox").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -1114,7 +1100,6 @@ func newMessagingCreateFcmProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&serviceAccountJson, "service-account-json", "", "FCM service account JSON.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set as enabled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -1166,7 +1151,6 @@ func newMessagingUpdateFcmProviderCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set as enabled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&serviceAccountJson, "service-account-json", "", "FCM service account JSON.")
-
 	return cmd
 }
 
@@ -1243,7 +1227,6 @@ func newMessagingCreateMailgunProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&replyToEmail, "reply-to-email", "", "Email set in the reply to field for the mail. Default value is sender email. Reply to email must have reply to name as well.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set as enabled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -1322,7 +1305,6 @@ func newMessagingUpdateMailgunProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&fromEmail, "from-email", "", "Sender email address.")
 	cmd.Flags().StringVar(&replyToName, "reply-to-name", "", "Name set in the reply to field for the mail. Default value is sender name.")
 	cmd.Flags().StringVar(&replyToEmail, "reply-to-email", "", "Email set in the reply to field for the mail. Default value is sender email.")
-
 	return cmd
 }
 
@@ -1378,7 +1360,6 @@ func newMessagingCreateMsg91ProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&authKey, "auth-key", "", "Msg91 auth key.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set as enabled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -1436,7 +1417,6 @@ func newMessagingUpdateMsg91ProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&templateId, "template-id", "", "Msg91 template ID.")
 	cmd.Flags().StringVar(&senderId, "sender-id", "", "Msg91 sender ID.")
 	cmd.Flags().StringVar(&authKey, "auth-key", "", "Msg91 auth key.")
-
 	return cmd
 }
 
@@ -1502,7 +1482,6 @@ func newMessagingCreateResendProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&replyToEmail, "reply-to-email", "", "Email set in the reply to field for the mail. Default value is sender email.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set as enabled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -1570,7 +1549,6 @@ func newMessagingUpdateResendProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&fromEmail, "from-email", "", "Sender email address.")
 	cmd.Flags().StringVar(&replyToName, "reply-to-name", "", "Name set in the Reply To field for the mail. Default value is Sender Name.")
 	cmd.Flags().StringVar(&replyToEmail, "reply-to-email", "", "Email set in the Reply To field for the mail. Default value is Sender Email.")
-
 	return cmd
 }
 
@@ -1636,7 +1614,6 @@ func newMessagingCreateSendgridProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&replyToEmail, "reply-to-email", "", "Email set in the reply to field for the mail. Default value is sender email.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set as enabled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -1704,7 +1681,6 @@ func newMessagingUpdateSendgridProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&fromEmail, "from-email", "", "Sender email address.")
 	cmd.Flags().StringVar(&replyToName, "reply-to-name", "", "Name set in the Reply To field for the mail. Default value is Sender Name.")
 	cmd.Flags().StringVar(&replyToEmail, "reply-to-email", "", "Email set in the Reply To field for the mail. Default value is Sender Email.")
-
 	return cmd
 }
 
@@ -1780,7 +1756,6 @@ func newMessagingCreateSesProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&replyToEmail, "reply-to-email", "", "Email set in the reply to field for the mail. Default value is sender email.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set as enabled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -1858,7 +1833,6 @@ func newMessagingUpdateSesProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&fromEmail, "from-email", "", "Sender email address.")
 	cmd.Flags().StringVar(&replyToName, "reply-to-name", "", "Name set in the Reply To field for the mail. Default value is Sender Name.")
 	cmd.Flags().StringVar(&replyToEmail, "reply-to-email", "", "Email set in the Reply To field for the mail. Default value is Sender Email.")
-
 	return cmd
 }
 
@@ -1953,7 +1927,6 @@ func newMessagingCreateSmtpProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&replyToEmail, "reply-to-email", "", "Email set in the reply to field for the mail. Default value is sender email.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set as enabled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -2052,7 +2025,6 @@ func newMessagingUpdateSmtpProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&replyToEmail, "reply-to-email", "", "Email set in the Reply To field for the mail. Default value is Sender Email.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set as enabled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -2108,7 +2080,6 @@ func newMessagingCreateTelesignProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&apiKey, "api-key", "", "Telesign API key.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set as enabled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -2166,7 +2137,6 @@ func newMessagingUpdateTelesignProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&customerId, "customer-id", "", "Telesign customer ID.")
 	cmd.Flags().StringVar(&apiKey, "api-key", "", "Telesign API key.")
 	cmd.Flags().StringVar(&from, "from", "", "Sender number.")
-
 	return cmd
 }
 
@@ -2222,7 +2192,6 @@ func newMessagingCreateTextmagicProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&apiKey, "api-key", "", "Textmagic apiKey.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set as enabled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -2280,7 +2249,6 @@ func newMessagingUpdateTextmagicProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&username, "username", "", "Textmagic username.")
 	cmd.Flags().StringVar(&apiKey, "api-key", "", "Textmagic apiKey.")
 	cmd.Flags().StringVar(&from, "from", "", "Sender number.")
-
 	return cmd
 }
 
@@ -2336,7 +2304,6 @@ func newMessagingCreateTwilioProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&authToken, "auth-token", "", "Twilio authentication token.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set as enabled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -2394,7 +2361,6 @@ func newMessagingUpdateTwilioProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&accountSid, "account-sid", "", "Twilio account secret ID.")
 	cmd.Flags().StringVar(&authToken, "auth-token", "", "Twilio authentication token.")
 	cmd.Flags().StringVar(&from, "from", "", "Sender number.")
-
 	return cmd
 }
 
@@ -2450,7 +2416,6 @@ func newMessagingCreateVonageProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&apiSecret, "api-secret", "", "Vonage API secret.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set as enabled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-
 	return cmd
 }
 
@@ -2508,7 +2473,6 @@ func newMessagingUpdateVonageProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&apiKey, "api-key", "", "Vonage API key.")
 	cmd.Flags().StringVar(&apiSecret, "api-secret", "", "Vonage API secret.")
 	cmd.Flags().StringVar(&from, "from", "", "Sender number.")
-
 	return cmd
 }
 
@@ -2525,7 +2489,7 @@ func newMessagingGetProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			result, err := service.GetProvider(providerId, )
+			result, err := service.GetProvider(providerId)
 			if err != nil {
 				return err
 			}
@@ -2536,7 +2500,6 @@ func newMessagingGetProviderCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&providerId, "provider-id", "", "Provider ID.")
 	_ = cmd.MarkFlagRequired("provider-id")
-
 	return cmd
 }
 
@@ -2553,7 +2516,7 @@ func newMessagingDeleteProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			result, err := service.DeleteProvider(providerId, )
+			result, err := service.DeleteProvider(providerId)
 			if err != nil {
 				return err
 			}
@@ -2564,7 +2527,6 @@ func newMessagingDeleteProviderCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&providerId, "provider-id", "", "Provider ID.")
 	_ = cmd.MarkFlagRequired("provider-id")
-
 	return cmd
 }
 
@@ -2601,13 +2563,13 @@ func newMessagingListTopicsCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -2649,7 +2611,6 @@ func newMessagingListTopicsCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -2689,7 +2650,6 @@ func newMessagingCreateTopicCommand() *cobra.Command {
 	cmd.Flags().StringVar(&name, "name", "", "Topic Name.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringArrayVar(&subscribe, "subscribe", nil, "An array of role strings with subscribe permission. By default all users are granted with any subscribe permission. learn more about roles (https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.")
-
 	return cmd
 }
 
@@ -2706,7 +2666,7 @@ func newMessagingGetTopicCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			result, err := service.GetTopic(topicId, )
+			result, err := service.GetTopic(topicId)
 			if err != nil {
 				return err
 			}
@@ -2717,7 +2677,6 @@ func newMessagingGetTopicCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&topicId, "topic-id", "", "Topic ID.")
 	_ = cmd.MarkFlagRequired("topic-id")
-
 	return cmd
 }
 
@@ -2759,7 +2718,6 @@ func newMessagingUpdateTopicCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("topic-id")
 	cmd.Flags().StringVar(&name, "name", "", "Topic Name.")
 	cmd.Flags().StringArrayVar(&subscribe, "subscribe", nil, "An array of role strings with subscribe permission. By default all users are granted with any subscribe permission. learn more about roles (https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.")
-
 	return cmd
 }
 
@@ -2776,7 +2734,7 @@ func newMessagingDeleteTopicCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			result, err := service.DeleteTopic(topicId, )
+			result, err := service.DeleteTopic(topicId)
 			if err != nil {
 				return err
 			}
@@ -2787,7 +2745,6 @@ func newMessagingDeleteTopicCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&topicId, "topic-id", "", "Topic ID.")
 	_ = cmd.MarkFlagRequired("topic-id")
-
 	return cmd
 }
 
@@ -2825,13 +2782,13 @@ func newMessagingListSubscribersCommand() *cobra.Command {
 			}
 
 			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Filter:   parsedFilter,
-				Where:    parsedWhere,
-				SortAsc:  sortAsc,
-				SortDesc: sortDesc,
-				Limit:  app.FlagInt(cmd, "limit", limit),
-				Offset: app.FlagInt(cmd, "offset", offset),
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
 			})
@@ -2875,7 +2832,6 @@ func newMessagingListSubscribersCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-
 	return cmd
 }
 
@@ -2894,7 +2850,7 @@ func newMessagingCreateSubscriberCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			result, err := service.CreateSubscriber(topicId, subscriberId, targetId, )
+			result, err := service.CreateSubscriber(topicId, subscriberId, targetId)
 			if err != nil {
 				return err
 			}
@@ -2909,7 +2865,6 @@ func newMessagingCreateSubscriberCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("subscriber-id")
 	cmd.Flags().StringVar(&targetId, "target-id", "", "Target ID. The target ID to link to the specified Topic ID.")
 	_ = cmd.MarkFlagRequired("target-id")
-
 	return cmd
 }
 
@@ -2927,7 +2882,7 @@ func newMessagingGetSubscriberCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			result, err := service.GetSubscriber(topicId, subscriberId, )
+			result, err := service.GetSubscriber(topicId, subscriberId)
 			if err != nil {
 				return err
 			}
@@ -2940,7 +2895,6 @@ func newMessagingGetSubscriberCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("topic-id")
 	cmd.Flags().StringVar(&subscriberId, "subscriber-id", "", "Subscriber ID.")
 	_ = cmd.MarkFlagRequired("subscriber-id")
-
 	return cmd
 }
 
@@ -2958,7 +2912,7 @@ func newMessagingDeleteSubscriberCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			result, err := service.DeleteSubscriber(topicId, subscriberId, )
+			result, err := service.DeleteSubscriber(topicId, subscriberId)
 			if err != nil {
 				return err
 			}
@@ -2971,7 +2925,5 @@ func newMessagingDeleteSubscriberCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("topic-id")
 	cmd.Flags().StringVar(&subscriberId, "subscriber-id", "", "Subscriber ID.")
 	_ = cmd.MarkFlagRequired("subscriber-id")
-
 	return cmd
 }
-

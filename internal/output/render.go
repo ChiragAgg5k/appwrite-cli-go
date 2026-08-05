@@ -7,9 +7,10 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/ChiragAgg5k/appwrite-cli-go/internal/jsonx"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/lipgloss/table"
+
+	"github.com/ChiragAgg5k/appwrite-cli-go/internal/jsonx"
 )
 
 // Ports the human-readable half of templates/cli/lib/parser.ts:parse().
@@ -329,7 +330,6 @@ func formatScalar(value any) string {
 
 	return fmt.Sprint(value)
 }
-
 
 // maximumColumns is where a table stops being readable.
 //
