@@ -13,8 +13,8 @@
 # You can use "View source" of this page to see the full script.
 
 # REPO
-$GITHUB_x64_URL = "https://github.com/ChiragAgg5k/appwrite-cli-go/releases/download/0.7.15-preview/appwrite-cli-win-x64.exe"
-$GITHUB_arm64_URL = "https://github.com/ChiragAgg5k/appwrite-cli-go/releases/download/0.7.15-preview/appwrite-cli-win-arm64.exe"
+$GITHUB_x64_URL = "https://github.com/ChiragAgg5k/appwrite-cli-go/releases/download/0.7.16-preview/appwrite-cli-win-x64.exe"
+$GITHUB_arm64_URL = "https://github.com/ChiragAgg5k/appwrite-cli-go/releases/download/0.7.16-preview/appwrite-cli-win-arm64.exe"
 
 $APPWRITE_BINARY_NAME = "appwrite.exe"
 
