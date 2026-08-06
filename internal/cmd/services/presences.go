@@ -17,10 +17,7 @@ func NewPresencesCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(newPresencesListCommand())
-	cmd.AddCommand(newPresencesGetUsageCommand())
 	cmd.AddCommand(newPresencesGetCommand())
-	cmd.AddCommand(newPresencesUpsertCommand())
-	cmd.AddCommand(newPresencesUpdateCommand())
 	cmd.AddCommand(newPresencesDeleteCommand())
 
 	return cmd
@@ -110,39 +107,6 @@ func newPresencesListCommand() *cobra.Command {
 	return cmd
 }
 
-func newPresencesGetUsageCommand() *cobra.Command {
-	var rangeArg string
-
-	cmd := &cobra.Command{
-		Use:   "get-usage",
-		Short: "Get presence usage metrics, including the current total of online users and historical online user counts for the selected time range.\n",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForProject("")
-			if err != nil {
-				return err
-			}
-			service := presences.New(client)
-
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
-			options := []presences.GetUsageOption{}
-			if cmd.Flags().Changed("range") {
-				options = append(options, service.WithGetUsageRange(rangeArg))
-			}
-
-			result, err := service.GetUsage(options...)
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&rangeArg, "range", "", "Date range.")
-	return cmd
-}
-
 func newPresencesGetCommand() *cobra.Command {
 	var presenceId string
 
@@ -167,120 +131,6 @@ func newPresencesGetCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&presenceId, "presence-id", "", "Presence unique ID.")
 	_ = cmd.MarkFlagRequired("presence-id")
-	return cmd
-}
-
-func newPresencesUpsertCommand() *cobra.Command {
-	var presenceId string
-	var status string
-	var permissions []string
-	var expiresAt string
-	var metadata string
-
-	cmd := &cobra.Command{
-		Use:   "upsert",
-		Short: "Create or update a presence log by its user ID.\n",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForProject("")
-			if err != nil {
-				return err
-			}
-			service := presences.New(client)
-			metadataValue, err := app.JSONObject(metadata)
-			if err != nil {
-				return err
-			}
-
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
-			options := []presences.UpsertOption{}
-			if cmd.Flags().Changed("permissions") {
-				options = append(options, service.WithUpsertPermissions(permissions))
-			}
-			if cmd.Flags().Changed("expires-at") {
-				options = append(options, service.WithUpsertExpiresAt(expiresAt))
-			}
-			if cmd.Flags().Changed("metadata") {
-				options = append(options, service.WithUpsertMetadata(metadataValue))
-			}
-
-			result, err := service.Upsert(presenceId, status, options...)
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&presenceId, "presence-id", "", "Presence unique ID.")
-	_ = cmd.MarkFlagRequired("presence-id")
-	cmd.Flags().StringVar(&status, "status", "", "Presence status.")
-	_ = cmd.MarkFlagRequired("status")
-	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, only the current user is granted all permissions. Learn more about permissions (https://appwrite.io/docs/permissions).")
-	cmd.Flags().StringVar(&expiresAt, "expires-at", "", "Presence expiry datetime.")
-	cmd.Flags().StringVar(&metadata, "metadata", "", "Presence metadata object.")
-	return cmd
-}
-
-func newPresencesUpdateCommand() *cobra.Command {
-	var presenceId string
-	var status string
-	var expiresAt string
-	var metadata string
-	var permissions []string
-	var purge bool
-
-	cmd := &cobra.Command{
-		Use:   "update",
-		Short: "Update a presence log by its unique ID. Using the patch method you can pass only specific fields that will get updated.\n",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForProject("")
-			if err != nil {
-				return err
-			}
-			service := presences.New(client)
-			metadataValue, err := app.JSONObject(metadata)
-			if err != nil {
-				return err
-			}
-
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
-			options := []presences.UpdateOption{}
-			if cmd.Flags().Changed("status") {
-				options = append(options, service.WithUpdateStatus(status))
-			}
-			if cmd.Flags().Changed("expires-at") {
-				options = append(options, service.WithUpdateExpiresAt(expiresAt))
-			}
-			if cmd.Flags().Changed("metadata") {
-				options = append(options, service.WithUpdateMetadata(metadataValue))
-			}
-			if cmd.Flags().Changed("permissions") {
-				options = append(options, service.WithUpdatePermissions(permissions))
-			}
-			if cmd.Flags().Changed("purge") {
-				options = append(options, service.WithUpdatePurge(purge))
-			}
-
-			result, err := service.Update(presenceId, options...)
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&presenceId, "presence-id", "", "Presence unique ID.")
-	_ = cmd.MarkFlagRequired("presence-id")
-	cmd.Flags().StringVar(&status, "status", "", "Presence status.")
-	cmd.Flags().StringVar(&expiresAt, "expires-at", "", "Presence expiry datetime.")
-	cmd.Flags().StringVar(&metadata, "metadata", "", "Presence metadata object.")
-	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, only the current user is granted all permissions. Learn more about permissions (https://appwrite.io/docs/permissions).")
-	cmd.Flags().BoolVar(&purge, "purge", false, "When true, purge cached responses used by list presences endpoint.")
-	cmd.Flags().Lookup("purge").NoOptDefVal = "true"
 	return cmd
 }
 

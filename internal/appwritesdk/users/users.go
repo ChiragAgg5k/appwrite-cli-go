@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/models"
-	"net/url"
 	"strings"
 )
 
@@ -21,20 +20,23 @@ func New(clt client.Client) *Users {
 }
 
 type ListOptions struct {
-	Queries []string
-	Search string
-	Total bool
+	Queries        []string
+	Search         string
+	Total          bool
 	enabledSetters map[string]bool
 }
+
 func (options ListOptions) New() *ListOptions {
 	options.enabledSetters = map[string]bool{
 		"Queries": false,
-		"Search": false,
-		"Total": false,
+		"Search":  false,
+		"Total":   false,
 	}
 	return &options
 }
+
 type ListOption func(*ListOptions)
+
 func (srv *Users) WithListQueries(v []string) ListOption {
 	return func(o *ListOptions) {
 		o.Queries = v
@@ -53,10 +55,10 @@ func (srv *Users) WithListTotal(v bool) ListOption {
 		o.enabledSetters["Total"] = true
 	}
 }
-	
+
 // List get a list of all the project's users. You can use the query params to
 // filter your results.
-func (srv *Users) List(optionalSetters ...ListOption)(*models.UserList, error) {
+func (srv *Users) List(optionalSetters ...ListOption) (*models.UserList, error) {
 	path := "/users"
 	options := ListOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -74,7 +76,7 @@ func (srv *Users) List(optionalSetters ...ListOption)(*models.UserList, error) {
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -101,23 +103,27 @@ func (srv *Users) List(optionalSetters ...ListOption)(*models.UserList, error) {
 	return &parsed, nil
 
 }
+
 type CreateOptions struct {
-	Email string
-	Phone string
-	Password string
-	Name string
+	Email          string
+	Phone          string
+	Password       string
+	Name           string
 	enabledSetters map[string]bool
 }
+
 func (options CreateOptions) New() *CreateOptions {
 	options.enabledSetters = map[string]bool{
-		"Email": false,
-		"Phone": false,
+		"Email":    false,
+		"Phone":    false,
 		"Password": false,
-		"Name": false,
+		"Name":     false,
 	}
 	return &options
 }
+
 type CreateOption func(*CreateOptions)
+
 func (srv *Users) WithCreateEmail(v string) CreateOption {
 	return func(o *CreateOptions) {
 		o.Email = v
@@ -142,9 +148,9 @@ func (srv *Users) WithCreateName(v string) CreateOption {
 		o.enabledSetters["Name"] = true
 	}
 }
-			
+
 // Create create a new user.
-func (srv *Users) Create(UserId string, optionalSetters ...CreateOption)(*models.User, error) {
+func (srv *Users) Create(UserId string, optionalSetters ...CreateOption) (*models.User, error) {
 	path := "/users"
 	options := CreateOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -166,8 +172,8 @@ func (srv *Users) Create(UserId string, optionalSetters ...CreateOption)(*models
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -194,29 +200,33 @@ func (srv *Users) Create(UserId string, optionalSetters ...CreateOption)(*models
 	return &parsed, nil
 
 }
+
 type CreateArgon2UserOptions struct {
-	Name string
+	Name           string
 	enabledSetters map[string]bool
 }
+
 func (options CreateArgon2UserOptions) New() *CreateArgon2UserOptions {
 	options.enabledSetters = map[string]bool{
 		"Name": false,
 	}
 	return &options
 }
+
 type CreateArgon2UserOption func(*CreateArgon2UserOptions)
+
 func (srv *Users) WithCreateArgon2UserName(v string) CreateArgon2UserOption {
 	return func(o *CreateArgon2UserOptions) {
 		o.Name = v
 		o.enabledSetters["Name"] = true
 	}
 }
-							
+
 // CreateArgon2User create a new user. Password provided must be hashed with
 // the [Argon2](https://en.wikipedia.org/wiki/Argon2) algorithm. Use the [POST
 // /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to
 // create users with a plain text password.
-func (srv *Users) CreateArgon2User(UserId string, Email string, Password string, optionalSetters ...CreateArgon2UserOption)(*models.User, error) {
+func (srv *Users) CreateArgon2User(UserId string, Email string, Password string, optionalSetters ...CreateArgon2UserOption) (*models.User, error) {
 	path := "/users/argon2"
 	options := CreateArgon2UserOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -231,8 +241,8 @@ func (srv *Users) CreateArgon2User(UserId string, Email string, Password string,
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -259,29 +269,33 @@ func (srv *Users) CreateArgon2User(UserId string, Email string, Password string,
 	return &parsed, nil
 
 }
+
 type CreateBcryptUserOptions struct {
-	Name string
+	Name           string
 	enabledSetters map[string]bool
 }
+
 func (options CreateBcryptUserOptions) New() *CreateBcryptUserOptions {
 	options.enabledSetters = map[string]bool{
 		"Name": false,
 	}
 	return &options
 }
+
 type CreateBcryptUserOption func(*CreateBcryptUserOptions)
+
 func (srv *Users) WithCreateBcryptUserName(v string) CreateBcryptUserOption {
 	return func(o *CreateBcryptUserOptions) {
 		o.Name = v
 		o.enabledSetters["Name"] = true
 	}
 }
-							
+
 // CreateBcryptUser create a new user. Password provided must be hashed with
 // the [Bcrypt](https://en.wikipedia.org/wiki/Bcrypt) algorithm. Use the [POST
 // /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to
 // create users with a plain text password.
-func (srv *Users) CreateBcryptUser(UserId string, Email string, Password string, optionalSetters ...CreateBcryptUserOption)(*models.User, error) {
+func (srv *Users) CreateBcryptUser(UserId string, Email string, Password string, optionalSetters ...CreateBcryptUserOption) (*models.User, error) {
 	path := "/users/bcrypt"
 	options := CreateBcryptUserOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -296,8 +310,8 @@ func (srv *Users) CreateBcryptUser(UserId string, Email string, Password string,
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -324,21 +338,25 @@ func (srv *Users) CreateBcryptUser(UserId string, Email string, Password string,
 	return &parsed, nil
 
 }
+
 type ListIdentitiesOptions struct {
-	Queries []string
-	Search string
-	Total bool
+	Queries        []string
+	Search         string
+	Total          bool
 	enabledSetters map[string]bool
 }
+
 func (options ListIdentitiesOptions) New() *ListIdentitiesOptions {
 	options.enabledSetters = map[string]bool{
 		"Queries": false,
-		"Search": false,
-		"Total": false,
+		"Search":  false,
+		"Total":   false,
 	}
 	return &options
 }
+
 type ListIdentitiesOption func(*ListIdentitiesOptions)
+
 func (srv *Users) WithListIdentitiesQueries(v []string) ListIdentitiesOption {
 	return func(o *ListIdentitiesOptions) {
 		o.Queries = v
@@ -357,9 +375,9 @@ func (srv *Users) WithListIdentitiesTotal(v bool) ListIdentitiesOption {
 		o.enabledSetters["Total"] = true
 	}
 }
-	
+
 // ListIdentities get identities for all users.
-func (srv *Users) ListIdentities(optionalSetters ...ListIdentitiesOption)(*models.IdentityList, error) {
+func (srv *Users) ListIdentities(optionalSetters ...ListIdentitiesOption) (*models.IdentityList, error) {
 	path := "/users/identities"
 	options := ListIdentitiesOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -377,7 +395,7 @@ func (srv *Users) ListIdentities(optionalSetters ...ListIdentitiesOption)(*model
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -404,15 +422,16 @@ func (srv *Users) ListIdentities(optionalSetters ...ListIdentitiesOption)(*model
 	return &parsed, nil
 
 }
-	
+
 // DeleteIdentity delete an identity by its unique ID.
-func (srv *Users) DeleteIdentity(IdentityId string)(*interface{}, error) {
-	r := strings.NewReplacer("{identityId}", url.PathEscape(IdentityId))
+func (srv *Users) DeleteIdentity(IdentityId string) (*interface{}, error) {
+	r := strings.NewReplacer("{identityId}", IdentityId)
 	path := r.Replace("/users/identities/{identityId}")
 	params := map[string]interface{}{}
+	params["identityId"] = IdentityId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
+		"content-type":       "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -438,29 +457,33 @@ func (srv *Users) DeleteIdentity(IdentityId string)(*interface{}, error) {
 	return &parsed, nil
 
 }
+
 type CreateMD5UserOptions struct {
-	Name string
+	Name           string
 	enabledSetters map[string]bool
 }
+
 func (options CreateMD5UserOptions) New() *CreateMD5UserOptions {
 	options.enabledSetters = map[string]bool{
 		"Name": false,
 	}
 	return &options
 }
+
 type CreateMD5UserOption func(*CreateMD5UserOptions)
+
 func (srv *Users) WithCreateMD5UserName(v string) CreateMD5UserOption {
 	return func(o *CreateMD5UserOptions) {
 		o.Name = v
 		o.enabledSetters["Name"] = true
 	}
 }
-							
+
 // CreateMD5User create a new user. Password provided must be hashed with the
 // [MD5](https://en.wikipedia.org/wiki/MD5) algorithm. Use the [POST
 // /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to
 // create users with a plain text password.
-func (srv *Users) CreateMD5User(UserId string, Email string, Password string, optionalSetters ...CreateMD5UserOption)(*models.User, error) {
+func (srv *Users) CreateMD5User(UserId string, Email string, Password string, optionalSetters ...CreateMD5UserOption) (*models.User, error) {
 	path := "/users/md5"
 	options := CreateMD5UserOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -475,8 +498,8 @@ func (srv *Users) CreateMD5User(UserId string, Email string, Password string, op
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -503,29 +526,33 @@ func (srv *Users) CreateMD5User(UserId string, Email string, Password string, op
 	return &parsed, nil
 
 }
+
 type CreatePHPassUserOptions struct {
-	Name string
+	Name           string
 	enabledSetters map[string]bool
 }
+
 func (options CreatePHPassUserOptions) New() *CreatePHPassUserOptions {
 	options.enabledSetters = map[string]bool{
 		"Name": false,
 	}
 	return &options
 }
+
 type CreatePHPassUserOption func(*CreatePHPassUserOptions)
+
 func (srv *Users) WithCreatePHPassUserName(v string) CreatePHPassUserOption {
 	return func(o *CreatePHPassUserOptions) {
 		o.Name = v
 		o.enabledSetters["Name"] = true
 	}
 }
-							
+
 // CreatePHPassUser create a new user. Password provided must be hashed with
 // the [PHPass](https://www.openwall.com/phpass/) algorithm. Use the [POST
 // /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to
 // create users with a plain text password.
-func (srv *Users) CreatePHPassUser(UserId string, Email string, Password string, optionalSetters ...CreatePHPassUserOption)(*models.User, error) {
+func (srv *Users) CreatePHPassUser(UserId string, Email string, Password string, optionalSetters ...CreatePHPassUserOption) (*models.User, error) {
 	path := "/users/phpass"
 	options := CreatePHPassUserOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -540,8 +567,8 @@ func (srv *Users) CreatePHPassUser(UserId string, Email string, Password string,
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -568,29 +595,33 @@ func (srv *Users) CreatePHPassUser(UserId string, Email string, Password string,
 	return &parsed, nil
 
 }
+
 type CreateScryptUserOptions struct {
-	Name string
+	Name           string
 	enabledSetters map[string]bool
 }
+
 func (options CreateScryptUserOptions) New() *CreateScryptUserOptions {
 	options.enabledSetters = map[string]bool{
 		"Name": false,
 	}
 	return &options
 }
+
 type CreateScryptUserOption func(*CreateScryptUserOptions)
+
 func (srv *Users) WithCreateScryptUserName(v string) CreateScryptUserOption {
 	return func(o *CreateScryptUserOptions) {
 		o.Name = v
 		o.enabledSetters["Name"] = true
 	}
 }
-																	
+
 // CreateScryptUser create a new user. Password provided must be hashed with
 // the [Scrypt](https://github.com/Tarsnap/scrypt) algorithm. Use the [POST
 // /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to
 // create users with a plain text password.
-func (srv *Users) CreateScryptUser(UserId string, Email string, Password string, PasswordSalt string, PasswordCpu int, PasswordMemory int, PasswordParallel int, PasswordLength int, optionalSetters ...CreateScryptUserOption)(*models.User, error) {
+func (srv *Users) CreateScryptUser(UserId string, Email string, Password string, PasswordSalt string, PasswordCpu int, PasswordMemory int, PasswordParallel int, PasswordLength int, optionalSetters ...CreateScryptUserOption) (*models.User, error) {
 	path := "/users/scrypt"
 	options := CreateScryptUserOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -610,8 +641,8 @@ func (srv *Users) CreateScryptUser(UserId string, Email string, Password string,
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -638,31 +669,35 @@ func (srv *Users) CreateScryptUser(UserId string, Email string, Password string,
 	return &parsed, nil
 
 }
+
 type CreateScryptModifiedUserOptions struct {
-	Name string
+	Name           string
 	enabledSetters map[string]bool
 }
+
 func (options CreateScryptModifiedUserOptions) New() *CreateScryptModifiedUserOptions {
 	options.enabledSetters = map[string]bool{
 		"Name": false,
 	}
 	return &options
 }
+
 type CreateScryptModifiedUserOption func(*CreateScryptModifiedUserOptions)
+
 func (srv *Users) WithCreateScryptModifiedUserName(v string) CreateScryptModifiedUserOption {
 	return func(o *CreateScryptModifiedUserOptions) {
 		o.Name = v
 		o.enabledSetters["Name"] = true
 	}
 }
-													
+
 // CreateScryptModifiedUser create a new user. Password provided must be
 // hashed with the [Scrypt
 // Modified](https://gist.github.com/Meldiron/eecf84a0225eccb5a378d45bb27462cc)
 // algorithm. Use the [POST
 // /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to
 // create users with a plain text password.
-func (srv *Users) CreateScryptModifiedUser(UserId string, Email string, Password string, PasswordSalt string, PasswordSaltSeparator string, PasswordSignerKey string, optionalSetters ...CreateScryptModifiedUserOption)(*models.User, error) {
+func (srv *Users) CreateScryptModifiedUser(UserId string, Email string, Password string, PasswordSalt string, PasswordSaltSeparator string, PasswordSignerKey string, optionalSetters ...CreateScryptModifiedUserOption) (*models.User, error) {
 	path := "/users/scrypt-modified"
 	options := CreateScryptModifiedUserOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -680,8 +715,8 @@ func (srv *Users) CreateScryptModifiedUser(UserId string, Email string, Password
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -708,19 +743,23 @@ func (srv *Users) CreateScryptModifiedUser(UserId string, Email string, Password
 	return &parsed, nil
 
 }
+
 type CreateSHAUserOptions struct {
 	PasswordVersion string
-	Name string
-	enabledSetters map[string]bool
+	Name            string
+	enabledSetters  map[string]bool
 }
+
 func (options CreateSHAUserOptions) New() *CreateSHAUserOptions {
 	options.enabledSetters = map[string]bool{
 		"PasswordVersion": false,
-		"Name": false,
+		"Name":            false,
 	}
 	return &options
 }
+
 type CreateSHAUserOption func(*CreateSHAUserOptions)
+
 func (srv *Users) WithCreateSHAUserPasswordVersion(v string) CreateSHAUserOption {
 	return func(o *CreateSHAUserOptions) {
 		o.PasswordVersion = v
@@ -733,12 +772,12 @@ func (srv *Users) WithCreateSHAUserName(v string) CreateSHAUserOption {
 		o.enabledSetters["Name"] = true
 	}
 }
-							
+
 // CreateSHAUser create a new user. Password provided must be hashed with the
 // [SHA](https://en.wikipedia.org/wiki/Secure_Hash_Algorithm) algorithm. Use
 // the [POST /users](https://appwrite.io/docs/server/users#usersCreate)
 // endpoint to create users with a plain text password.
-func (srv *Users) CreateSHAUser(UserId string, Email string, Password string, optionalSetters ...CreateSHAUserOption)(*models.User, error) {
+func (srv *Users) CreateSHAUser(UserId string, Email string, Password string, optionalSetters ...CreateSHAUserOption) (*models.User, error) {
 	path := "/users/sha"
 	options := CreateSHAUserOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -756,8 +795,8 @@ func (srv *Users) CreateSHAUser(UserId string, Email string, Password string, op
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -784,31 +823,35 @@ func (srv *Users) CreateSHAUser(UserId string, Email string, Password string, op
 	return &parsed, nil
 
 }
+
 type GetUsageOptions struct {
-	Range string
+	Range          string
 	enabledSetters map[string]bool
 }
+
 func (options GetUsageOptions) New() *GetUsageOptions {
 	options.enabledSetters = map[string]bool{
 		"Range": false,
 	}
 	return &options
 }
+
 type GetUsageOption func(*GetUsageOptions)
+
 func (srv *Users) WithGetUsageRange(v string) GetUsageOption {
 	return func(o *GetUsageOptions) {
 		o.Range = v
 		o.enabledSetters["Range"] = true
 	}
 }
-	
+
 // GetUsage get usage metrics and statistics for all users in the project. You
 // can view the total number of users and sessions. The response includes both
 // current totals and historical data over time. Use the optional range
 // parameter to specify the time window for historical data: 24h (last 24
 // hours), 30d (last 30 days), or 90d (last 90 days). If not specified, range
 // defaults to 30 days.
-func (srv *Users) GetUsage(optionalSetters ...GetUsageOption)(*models.UsageUsers, error) {
+func (srv *Users) GetUsage(optionalSetters ...GetUsageOption) (*models.UsageUsers, error) {
 	path := "/users/usage"
 	options := GetUsageOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -820,7 +863,7 @@ func (srv *Users) GetUsage(optionalSetters ...GetUsageOption)(*models.UsageUsers
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -847,15 +890,16 @@ func (srv *Users) GetUsage(optionalSetters ...GetUsageOption)(*models.UsageUsers
 	return &parsed, nil
 
 }
-	
+
 // Get get a user by its unique ID.
-func (srv *Users) Get(UserId string)(*models.User, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) Get(UserId string) (*models.User, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -882,20 +926,21 @@ func (srv *Users) Get(UserId string)(*models.User, error) {
 	return &parsed, nil
 
 }
-	
+
 // Delete delete a user by its unique ID, thereby releasing it's ID. Since ID
 // is released and can be reused, all user-related resources like documents or
 // storage files should be deleted before user deletion. If you want to keep
 // ID reserved, use the
 // [updateStatus](https://appwrite.io/docs/server/users#usersUpdateStatus)
 // endpoint instead.
-func (srv *Users) Delete(UserId string)(*interface{}, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) Delete(UserId string) (*interface{}, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
+		"content-type":       "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -921,17 +966,18 @@ func (srv *Users) Delete(UserId string)(*interface{}, error) {
 	return &parsed, nil
 
 }
-			
+
 // UpdateEmail update the user email by its unique ID.
-func (srv *Users) UpdateEmail(UserId string, Email string)(*models.User, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) UpdateEmail(UserId string, Email string) (*models.User, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/email")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	params["email"] = Email
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -958,21 +1004,22 @@ func (srv *Users) UpdateEmail(UserId string, Email string)(*models.User, error) 
 	return &parsed, nil
 
 }
-			
+
 // UpdateImpersonator enable or disable whether a user can impersonate other
 // users. When impersonation headers are used, the request runs as the target
 // user for API behavior, while internal audit logs still attribute the action
 // to the original impersonator and store the impersonated target details only
 // in internal audit payload data.
-func (srv *Users) UpdateImpersonator(UserId string, Impersonator bool)(*models.User, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) UpdateImpersonator(UserId string, Impersonator bool) (*models.User, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/impersonator")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	params["impersonator"] = Impersonator
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -999,19 +1046,23 @@ func (srv *Users) UpdateImpersonator(UserId string, Impersonator bool)(*models.U
 	return &parsed, nil
 
 }
+
 type CreateJWTOptions struct {
-	SessionId string
-	Duration int
+	SessionId      string
+	Duration       int
 	enabledSetters map[string]bool
 }
+
 func (options CreateJWTOptions) New() *CreateJWTOptions {
 	options.enabledSetters = map[string]bool{
 		"SessionId": false,
-		"Duration": false,
+		"Duration":  false,
 	}
 	return &options
 }
+
 type CreateJWTOption func(*CreateJWTOptions)
+
 func (srv *Users) WithCreateJWTSessionId(v string) CreateJWTOption {
 	return func(o *CreateJWTOptions) {
 		o.SessionId = v
@@ -1024,19 +1075,20 @@ func (srv *Users) WithCreateJWTDuration(v int) CreateJWTOption {
 		o.enabledSetters["Duration"] = true
 	}
 }
-			
+
 // CreateJWT use this endpoint to create a JSON Web Token for user by its
 // unique ID. You can use the resulting JWT to authenticate on behalf of the
 // user. The JWT secret will become invalid if the session it uses gets
 // deleted.
-func (srv *Users) CreateJWT(UserId string, optionalSetters ...CreateJWTOption)(*models.Jwt, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) CreateJWT(UserId string, optionalSetters ...CreateJWTOption) (*models.Jwt, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/jwts")
 	options := CreateJWTOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	if options.enabledSetters["SessionId"] {
 		params["sessionId"] = options.SessionId
 	}
@@ -1045,8 +1097,8 @@ func (srv *Users) CreateJWT(UserId string, optionalSetters ...CreateJWTOption)(*
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -1073,22 +1125,23 @@ func (srv *Users) CreateJWT(UserId string, optionalSetters ...CreateJWTOption)(*
 	return &parsed, nil
 
 }
-			
+
 // UpdateLabels update the user labels by its unique ID.
-// 
+//
 // Labels can be used to grant access to resources. While teams are a way for
 // user's to share access to a resource, labels can be defined by the
 // developer to grant access without an invitation. See the [Permissions
 // docs](https://appwrite.io/docs/permissions) for more info.
-func (srv *Users) UpdateLabels(UserId string, Labels []string)(*models.User, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) UpdateLabels(UserId string, Labels []string) (*models.User, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/labels")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	params["labels"] = Labels
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PUT", path, headers, params)
@@ -1115,19 +1168,23 @@ func (srv *Users) UpdateLabels(UserId string, Labels []string)(*models.User, err
 	return &parsed, nil
 
 }
+
 type ListLogsOptions struct {
-	Queries []string
-	Total bool
+	Queries        []string
+	Total          bool
 	enabledSetters map[string]bool
 }
+
 func (options ListLogsOptions) New() *ListLogsOptions {
 	options.enabledSetters = map[string]bool{
 		"Queries": false,
-		"Total": false,
+		"Total":   false,
 	}
 	return &options
 }
+
 type ListLogsOption func(*ListLogsOptions)
+
 func (srv *Users) WithListLogsQueries(v []string) ListLogsOption {
 	return func(o *ListLogsOptions) {
 		o.Queries = v
@@ -1140,16 +1197,17 @@ func (srv *Users) WithListLogsTotal(v bool) ListLogsOption {
 		o.enabledSetters["Total"] = true
 	}
 }
-			
+
 // ListLogs get the user activity logs list by its unique ID.
-func (srv *Users) ListLogs(UserId string, optionalSetters ...ListLogsOption)(*models.LogList, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) ListLogs(UserId string, optionalSetters ...ListLogsOption) (*models.LogList, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/logs")
 	options := ListLogsOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	if options.enabledSetters["Queries"] {
 		params["queries"] = options.Queries
 	}
@@ -1158,7 +1216,7 @@ func (srv *Users) ListLogs(UserId string, optionalSetters ...ListLogsOption)(*mo
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1185,21 +1243,25 @@ func (srv *Users) ListLogs(UserId string, optionalSetters ...ListLogsOption)(*mo
 	return &parsed, nil
 
 }
+
 type ListMembershipsOptions struct {
-	Queries []string
-	Search string
-	Total bool
+	Queries        []string
+	Search         string
+	Total          bool
 	enabledSetters map[string]bool
 }
+
 func (options ListMembershipsOptions) New() *ListMembershipsOptions {
 	options.enabledSetters = map[string]bool{
 		"Queries": false,
-		"Search": false,
-		"Total": false,
+		"Search":  false,
+		"Total":   false,
 	}
 	return &options
 }
+
 type ListMembershipsOption func(*ListMembershipsOptions)
+
 func (srv *Users) WithListMembershipsQueries(v []string) ListMembershipsOption {
 	return func(o *ListMembershipsOptions) {
 		o.Queries = v
@@ -1218,16 +1280,17 @@ func (srv *Users) WithListMembershipsTotal(v bool) ListMembershipsOption {
 		o.enabledSetters["Total"] = true
 	}
 }
-			
+
 // ListMemberships get the user membership list by its unique ID.
-func (srv *Users) ListMemberships(UserId string, optionalSetters ...ListMembershipsOption)(*models.MembershipList, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) ListMemberships(UserId string, optionalSetters ...ListMembershipsOption) (*models.MembershipList, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/memberships")
 	options := ListMembershipsOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	if options.enabledSetters["Queries"] {
 		params["queries"] = options.Queries
 	}
@@ -1239,7 +1302,7 @@ func (srv *Users) ListMemberships(UserId string, optionalSetters ...ListMembersh
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1266,19 +1329,20 @@ func (srv *Users) ListMemberships(UserId string, optionalSetters ...ListMembersh
 	return &parsed, nil
 
 }
-			
+
 // UpdateMfa enable or disable MFA on a user account.
 //
 // Deprecated: This API has been deprecated since 1.8.0. Please use `Users.updateMFA` instead.
-func (srv *Users) UpdateMfa(UserId string, Mfa bool)(*models.User, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) UpdateMfa(UserId string, Mfa bool) (*models.User, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/mfa")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	params["mfa"] = Mfa
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -1305,17 +1369,18 @@ func (srv *Users) UpdateMfa(UserId string, Mfa bool)(*models.User, error) {
 	return &parsed, nil
 
 }
-			
+
 // UpdateMFA enable or disable MFA on a user account.
-func (srv *Users) UpdateMFA(UserId string, Mfa bool)(*models.User, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) UpdateMFA(UserId string, Mfa bool) (*models.User, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/mfa")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	params["mfa"] = Mfa
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -1342,17 +1407,19 @@ func (srv *Users) UpdateMFA(UserId string, Mfa bool)(*models.User, error) {
 	return &parsed, nil
 
 }
-			
+
 // DeleteMfaAuthenticator delete an authenticator app.
 //
 // Deprecated: This API has been deprecated since 1.8.0. Please use `Users.deleteMFAAuthenticator` instead.
-func (srv *Users) DeleteMfaAuthenticator(UserId string, Type string)(*interface{}, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId), "{type}", url.PathEscape(Type))
+func (srv *Users) DeleteMfaAuthenticator(UserId string, Type string) (*interface{}, error) {
+	r := strings.NewReplacer("{userId}", UserId, "{type}", Type)
 	path := r.Replace("/users/{userId}/mfa/authenticators/{type}")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
+	params["type"] = Type
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
+		"content-type":       "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -1378,15 +1445,17 @@ func (srv *Users) DeleteMfaAuthenticator(UserId string, Type string)(*interface{
 	return &parsed, nil
 
 }
-			
+
 // DeleteMFAAuthenticator delete an authenticator app.
-func (srv *Users) DeleteMFAAuthenticator(UserId string, Type string)(*interface{}, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId), "{type}", url.PathEscape(Type))
+func (srv *Users) DeleteMFAAuthenticator(UserId string, Type string) (*interface{}, error) {
+	r := strings.NewReplacer("{userId}", UserId, "{type}", Type)
 	path := r.Replace("/users/{userId}/mfa/authenticators/{type}")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
+	params["type"] = Type
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
+		"content-type":       "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -1412,18 +1481,19 @@ func (srv *Users) DeleteMFAAuthenticator(UserId string, Type string)(*interface{
 	return &parsed, nil
 
 }
-	
+
 // ListMfaFactors list the factors available on the account to be used as a
 // MFA challange.
 //
 // Deprecated: This API has been deprecated since 1.8.0. Please use `Users.listMFAFactors` instead.
-func (srv *Users) ListMfaFactors(UserId string)(*models.MfaFactors, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) ListMfaFactors(UserId string) (*models.MfaFactors, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/mfa/factors")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1450,16 +1520,17 @@ func (srv *Users) ListMfaFactors(UserId string)(*models.MfaFactors, error) {
 	return &parsed, nil
 
 }
-	
+
 // ListMFAFactors list the factors available on the account to be used as a
 // MFA challange.
-func (srv *Users) ListMFAFactors(UserId string)(*models.MfaFactors, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) ListMFAFactors(UserId string) (*models.MfaFactors, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/mfa/factors")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1486,20 +1557,21 @@ func (srv *Users) ListMFAFactors(UserId string)(*models.MfaFactors, error) {
 	return &parsed, nil
 
 }
-	
+
 // GetMfaRecoveryCodes get recovery codes that can be used as backup for MFA
 // flow by User ID. Before getting codes, they must be generated using
 // [createMfaRecoveryCodes](/docs/references/cloud/client-web/account#createMfaRecoveryCodes)
 // method.
 //
 // Deprecated: This API has been deprecated since 1.8.0. Please use `Users.getMFARecoveryCodes` instead.
-func (srv *Users) GetMfaRecoveryCodes(UserId string)(*models.MfaRecoveryCodes, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) GetMfaRecoveryCodes(UserId string) (*models.MfaRecoveryCodes, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/mfa/recovery-codes")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1526,18 +1598,19 @@ func (srv *Users) GetMfaRecoveryCodes(UserId string)(*models.MfaRecoveryCodes, e
 	return &parsed, nil
 
 }
-	
+
 // GetMFARecoveryCodes get recovery codes that can be used as backup for MFA
 // flow by User ID. Before getting codes, they must be generated using
 // [createMfaRecoveryCodes](/docs/references/cloud/client-web/account#createMfaRecoveryCodes)
 // method.
-func (srv *Users) GetMFARecoveryCodes(UserId string)(*models.MfaRecoveryCodes, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) GetMFARecoveryCodes(UserId string) (*models.MfaRecoveryCodes, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/mfa/recovery-codes")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1564,7 +1637,7 @@ func (srv *Users) GetMFARecoveryCodes(UserId string)(*models.MfaRecoveryCodes, e
 	return &parsed, nil
 
 }
-	
+
 // UpdateMfaRecoveryCodes regenerate recovery codes that can be used as backup
 // for MFA flow by User ID. Before regenerating codes, they must be first
 // generated using
@@ -1572,14 +1645,15 @@ func (srv *Users) GetMFARecoveryCodes(UserId string)(*models.MfaRecoveryCodes, e
 // method.
 //
 // Deprecated: This API has been deprecated since 1.8.0. Please use `Users.updateMFARecoveryCodes` instead.
-func (srv *Users) UpdateMfaRecoveryCodes(UserId string)(*models.MfaRecoveryCodes, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) UpdateMfaRecoveryCodes(UserId string) (*models.MfaRecoveryCodes, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/mfa/recovery-codes")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PUT", path, headers, params)
@@ -1606,20 +1680,21 @@ func (srv *Users) UpdateMfaRecoveryCodes(UserId string)(*models.MfaRecoveryCodes
 	return &parsed, nil
 
 }
-	
+
 // UpdateMFARecoveryCodes regenerate recovery codes that can be used as backup
 // for MFA flow by User ID. Before regenerating codes, they must be first
 // generated using
 // [createMfaRecoveryCodes](/docs/references/cloud/client-web/account#createMfaRecoveryCodes)
 // method.
-func (srv *Users) UpdateMFARecoveryCodes(UserId string)(*models.MfaRecoveryCodes, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) UpdateMFARecoveryCodes(UserId string) (*models.MfaRecoveryCodes, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/mfa/recovery-codes")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PUT", path, headers, params)
@@ -1646,21 +1721,22 @@ func (srv *Users) UpdateMFARecoveryCodes(UserId string)(*models.MfaRecoveryCodes
 	return &parsed, nil
 
 }
-	
+
 // CreateMfaRecoveryCodes generate recovery codes used as backup for MFA flow
 // for User ID. Recovery codes can be used as a MFA verification type in
 // [createMfaChallenge](/docs/references/cloud/client-web/account#createMfaChallenge)
 // method by client SDK.
 //
 // Deprecated: This API has been deprecated since 1.8.0. Please use `Users.createMFARecoveryCodes` instead.
-func (srv *Users) CreateMfaRecoveryCodes(UserId string)(*models.MfaRecoveryCodes, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) CreateMfaRecoveryCodes(UserId string) (*models.MfaRecoveryCodes, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/mfa/recovery-codes")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -1687,19 +1763,20 @@ func (srv *Users) CreateMfaRecoveryCodes(UserId string)(*models.MfaRecoveryCodes
 	return &parsed, nil
 
 }
-	
+
 // CreateMFARecoveryCodes generate recovery codes used as backup for MFA flow
 // for User ID. Recovery codes can be used as a MFA verification type in
 // [createMfaChallenge](/docs/references/cloud/client-web/account#createMfaChallenge)
 // method by client SDK.
-func (srv *Users) CreateMFARecoveryCodes(UserId string)(*models.MfaRecoveryCodes, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) CreateMFARecoveryCodes(UserId string) (*models.MfaRecoveryCodes, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/mfa/recovery-codes")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -1726,17 +1803,18 @@ func (srv *Users) CreateMFARecoveryCodes(UserId string)(*models.MfaRecoveryCodes
 	return &parsed, nil
 
 }
-			
+
 // UpdateName update the user name by its unique ID.
-func (srv *Users) UpdateName(UserId string, Name string)(*models.User, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) UpdateName(UserId string, Name string) (*models.User, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/name")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	params["name"] = Name
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -1763,17 +1841,18 @@ func (srv *Users) UpdateName(UserId string, Name string)(*models.User, error) {
 	return &parsed, nil
 
 }
-			
+
 // UpdatePassword update the user password by its unique ID.
-func (srv *Users) UpdatePassword(UserId string, Password string)(*models.User, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) UpdatePassword(UserId string, Password string) (*models.User, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/password")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	params["password"] = Password
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -1800,17 +1879,18 @@ func (srv *Users) UpdatePassword(UserId string, Password string)(*models.User, e
 	return &parsed, nil
 
 }
-			
+
 // UpdatePhone update the user phone by its unique ID.
-func (srv *Users) UpdatePhone(UserId string, Number string)(*models.User, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) UpdatePhone(UserId string, Number string) (*models.User, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/phone")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	params["number"] = Number
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -1837,15 +1917,16 @@ func (srv *Users) UpdatePhone(UserId string, Number string)(*models.User, error)
 	return &parsed, nil
 
 }
-	
+
 // GetPrefs get the user preferences by its unique ID.
-func (srv *Users) GetPrefs(UserId string)(*models.Preferences, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) GetPrefs(UserId string) (*models.Preferences, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/prefs")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1872,19 +1953,20 @@ func (srv *Users) GetPrefs(UserId string)(*models.Preferences, error) {
 	return &parsed, nil
 
 }
-			
+
 // UpdatePrefs update the user preferences by its unique ID. The object you
 // pass is stored as is, and replaces any previous value. The maximum allowed
 // prefs size is 64kB and throws error if exceeded.
-func (srv *Users) UpdatePrefs(UserId string, Prefs interface{})(*models.Preferences, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) UpdatePrefs(UserId string, Prefs interface{}) (*models.Preferences, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/prefs")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	params["prefs"] = Prefs
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -1911,39 +1993,44 @@ func (srv *Users) UpdatePrefs(UserId string, Prefs interface{})(*models.Preferen
 	return &parsed, nil
 
 }
+
 type ListSessionsOptions struct {
-	Total bool
+	Total          bool
 	enabledSetters map[string]bool
 }
+
 func (options ListSessionsOptions) New() *ListSessionsOptions {
 	options.enabledSetters = map[string]bool{
 		"Total": false,
 	}
 	return &options
 }
+
 type ListSessionsOption func(*ListSessionsOptions)
+
 func (srv *Users) WithListSessionsTotal(v bool) ListSessionsOption {
 	return func(o *ListSessionsOptions) {
 		o.Total = v
 		o.enabledSetters["Total"] = true
 	}
 }
-			
+
 // ListSessions get the user sessions list by its unique ID.
-func (srv *Users) ListSessions(UserId string, optionalSetters ...ListSessionsOption)(*models.SessionList, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) ListSessions(UserId string, optionalSetters ...ListSessionsOption) (*models.SessionList, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/sessions")
 	options := ListSessionsOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	if options.enabledSetters["Total"] {
 		params["total"] = options.Total
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1970,22 +2057,23 @@ func (srv *Users) ListSessions(UserId string, optionalSetters ...ListSessionsOpt
 	return &parsed, nil
 
 }
-	
+
 // CreateSession creates a session for a user. Returns an immediately usable
 // session object.
-// 
+//
 // If you want to generate a token for a custom authentication flow, use the
 // [POST
 // /users/{userId}/tokens](https://appwrite.io/docs/server/users#createToken)
 // endpoint.
-func (srv *Users) CreateSession(UserId string)(*models.Session, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) CreateSession(UserId string) (*models.Session, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/sessions")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -2012,15 +2100,16 @@ func (srv *Users) CreateSession(UserId string)(*models.Session, error) {
 	return &parsed, nil
 
 }
-	
+
 // DeleteSessions delete all user's sessions by using the user's unique ID.
-func (srv *Users) DeleteSessions(UserId string)(*interface{}, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) DeleteSessions(UserId string) (*interface{}, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/sessions")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
+		"content-type":       "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -2046,15 +2135,17 @@ func (srv *Users) DeleteSessions(UserId string)(*interface{}, error) {
 	return &parsed, nil
 
 }
-			
+
 // DeleteSession delete a user sessions by its unique ID.
-func (srv *Users) DeleteSession(UserId string, SessionId string)(*interface{}, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId), "{sessionId}", url.PathEscape(SessionId))
+func (srv *Users) DeleteSession(UserId string, SessionId string) (*interface{}, error) {
+	r := strings.NewReplacer("{userId}", UserId, "{sessionId}", SessionId)
 	path := r.Replace("/users/{userId}/sessions/{sessionId}")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
+	params["sessionId"] = SessionId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
+		"content-type":       "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -2080,18 +2171,19 @@ func (srv *Users) DeleteSession(UserId string, SessionId string)(*interface{}, e
 	return &parsed, nil
 
 }
-			
+
 // UpdateStatus update the user status by its unique ID. Use this endpoint as
 // an alternative to deleting a user if you want to keep user's ID reserved.
-func (srv *Users) UpdateStatus(UserId string, Status bool)(*models.User, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) UpdateStatus(UserId string, Status bool) (*models.User, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/status")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	params["status"] = Status
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -2118,19 +2210,23 @@ func (srv *Users) UpdateStatus(UserId string, Status bool)(*models.User, error) 
 	return &parsed, nil
 
 }
+
 type ListTargetsOptions struct {
-	Queries []string
-	Total bool
+	Queries        []string
+	Total          bool
 	enabledSetters map[string]bool
 }
+
 func (options ListTargetsOptions) New() *ListTargetsOptions {
 	options.enabledSetters = map[string]bool{
 		"Queries": false,
-		"Total": false,
+		"Total":   false,
 	}
 	return &options
 }
+
 type ListTargetsOption func(*ListTargetsOptions)
+
 func (srv *Users) WithListTargetsQueries(v []string) ListTargetsOption {
 	return func(o *ListTargetsOptions) {
 		o.Queries = v
@@ -2143,16 +2239,17 @@ func (srv *Users) WithListTargetsTotal(v bool) ListTargetsOption {
 		o.enabledSetters["Total"] = true
 	}
 }
-			
+
 // ListTargets list the messaging targets that are associated with a user.
-func (srv *Users) ListTargets(UserId string, optionalSetters ...ListTargetsOption)(*models.TargetList, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) ListTargets(UserId string, optionalSetters ...ListTargetsOption) (*models.TargetList, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/targets")
 	options := ListTargetsOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	if options.enabledSetters["Queries"] {
 		params["queries"] = options.Queries
 	}
@@ -2161,7 +2258,7 @@ func (srv *Users) ListTargets(UserId string, optionalSetters ...ListTargetsOptio
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -2188,19 +2285,23 @@ func (srv *Users) ListTargets(UserId string, optionalSetters ...ListTargetsOptio
 	return &parsed, nil
 
 }
+
 type CreateTargetOptions struct {
-	ProviderId string
-	Name string
+	ProviderId     string
+	Name           string
 	enabledSetters map[string]bool
 }
+
 func (options CreateTargetOptions) New() *CreateTargetOptions {
 	options.enabledSetters = map[string]bool{
 		"ProviderId": false,
-		"Name": false,
+		"Name":       false,
 	}
 	return &options
 }
+
 type CreateTargetOption func(*CreateTargetOptions)
+
 func (srv *Users) WithCreateTargetProviderId(v string) CreateTargetOption {
 	return func(o *CreateTargetOptions) {
 		o.ProviderId = v
@@ -2213,16 +2314,17 @@ func (srv *Users) WithCreateTargetName(v string) CreateTargetOption {
 		o.enabledSetters["Name"] = true
 	}
 }
-									
+
 // CreateTarget create a messaging target.
-func (srv *Users) CreateTarget(UserId string, TargetId string, ProviderType string, Identifier string, optionalSetters ...CreateTargetOption)(*models.Target, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) CreateTarget(UserId string, TargetId string, ProviderType string, Identifier string, optionalSetters ...CreateTargetOption) (*models.Target, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/targets")
 	options := CreateTargetOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	params["targetId"] = TargetId
 	params["providerType"] = ProviderType
 	params["identifier"] = Identifier
@@ -2234,8 +2336,8 @@ func (srv *Users) CreateTarget(UserId string, TargetId string, ProviderType stri
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -2262,15 +2364,17 @@ func (srv *Users) CreateTarget(UserId string, TargetId string, ProviderType stri
 	return &parsed, nil
 
 }
-			
+
 // GetTarget get a user's push notification target by ID.
-func (srv *Users) GetTarget(UserId string, TargetId string)(*models.Target, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId), "{targetId}", url.PathEscape(TargetId))
+func (srv *Users) GetTarget(UserId string, TargetId string) (*models.Target, error) {
+	r := strings.NewReplacer("{userId}", UserId, "{targetId}", TargetId)
 	path := r.Replace("/users/{userId}/targets/{targetId}")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
+	params["targetId"] = TargetId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -2297,21 +2401,25 @@ func (srv *Users) GetTarget(UserId string, TargetId string)(*models.Target, erro
 	return &parsed, nil
 
 }
+
 type UpdateTargetOptions struct {
-	Identifier string
-	ProviderId string
-	Name string
+	Identifier     string
+	ProviderId     string
+	Name           string
 	enabledSetters map[string]bool
 }
+
 func (options UpdateTargetOptions) New() *UpdateTargetOptions {
 	options.enabledSetters = map[string]bool{
 		"Identifier": false,
 		"ProviderId": false,
-		"Name": false,
+		"Name":       false,
 	}
 	return &options
 }
+
 type UpdateTargetOption func(*UpdateTargetOptions)
+
 func (srv *Users) WithUpdateTargetIdentifier(v string) UpdateTargetOption {
 	return func(o *UpdateTargetOptions) {
 		o.Identifier = v
@@ -2330,16 +2438,18 @@ func (srv *Users) WithUpdateTargetName(v string) UpdateTargetOption {
 		o.enabledSetters["Name"] = true
 	}
 }
-					
+
 // UpdateTarget update a messaging target.
-func (srv *Users) UpdateTarget(UserId string, TargetId string, optionalSetters ...UpdateTargetOption)(*models.Target, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId), "{targetId}", url.PathEscape(TargetId))
+func (srv *Users) UpdateTarget(UserId string, TargetId string, optionalSetters ...UpdateTargetOption) (*models.Target, error) {
+	r := strings.NewReplacer("{userId}", UserId, "{targetId}", TargetId)
 	path := r.Replace("/users/{userId}/targets/{targetId}")
 	options := UpdateTargetOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["userId"] = UserId
+	params["targetId"] = TargetId
 	if options.enabledSetters["Identifier"] {
 		params["identifier"] = options.Identifier
 	}
@@ -2351,8 +2461,8 @@ func (srv *Users) UpdateTarget(UserId string, TargetId string, optionalSetters .
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -2379,15 +2489,17 @@ func (srv *Users) UpdateTarget(UserId string, TargetId string, optionalSetters .
 	return &parsed, nil
 
 }
-			
+
 // DeleteTarget delete a messaging target.
-func (srv *Users) DeleteTarget(UserId string, TargetId string)(*interface{}, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId), "{targetId}", url.PathEscape(TargetId))
+func (srv *Users) DeleteTarget(UserId string, TargetId string) (*interface{}, error) {
+	r := strings.NewReplacer("{userId}", UserId, "{targetId}", TargetId)
 	path := r.Replace("/users/{userId}/targets/{targetId}")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
+	params["targetId"] = TargetId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
+		"content-type":       "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -2413,11 +2525,13 @@ func (srv *Users) DeleteTarget(UserId string, TargetId string)(*interface{}, err
 	return &parsed, nil
 
 }
+
 type CreateTokenOptions struct {
-	Length int
-	Expire int
+	Length         int
+	Expire         int
 	enabledSetters map[string]bool
 }
+
 func (options CreateTokenOptions) New() *CreateTokenOptions {
 	options.enabledSetters = map[string]bool{
 		"Length": false,
@@ -2425,7 +2539,9 @@ func (options CreateTokenOptions) New() *CreateTokenOptions {
 	}
 	return &options
 }
+
 type CreateTokenOption func(*CreateTokenOptions)
+
 func (srv *Users) WithCreateTokenLength(v int) CreateTokenOption {
 	return func(o *CreateTokenOptions) {
 		o.Length = v
@@ -2438,19 +2554,20 @@ func (srv *Users) WithCreateTokenExpire(v int) CreateTokenOption {
 		o.enabledSetters["Expire"] = true
 	}
 }
-			
+
 // CreateToken returns a token with a secret key for creating a session. Use
 // the user ID and secret and submit a request to the [PUT
 // /account/sessions/token](https://appwrite.io/docs/references/cloud/client-web/account#createSession)
 // endpoint to complete the login process.
-func (srv *Users) CreateToken(UserId string, optionalSetters ...CreateTokenOption)(*models.Token, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) CreateToken(UserId string, optionalSetters ...CreateTokenOption) (*models.Token, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/tokens")
 	options := CreateTokenOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	if options.enabledSetters["Length"] {
 		params["length"] = options.Length
 	}
@@ -2459,8 +2576,8 @@ func (srv *Users) CreateToken(UserId string, optionalSetters ...CreateTokenOptio
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -2487,18 +2604,19 @@ func (srv *Users) CreateToken(UserId string, optionalSetters ...CreateTokenOptio
 	return &parsed, nil
 
 }
-			
+
 // UpdateEmailVerification update the user email verification status by its
 // unique ID.
-func (srv *Users) UpdateEmailVerification(UserId string, EmailVerification bool)(*models.User, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) UpdateEmailVerification(UserId string, EmailVerification bool) (*models.User, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/verification")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	params["emailVerification"] = EmailVerification
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -2525,18 +2643,19 @@ func (srv *Users) UpdateEmailVerification(UserId string, EmailVerification bool)
 	return &parsed, nil
 
 }
-			
+
 // UpdatePhoneVerification update the user phone verification status by its
 // unique ID.
-func (srv *Users) UpdatePhoneVerification(UserId string, PhoneVerification bool)(*models.User, error) {
-	r := strings.NewReplacer("{userId}", url.PathEscape(UserId))
+func (srv *Users) UpdatePhoneVerification(UserId string, PhoneVerification bool) (*models.User, error) {
+	r := strings.NewReplacer("{userId}", UserId)
 	path := r.Replace("/users/{userId}/verification/phone")
 	params := map[string]interface{}{}
+	params["userId"] = UserId
 	params["phoneVerification"] = PhoneVerification
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)

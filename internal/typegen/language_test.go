@@ -10,9 +10,9 @@ import (
 // The baselines under testdata/ were produced by running the shipping
 // TypeScript emitters under node over testdata/collections.json, with
 // process.argv pinned to `types ./types`. They are captured output, not output
-// anyone wrote by hand -- see docs/go-cli/README.md section 2.6.
+// anyone wrote by hand.
 //
-// Regenerating them means re-running the probe, not editing the file. A diff
+// Regenerating them means re-running the emitters, not editing the file. A diff
 // here is a real behaviour change in one implementation or the other.
 
 // baselineInvocation is the argv the baselines were captured with.

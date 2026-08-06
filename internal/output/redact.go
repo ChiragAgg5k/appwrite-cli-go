@@ -7,11 +7,9 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/jsonx"
 )
 
-// Ports the redaction half of templates/cli/lib/parser.ts.
-//
-// docs/go-cli/PLAN.md lists this as invariant 5: a regression here leaks
-// credentials into terminal scrollback, CI logs and bug reports. The rules are
-// reproduced exactly, including the parts that look arbitrary.
+// A regression here leaks credentials into terminal scrollback, CI logs and
+// bug reports. The rules are reproduced exactly, including the parts that look
+// arbitrary.
 
 // HiddenValue replaces a redacted value.
 const HiddenValue = "[hidden]"
@@ -52,6 +50,33 @@ func IsSensitiveKey(key string) bool {
 	normalized := normalizeKey(key)
 	for _, sensitive := range sensitiveKeys {
 		if normalized == sensitive || strings.HasSuffix(normalized, sensitive) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// IsSensitiveFlagName reports whether a command-line flag carries a credential
+// as its value.
+//
+// Deliberately broader than IsSensitiveKey, and the difference matters twice:
+//
+//   - `--password-signer-key` normalises to `passwordsignerkey`, which ends in
+//     `key` rather than in any listed term, so a suffix test misses it.
+//   - `--key` and `-k` normalise to `key` and `k`, absent from the shared list
+//     because `key` is an ordinary field name in API payloads and matching it
+//     there would mask responses that are not credentials.
+//
+// A flag name carries neither ambiguity, so substring matching is safe here
+// where it would not be on a response field.
+func IsSensitiveFlagName(name string) bool {
+	normalized := normalizeKey(name)
+	if normalized == "key" || normalized == "k" {
+		return true
+	}
+	for _, sensitive := range sensitiveKeys {
+		if strings.Contains(normalized, sensitive) {
 			return true
 		}
 	}

@@ -51,14 +51,9 @@ const (
 	StatusFailed = "failed"
 )
 
-// Archive is a packaged deployment on disk.
-//
-// A path, not bytes. The TypeScript reads the finished archive into a Buffer
-// (deployment.ts:601) and hands it to the SDK as a File; Phase 0 measured that
-// at 421 MB RSS and still growing on a 369 MB tree, against 102 MB flat for a
-// Go upload that streams from the file. That is the single largest measured win
-// in this rewrite, so the archive is never held in memory -- not here, and not
-// in Upload.
+// Archive is a packaged deployment on disk: a path, not bytes. Reading a 369 MB
+// tree into memory measured 421 MB RSS against 102 MB flat for a streamed
+// upload, so the archive is never held in memory -- not here, and not in Upload.
 type Archive struct {
 	// Path is the archive on disk.
 	Path string
@@ -81,11 +76,10 @@ func (a *Archive) Remove() error {
 
 // PackageDirectory packs a resource directory into a gzipped archive.
 //
-// extraIgnoreRules is the resource's own `ignore` config, which ADDS to
-// .gitignore rather than replacing it -- deployment.ts installs both matchers.
-// (The emulation path in internal/docker does replace; the two are genuinely
-// different, so do not unify them.) projectRoot bounds how far a symlink may be
-// followed and may be empty for a path given straight to the CLI.
+// extraIgnoreRules is the resource's own `ignore` config, which adds to
+// .gitignore rather than replacing it. (The emulation path in internal/docker
+// does replace -- genuinely different, do not unify them.) projectRoot bounds
+// how far a symlink may be followed.
 func PackageDirectory(
 	directory string,
 	extraIgnoreRules []string,
@@ -150,7 +144,7 @@ type matcher struct {
 
 // listDeployableFiles walks a directory and applies its ignore rules.
 //
-// Ports listDeployableFiles (deployment.ts:422). A .gitignore in a
+// A .gitignore in a
 // SUBDIRECTORY applies to that subtree only, which is why the matchers are a
 // stack rather than one merged rule set.
 func listDeployableFiles(
@@ -321,7 +315,7 @@ func isIgnored(relativePath string, matchers []matcher, isDirectory bool) bool {
 
 // resolveSymlinkBoundary bounds how far a symlink may be followed.
 //
-// Ports resolveSymlinkBoundary (utils.ts:898). Sharing `functions/common`
+// Sharing `functions/common`
 // between two functions stays possible; reaching `~/.ssh` does not.
 func resolveSymlinkBoundary(directory, projectRoot string) (string, error) {
 	resolved, err := filepath.EvalSymlinks(directory)
@@ -397,14 +391,10 @@ func PlanChunks(size int64) []Chunk {
 
 // Upload sends an archive to path as a multipart form.
 //
-// STREAMED, never buffered: every chunk is an io.SectionReader over the open
-// file, so peak memory is the HTTP write buffer rather than the archive. The
-// TypeScript's fs.readFileSync into a Buffer is the 421 MB in
-// docs/go-cli/PLAN.md §1.4, and this is the 102 MB flat.
-//
-// Ports the chunkedUpload half of the console SDK's client: one request under
-// the chunk size, otherwise a first chunk that mints the upload id followed by
-// the rest, eight at a time.
+// Streamed, never buffered: every chunk is an io.SectionReader over the open
+// file, so peak memory is the HTTP write buffer rather than the archive. One
+// request under the chunk size, otherwise a first chunk that mints the upload id
+// followed by the rest, eight at a time.
 func Upload(
 	api *client.Client,
 	path string,
@@ -541,7 +531,7 @@ type Result struct {
 
 // Push packages a directory, creates the deployment and optionally waits.
 //
-// Ports pushDeployment (deployment.ts:736). The archive is removed whatever
+// The archive is removed whatever
 // happens: it lives in a temporary directory, and a failed push that leaves one
 // behind costs the size of the deployment on every retry.
 func Push(options Options) (Result, error) {

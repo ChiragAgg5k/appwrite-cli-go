@@ -1,16 +1,11 @@
 // Package preview draws a site's deployment screenshot in the terminal.
 //
-// Ports the terminal-image half of templates/cli/lib/commands/push.ts: the
-// constants at :123, renderImageBufferToTerminalPreview (:305) and
-// frameTerminalPreview (:383).
-//
-// The TypeScript delegates the pixels to the `terminal-image` package and then
-// deliberately unsets TERM_PROGRAM, KITTY_WINDOW_ID and friends to force that
-// package's ANSI fallback -- iTerm and kitty would otherwise receive a real
-// image, which cannot be framed and does not survive a copied-out transcript.
-// So the fallback IS the shipped rendering, and it is the only one implemented
-// here. That also means no new dependency: image/png and image/jpeg are in the
-// standard library, and half-block cells are a few lines of arithmetic.
+// The TypeScript unsets TERM_PROGRAM, KITTY_WINDOW_ID and friends to force
+// terminal-image's ANSI fallback: iTerm and kitty would otherwise receive a real
+// image, which cannot be framed and does not survive a copied-out transcript. So
+// the fallback is the shipped rendering and the only one implemented here --
+// which also means no new dependency, since image/png and image/jpeg are
+// standard library and half-block cells are arithmetic.
 package preview
 
 import (
@@ -42,12 +37,9 @@ const (
 	Height = 270
 )
 
-// The cell grid the art is drawn into.
-//
-// SITE_TERMINAL_PREVIEW_TARGET_WIDTH and the four bounds beside it. The target
-// is narrower than the maximum on purpose: a preview that fills an 200-column
-// terminal edge to edge is a wall, and the links printed under it are what the
-// user came for.
+// The cell grid the art is drawn into. The target is narrower than the maximum
+// on purpose: a preview filling a 200-column terminal edge to edge is a wall,
+// and the links printed under it are what the user came for.
 const (
 	targetColumns = 72
 	maxColumns    = 80
@@ -72,7 +64,7 @@ const ansiReset = "\x1b[0m"
 
 // Columns is the width to draw into, for a terminal of the given width.
 //
-// Ports getSiteTerminalPreviewWidth. The -4 leaves room for the frame and a
+// The -4 leaves room for the frame and a
 // margin; the floor is what keeps a very narrow terminal producing a small
 // picture rather than a zero-width one.
 func Columns(terminalColumns int) int {
@@ -85,7 +77,7 @@ func Columns(terminalColumns int) int {
 
 // Rows is the height to draw into, for a terminal of the given height.
 //
-// Ports getSiteTerminalPreviewHeight. The -10 is the summary that has to stay
+// The -10 is the summary that has to stay
 // on screen with it: the status row, the two links, and the blank lines around
 // them.
 func Rows(terminalRows int) int {

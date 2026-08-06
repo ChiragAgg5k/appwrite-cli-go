@@ -5,12 +5,10 @@ import (
 	"strings"
 )
 
-// Ports the parser in dotenv 16.x, which `run` uses to read a function's .env.
-//
 // Every pair it produces is handed to the container as an environment
 // variable, so a parse difference changes what the function sees at runtime.
 // Behaviour is pinned to the package itself, not to its documentation; see
-// internal/dotenv/testdata and docs/go-cli/capture-dotenv-baselines.ts.
+// internal/dotenv/testdata.
 //
 // dotenv is one regular expression plus a short post-processing step, and it is
 // reproduced that way rather than rewritten as a hand-rolled scanner -- a

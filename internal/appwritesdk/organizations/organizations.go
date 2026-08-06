@@ -21,18 +21,21 @@ func New(clt client.Client) *Organizations {
 }
 
 type ListOptions struct {
-	Queries []string
-	Search string
+	Queries        []string
+	Search         string
 	enabledSetters map[string]bool
 }
+
 func (options ListOptions) New() *ListOptions {
 	options.enabledSetters = map[string]bool{
 		"Queries": false,
-		"Search": false,
+		"Search":  false,
 	}
 	return &options
 }
+
 type ListOption func(*ListOptions)
+
 func (srv *Organizations) WithListQueries(v []string) ListOption {
 	return func(o *ListOptions) {
 		o.Queries = v
@@ -45,10 +48,10 @@ func (srv *Organizations) WithListSearch(v string) ListOption {
 		o.enabledSetters["Search"] = true
 	}
 }
-	
+
 // List get a list of all the teams in which the current user is a member. You
 // can use the parameters to filter your results.
-func (srv *Organizations) List(optionalSetters ...ListOption)(*models.OrganizationList, error) {
+func (srv *Organizations) List(optionalSetters ...ListOption) (*models.OrganizationList, error) {
 	path := "/organizations"
 	options := ListOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -63,7 +66,7 @@ func (srv *Organizations) List(optionalSetters ...ListOption)(*models.Organizati
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -90,29 +93,33 @@ func (srv *Organizations) List(optionalSetters ...ListOption)(*models.Organizati
 	return &parsed, nil
 
 }
+
 type CreateOptions struct {
-	PaymentMethodId string
+	PaymentMethodId  string
 	BillingAddressId string
-	Invites []string
-	CouponId string
-	TaxId string
-	Budget int
-	Platform string
-	enabledSetters map[string]bool
+	Invites          []string
+	CouponId         string
+	TaxId            string
+	Budget           int
+	Platform         string
+	enabledSetters   map[string]bool
 }
+
 func (options CreateOptions) New() *CreateOptions {
 	options.enabledSetters = map[string]bool{
-		"PaymentMethodId": false,
+		"PaymentMethodId":  false,
 		"BillingAddressId": false,
-		"Invites": false,
-		"CouponId": false,
-		"TaxId": false,
-		"Budget": false,
-		"Platform": false,
+		"Invites":          false,
+		"CouponId":         false,
+		"TaxId":            false,
+		"Budget":           false,
+		"Platform":         false,
 	}
 	return &options
 }
+
 type CreateOption func(*CreateOptions)
+
 func (srv *Organizations) WithCreatePaymentMethodId(v string) CreateOption {
 	return func(o *CreateOptions) {
 		o.PaymentMethodId = v
@@ -155,9 +162,9 @@ func (srv *Organizations) WithCreatePlatform(v string) CreateOption {
 		o.enabledSetters["Platform"] = true
 	}
 }
-							
+
 // Create create a new organization.
-func (srv *Organizations) Create(OrganizationId string, Name string, BillingPlan string, optionalSetters ...CreateOption)(models.Model, error) {
+func (srv *Organizations) Create(OrganizationId string, Name string, BillingPlan string, optionalSetters ...CreateOption) (models.Model, error) {
 	path := "/organizations"
 	options := CreateOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -190,8 +197,8 @@ func (srv *Organizations) Create(OrganizationId string, Name string, BillingPlan
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -217,23 +224,27 @@ func (srv *Organizations) Create(OrganizationId string, Name string, BillingPlan
 	return parsed, nil
 
 }
+
 type EstimationCreateOrganizationOptions struct {
 	PaymentMethodId string
-	Invites []string
-	CouponId string
-	Platform string
-	enabledSetters map[string]bool
+	Invites         []string
+	CouponId        string
+	Platform        string
+	enabledSetters  map[string]bool
 }
+
 func (options EstimationCreateOrganizationOptions) New() *EstimationCreateOrganizationOptions {
 	options.enabledSetters = map[string]bool{
 		"PaymentMethodId": false,
-		"Invites": false,
-		"CouponId": false,
-		"Platform": false,
+		"Invites":         false,
+		"CouponId":        false,
+		"Platform":        false,
 	}
 	return &options
 }
+
 type EstimationCreateOrganizationOption func(*EstimationCreateOrganizationOptions)
+
 func (srv *Organizations) WithEstimationCreateOrganizationPaymentMethodId(v string) EstimationCreateOrganizationOption {
 	return func(o *EstimationCreateOrganizationOptions) {
 		o.PaymentMethodId = v
@@ -258,9 +269,9 @@ func (srv *Organizations) WithEstimationCreateOrganizationPlatform(v string) Est
 		o.enabledSetters["Platform"] = true
 	}
 }
-			
+
 // EstimationCreateOrganization get estimation for creating an organization.
-func (srv *Organizations) EstimationCreateOrganization(BillingPlan string, optionalSetters ...EstimationCreateOrganizationOption)(*models.Estimation, error) {
+func (srv *Organizations) EstimationCreateOrganization(BillingPlan string, optionalSetters ...EstimationCreateOrganizationOption) (*models.Estimation, error) {
 	path := "/organizations/estimations/create-organization"
 	options := EstimationCreateOrganizationOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -282,8 +293,8 @@ func (srv *Organizations) EstimationCreateOrganization(BillingPlan string, optio
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -310,16 +321,17 @@ func (srv *Organizations) EstimationCreateOrganization(BillingPlan string, optio
 	return &parsed, nil
 
 }
-	
+
 // Delete delete an organization.
-func (srv *Organizations) Delete(OrganizationId string)(*interface{}, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) Delete(OrganizationId string) (*interface{}, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -345,15 +357,16 @@ func (srv *Organizations) Delete(OrganizationId string)(*interface{}, error) {
 	return &parsed, nil
 
 }
-	
+
 // ListAddons list all billing addons for an organization.
-func (srv *Organizations) ListAddons(OrganizationId string)(*models.AddonList, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) ListAddons(OrganizationId string) (*models.AddonList, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/addons")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -380,16 +393,17 @@ func (srv *Organizations) ListAddons(OrganizationId string)(*models.AddonList, e
 	return &parsed, nil
 
 }
-	
+
 // CreateBaaAddon create the BAA billing addon for an organization.
-func (srv *Organizations) CreateBaaAddon(OrganizationId string)(*models.Addon, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) CreateBaaAddon(OrganizationId string) (*models.Addon, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/addons/baa")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -416,16 +430,17 @@ func (srv *Organizations) CreateBaaAddon(OrganizationId string)(*models.Addon, e
 	return &parsed, nil
 
 }
-	
+
 // CreatePremiumGeoDBAddon create a Premium Geo DB addon for an organization.
-func (srv *Organizations) CreatePremiumGeoDBAddon(OrganizationId string)(*models.Addon, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) CreatePremiumGeoDBAddon(OrganizationId string) (*models.Addon, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/addons/premium-geo-db")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -452,15 +467,17 @@ func (srv *Organizations) CreatePremiumGeoDBAddon(OrganizationId string)(*models
 	return &parsed, nil
 
 }
-			
+
 // GetAddon get the details of a billing addon for an organization.
-func (srv *Organizations) GetAddon(OrganizationId string, AddonId string)(*models.Addon, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId), "{addonId}", url.PathEscape(AddonId))
+func (srv *Organizations) GetAddon(OrganizationId string, AddonId string) (*models.Addon, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId, "{addonId}", AddonId)
 	path := r.Replace("/organizations/{organizationId}/addons/{addonId}")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
+	params["addonId"] = AddonId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -487,16 +504,18 @@ func (srv *Organizations) GetAddon(OrganizationId string, AddonId string)(*model
 	return &parsed, nil
 
 }
-			
+
 // DeleteAddon delete a billing addon for an organization.
-func (srv *Organizations) DeleteAddon(OrganizationId string, AddonId string)(*interface{}, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId), "{addonId}", url.PathEscape(AddonId))
+func (srv *Organizations) DeleteAddon(OrganizationId string, AddonId string) (*interface{}, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId, "{addonId}", AddonId)
 	path := r.Replace("/organizations/{organizationId}/addons/{addonId}")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
+	params["addonId"] = AddonId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -522,17 +541,19 @@ func (srv *Organizations) DeleteAddon(OrganizationId string, AddonId string)(*in
 	return &parsed, nil
 
 }
-			
+
 // ConfirmAddonPayment confirm payment for a billing addon for an
 // organization.
-func (srv *Organizations) ConfirmAddonPayment(OrganizationId string, AddonId string)(*models.Addon, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId), "{addonId}", url.PathEscape(AddonId))
+func (srv *Organizations) ConfirmAddonPayment(OrganizationId string, AddonId string) (*models.Addon, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId, "{addonId}", AddonId)
 	path := r.Replace("/organizations/{organizationId}/addons/{addonId}/confirmations")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
+	params["addonId"] = AddonId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -559,16 +580,18 @@ func (srv *Organizations) ConfirmAddonPayment(OrganizationId string, AddonId str
 	return &parsed, nil
 
 }
-			
+
 // GetAddonPrice get the price details for a billing addon for an
 // organization.
-func (srv *Organizations) GetAddonPrice(OrganizationId string, Addon string)(*models.AddonPrice, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId), "{addon}", url.PathEscape(Addon))
+func (srv *Organizations) GetAddonPrice(OrganizationId string, Addon string) (*models.AddonPrice, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId, "{addon}", Addon)
 	path := r.Replace("/organizations/{organizationId}/addons/{addon}/price")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
+	params["addon"] = Addon
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -595,39 +618,44 @@ func (srv *Organizations) GetAddonPrice(OrganizationId string, Addon string)(*mo
 	return &parsed, nil
 
 }
+
 type ListAggregationsOptions struct {
-	Queries []string
+	Queries        []string
 	enabledSetters map[string]bool
 }
+
 func (options ListAggregationsOptions) New() *ListAggregationsOptions {
 	options.enabledSetters = map[string]bool{
 		"Queries": false,
 	}
 	return &options
 }
+
 type ListAggregationsOption func(*ListAggregationsOptions)
+
 func (srv *Organizations) WithListAggregationsQueries(v []string) ListAggregationsOption {
 	return func(o *ListAggregationsOptions) {
 		o.Queries = v
 		o.enabledSetters["Queries"] = true
 	}
 }
-			
+
 // ListAggregations get a list of all aggregations for an organization.
-func (srv *Organizations) ListAggregations(OrganizationId string, optionalSetters ...ListAggregationsOption)(*models.AggregationTeamList, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) ListAggregations(OrganizationId string, optionalSetters ...ListAggregationsOption) (*models.AggregationTeamList, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/aggregations")
 	options := ListAggregationsOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	if options.enabledSetters["Queries"] {
 		params["queries"] = options.Queries
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -654,19 +682,23 @@ func (srv *Organizations) ListAggregations(OrganizationId string, optionalSetter
 	return &parsed, nil
 
 }
+
 type GetAggregationOptions struct {
-	Limit int
-	Offset int
+	Limit          int
+	Offset         int
 	enabledSetters map[string]bool
 }
+
 func (options GetAggregationOptions) New() *GetAggregationOptions {
 	options.enabledSetters = map[string]bool{
-		"Limit": false,
+		"Limit":  false,
 		"Offset": false,
 	}
 	return &options
 }
+
 type GetAggregationOption func(*GetAggregationOptions)
+
 func (srv *Organizations) WithGetAggregationLimit(v int) GetAggregationOption {
 	return func(o *GetAggregationOptions) {
 		o.Limit = v
@@ -679,16 +711,18 @@ func (srv *Organizations) WithGetAggregationOffset(v int) GetAggregationOption {
 		o.enabledSetters["Offset"] = true
 	}
 }
-					
+
 // GetAggregation get a specific aggregation using it's aggregation ID.
-func (srv *Organizations) GetAggregation(OrganizationId string, AggregationId string, optionalSetters ...GetAggregationOption)(*models.AggregationTeam, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId), "{aggregationId}", url.PathEscape(AggregationId))
+func (srv *Organizations) GetAggregation(OrganizationId string, AggregationId string, optionalSetters ...GetAggregationOption) (*models.AggregationTeam, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId, "{aggregationId}", AggregationId)
 	path := r.Replace("/organizations/{organizationId}/aggregations/{aggregationId}")
 	options := GetAggregationOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
+	params["aggregationId"] = AggregationId
 	if options.enabledSetters["Limit"] {
 		params["limit"] = options.Limit
 	}
@@ -697,7 +731,7 @@ func (srv *Organizations) GetAggregation(OrganizationId string, AggregationId st
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -724,17 +758,18 @@ func (srv *Organizations) GetAggregation(OrganizationId string, AggregationId st
 	return &parsed, nil
 
 }
-			
+
 // SetBillingAddress set a billing address for an organization.
-func (srv *Organizations) SetBillingAddress(OrganizationId string, BillingAddressId string)(*models.Organization, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) SetBillingAddress(OrganizationId string, BillingAddressId string) (*models.Organization, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/billing-address")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	params["billingAddressId"] = BillingAddressId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -761,16 +796,17 @@ func (srv *Organizations) SetBillingAddress(OrganizationId string, BillingAddres
 	return &parsed, nil
 
 }
-	
+
 // DeleteBillingAddress delete a team's billing address.
-func (srv *Organizations) DeleteBillingAddress(OrganizationId string)(*interface{}, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) DeleteBillingAddress(OrganizationId string) (*interface{}, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/billing-address")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -796,15 +832,17 @@ func (srv *Organizations) DeleteBillingAddress(OrganizationId string)(*interface
 	return &parsed, nil
 
 }
-			
+
 // GetBillingAddress get a billing address using it's ID.
-func (srv *Organizations) GetBillingAddress(OrganizationId string, BillingAddressId string)(*models.BillingAddress, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId), "{billingAddressId}", url.PathEscape(BillingAddressId))
+func (srv *Organizations) GetBillingAddress(OrganizationId string, BillingAddressId string) (*models.BillingAddress, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId, "{billingAddressId}", BillingAddressId)
 	path := r.Replace("/organizations/{organizationId}/billing-addresses/{billingAddressId}")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
+	params["billingAddressId"] = BillingAddressId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -831,17 +869,18 @@ func (srv *Organizations) GetBillingAddress(OrganizationId string, BillingAddres
 	return &parsed, nil
 
 }
-			
+
 // SetBillingEmail set the current billing email for the organization.
-func (srv *Organizations) SetBillingEmail(OrganizationId string, BillingEmail string)(*models.Organization, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) SetBillingEmail(OrganizationId string, BillingEmail string) (*models.Organization, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/billing-email")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	params["billingEmail"] = BillingEmail
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -868,41 +907,46 @@ func (srv *Organizations) SetBillingEmail(OrganizationId string, BillingEmail st
 	return &parsed, nil
 
 }
+
 type UpdateBudgetOptions struct {
-	Alerts []int
+	Alerts         []int
 	enabledSetters map[string]bool
 }
+
 func (options UpdateBudgetOptions) New() *UpdateBudgetOptions {
 	options.enabledSetters = map[string]bool{
 		"Alerts": false,
 	}
 	return &options
 }
+
 type UpdateBudgetOption func(*UpdateBudgetOptions)
+
 func (srv *Organizations) WithUpdateBudgetAlerts(v []int) UpdateBudgetOption {
 	return func(o *UpdateBudgetOptions) {
 		o.Alerts = v
 		o.enabledSetters["Alerts"] = true
 	}
 }
-					
+
 // UpdateBudget update the budget limit for an organization.
-func (srv *Organizations) UpdateBudget(OrganizationId string, Budget int, optionalSetters ...UpdateBudgetOption)(*models.Organization, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) UpdateBudget(OrganizationId string, Budget int, optionalSetters ...UpdateBudgetOption) (*models.Organization, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/budget")
 	options := UpdateBudgetOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	params["budget"] = Budget
 	if options.enabledSetters["Alerts"] {
 		params["alerts"] = options.Alerts
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -929,39 +973,44 @@ func (srv *Organizations) UpdateBudget(OrganizationId string, Budget int, option
 	return &parsed, nil
 
 }
+
 type ListCreditsOptions struct {
-	Queries []string
+	Queries        []string
 	enabledSetters map[string]bool
 }
+
 func (options ListCreditsOptions) New() *ListCreditsOptions {
 	options.enabledSetters = map[string]bool{
 		"Queries": false,
 	}
 	return &options
 }
+
 type ListCreditsOption func(*ListCreditsOptions)
+
 func (srv *Organizations) WithListCreditsQueries(v []string) ListCreditsOption {
 	return func(o *ListCreditsOptions) {
 		o.Queries = v
 		o.enabledSetters["Queries"] = true
 	}
 }
-			
+
 // ListCredits list all credits for an organization.
-func (srv *Organizations) ListCredits(OrganizationId string, optionalSetters ...ListCreditsOption)(*models.CreditList, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) ListCredits(OrganizationId string, optionalSetters ...ListCreditsOption) (*models.CreditList, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/credits")
 	options := ListCreditsOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	if options.enabledSetters["Queries"] {
 		params["queries"] = options.Queries
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -988,17 +1037,18 @@ func (srv *Organizations) ListCredits(OrganizationId string, optionalSetters ...
 	return &parsed, nil
 
 }
-			
+
 // AddCredit add credit to an organization using a coupon.
-func (srv *Organizations) AddCredit(OrganizationId string, CouponId string)(*models.Credit, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) AddCredit(OrganizationId string, CouponId string) (*models.Credit, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/credits")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	params["couponId"] = CouponId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -1025,15 +1075,16 @@ func (srv *Organizations) AddCredit(OrganizationId string, CouponId string)(*mod
 	return &parsed, nil
 
 }
-	
+
 // GetAvailableCredits get total available valid credits for an organization.
-func (srv *Organizations) GetAvailableCredits(OrganizationId string)(*models.CreditAvailable, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) GetAvailableCredits(OrganizationId string) (*models.CreditAvailable, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/credits/available")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1060,15 +1111,17 @@ func (srv *Organizations) GetAvailableCredits(OrganizationId string)(*models.Cre
 	return &parsed, nil
 
 }
-			
+
 // GetCredit get credit details.
-func (srv *Organizations) GetCredit(OrganizationId string, CreditId string)(*models.Credit, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId), "{creditId}", url.PathEscape(CreditId))
+func (srv *Organizations) GetCredit(OrganizationId string, CreditId string) (*models.Credit, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId, "{creditId}", CreditId)
 	path := r.Replace("/organizations/{organizationId}/credits/{creditId}")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
+	params["creditId"] = CreditId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1095,16 +1148,17 @@ func (srv *Organizations) GetCredit(OrganizationId string, CreditId string)(*mod
 	return &parsed, nil
 
 }
-	
+
 // EstimationDeleteOrganization get estimation for deleting an organization.
-func (srv *Organizations) EstimationDeleteOrganization(OrganizationId string)(*models.EstimationDeleteOrganization, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) EstimationDeleteOrganization(OrganizationId string) (*models.EstimationDeleteOrganization, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/estimations/delete-organization")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -1131,19 +1185,23 @@ func (srv *Organizations) EstimationDeleteOrganization(OrganizationId string)(*m
 	return &parsed, nil
 
 }
+
 type EstimationUpdatePlanOptions struct {
-	Invites []string
-	CouponId string
+	Invites        []string
+	CouponId       string
 	enabledSetters map[string]bool
 }
+
 func (options EstimationUpdatePlanOptions) New() *EstimationUpdatePlanOptions {
 	options.enabledSetters = map[string]bool{
-		"Invites": false,
+		"Invites":  false,
 		"CouponId": false,
 	}
 	return &options
 }
+
 type EstimationUpdatePlanOption func(*EstimationUpdatePlanOptions)
+
 func (srv *Organizations) WithEstimationUpdatePlanInvites(v []string) EstimationUpdatePlanOption {
 	return func(o *EstimationUpdatePlanOptions) {
 		o.Invites = v
@@ -1156,16 +1214,17 @@ func (srv *Organizations) WithEstimationUpdatePlanCouponId(v string) EstimationU
 		o.enabledSetters["CouponId"] = true
 	}
 }
-					
+
 // EstimationUpdatePlan get estimation for updating the organization plan.
-func (srv *Organizations) EstimationUpdatePlan(OrganizationId string, BillingPlan string, optionalSetters ...EstimationUpdatePlanOption)(*models.EstimationUpdatePlan, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) EstimationUpdatePlan(OrganizationId string, BillingPlan string, optionalSetters ...EstimationUpdatePlanOption) (*models.EstimationUpdatePlan, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/estimations/update-plan")
 	options := EstimationUpdatePlanOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	params["billingPlan"] = BillingPlan
 	if options.enabledSetters["Invites"] {
 		params["invites"] = options.Invites
@@ -1175,8 +1234,8 @@ func (srv *Organizations) EstimationUpdatePlan(OrganizationId string, BillingPla
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -1203,22 +1262,23 @@ func (srv *Organizations) EstimationUpdatePlan(OrganizationId string, BillingPla
 	return &parsed, nil
 
 }
-									
+
 // CreateDowngradeFeedback submit feedback about downgrading from a paid plan
 // to a lower tier. This helps the team understand user experience and improve
 // the platform.
-func (srv *Organizations) CreateDowngradeFeedback(OrganizationId string, Reason string, Message string, FromPlanId string, ToPlanId string)(*models.DowngradeFeedback, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) CreateDowngradeFeedback(OrganizationId string, Reason string, Message string, FromPlanId string, ToPlanId string) (*models.DowngradeFeedback, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/feedbacks/downgrade")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	params["reason"] = Reason
 	params["message"] = Message
 	params["fromPlanId"] = FromPlanId
 	params["toPlanId"] = ToPlanId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -1245,39 +1305,44 @@ func (srv *Organizations) CreateDowngradeFeedback(OrganizationId string, Reason 
 	return &parsed, nil
 
 }
+
 type ListInvoicesOptions struct {
-	Queries []string
+	Queries        []string
 	enabledSetters map[string]bool
 }
+
 func (options ListInvoicesOptions) New() *ListInvoicesOptions {
 	options.enabledSetters = map[string]bool{
 		"Queries": false,
 	}
 	return &options
 }
+
 type ListInvoicesOption func(*ListInvoicesOptions)
+
 func (srv *Organizations) WithListInvoicesQueries(v []string) ListInvoicesOption {
 	return func(o *ListInvoicesOptions) {
 		o.Queries = v
 		o.enabledSetters["Queries"] = true
 	}
 }
-			
+
 // ListInvoices list all invoices for an organization.
-func (srv *Organizations) ListInvoices(OrganizationId string, optionalSetters ...ListInvoicesOption)(*models.InvoiceList, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) ListInvoices(OrganizationId string, optionalSetters ...ListInvoicesOption) (*models.InvoiceList, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/invoices")
 	options := ListInvoicesOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	if options.enabledSetters["Queries"] {
 		params["queries"] = options.Queries
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1304,15 +1369,17 @@ func (srv *Organizations) ListInvoices(OrganizationId string, optionalSetters ..
 	return &parsed, nil
 
 }
-			
+
 // GetInvoice get an invoice by its unique ID.
-func (srv *Organizations) GetInvoice(OrganizationId string, InvoiceId string)(*models.Invoice, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId), "{invoiceId}", url.PathEscape(InvoiceId))
+func (srv *Organizations) GetInvoice(OrganizationId string, InvoiceId string) (*models.Invoice, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId, "{invoiceId}", InvoiceId)
 	path := r.Replace("/organizations/{organizationId}/invoices/{invoiceId}")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
+	params["invoiceId"] = InvoiceId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1339,15 +1406,17 @@ func (srv *Organizations) GetInvoice(OrganizationId string, InvoiceId string)(*m
 	return &parsed, nil
 
 }
-			
+
 // GetInvoiceDownload download invoice in PDF
-func (srv *Organizations) GetInvoiceDownload(OrganizationId string, InvoiceId string)(*[]byte, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId), "{invoiceId}", url.PathEscape(InvoiceId))
+func (srv *Organizations) GetInvoiceDownload(OrganizationId string, InvoiceId string) (*[]byte, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId, "{invoiceId}", InvoiceId)
 	path := r.Replace("/organizations/{organizationId}/invoices/{invoiceId}/download")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
+	params["invoiceId"] = InvoiceId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1373,10 +1442,11 @@ func (srv *Organizations) GetInvoiceDownload(OrganizationId string, InvoiceId st
 	return &parsed, nil
 
 }
+
 // GetInvoiceDownloadURL download invoice in PDF
 // Returns the URL for the resource instead of the content.
 func (srv *Organizations) GetInvoiceDownloadURL(OrganizationId string, InvoiceId string) (*string, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId), "{invoiceId}", url.PathEscape(InvoiceId))
+	r := strings.NewReplacer("{organizationId}", OrganizationId, "{invoiceId}", InvoiceId)
 	path := r.Replace("/organizations/{organizationId}/invoices/{invoiceId}/download")
 	u, err := url.Parse(srv.client.Endpoint + path)
 	if err != nil {
@@ -1387,18 +1457,20 @@ func (srv *Organizations) GetInvoiceDownloadURL(OrganizationId string, InvoiceId
 	result := u.String()
 	return &result, nil
 }
-					
+
 // CreateInvoicePayment initiate payment for failed invoice to pay live from
 // console
-func (srv *Organizations) CreateInvoicePayment(OrganizationId string, InvoiceId string, PaymentMethodId string)(*models.Invoice, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId), "{invoiceId}", url.PathEscape(InvoiceId))
+func (srv *Organizations) CreateInvoicePayment(OrganizationId string, InvoiceId string, PaymentMethodId string) (*models.Invoice, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId, "{invoiceId}", InvoiceId)
 	path := r.Replace("/organizations/{organizationId}/invoices/{invoiceId}/payments")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
+	params["invoiceId"] = InvoiceId
 	params["paymentMethodId"] = PaymentMethodId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -1425,17 +1497,19 @@ func (srv *Organizations) CreateInvoicePayment(OrganizationId string, InvoiceId 
 	return &parsed, nil
 
 }
-			
+
 // ValidateInvoice validates the payment linked with the invoice and updates
 // the invoice status if the payment status is changed.
-func (srv *Organizations) ValidateInvoice(OrganizationId string, InvoiceId string)(*models.Invoice, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId), "{invoiceId}", url.PathEscape(InvoiceId))
+func (srv *Organizations) ValidateInvoice(OrganizationId string, InvoiceId string) (*models.Invoice, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId, "{invoiceId}", InvoiceId)
 	path := r.Replace("/organizations/{organizationId}/invoices/{invoiceId}/status")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
+	params["invoiceId"] = InvoiceId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -1462,15 +1536,17 @@ func (srv *Organizations) ValidateInvoice(OrganizationId string, InvoiceId strin
 	return &parsed, nil
 
 }
-			
+
 // GetInvoiceView view invoice in PDF
-func (srv *Organizations) GetInvoiceView(OrganizationId string, InvoiceId string)(*[]byte, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId), "{invoiceId}", url.PathEscape(InvoiceId))
+func (srv *Organizations) GetInvoiceView(OrganizationId string, InvoiceId string) (*[]byte, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId, "{invoiceId}", InvoiceId)
 	path := r.Replace("/organizations/{organizationId}/invoices/{invoiceId}/view")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
+	params["invoiceId"] = InvoiceId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1496,10 +1572,11 @@ func (srv *Organizations) GetInvoiceView(OrganizationId string, InvoiceId string
 	return &parsed, nil
 
 }
+
 // GetInvoiceViewURL view invoice in PDF
 // Returns the URL for the resource instead of the content.
 func (srv *Organizations) GetInvoiceViewURL(OrganizationId string, InvoiceId string) (*string, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId), "{invoiceId}", url.PathEscape(InvoiceId))
+	r := strings.NewReplacer("{organizationId}", OrganizationId, "{invoiceId}", InvoiceId)
 	path := r.Replace("/organizations/{organizationId}/invoices/{invoiceId}/view")
 	u, err := url.Parse(srv.client.Endpoint + path)
 	if err != nil {
@@ -1510,17 +1587,18 @@ func (srv *Organizations) GetInvoiceViewURL(OrganizationId string, InvoiceId str
 	result := u.String()
 	return &result, nil
 }
-			
+
 // SetDefaultPaymentMethod set a organization's default payment method.
-func (srv *Organizations) SetDefaultPaymentMethod(OrganizationId string, PaymentMethodId string)(*models.Organization, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) SetDefaultPaymentMethod(OrganizationId string, PaymentMethodId string) (*models.Organization, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/payment-method")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	params["paymentMethodId"] = PaymentMethodId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -1547,17 +1625,18 @@ func (srv *Organizations) SetDefaultPaymentMethod(OrganizationId string, Payment
 	return &parsed, nil
 
 }
-	
+
 // DeleteDefaultPaymentMethod delete the default payment method for an
 // organization.
-func (srv *Organizations) DeleteDefaultPaymentMethod(OrganizationId string)(*models.Organization, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) DeleteDefaultPaymentMethod(OrganizationId string) (*models.Organization, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/payment-method")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -1584,17 +1663,18 @@ func (srv *Organizations) DeleteDefaultPaymentMethod(OrganizationId string)(*mod
 	return &parsed, nil
 
 }
-			
+
 // SetBackupPaymentMethod set an organization's backup payment method.
-func (srv *Organizations) SetBackupPaymentMethod(OrganizationId string, PaymentMethodId string)(*models.Organization, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) SetBackupPaymentMethod(OrganizationId string, PaymentMethodId string) (*models.Organization, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/payment-method/backup")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	params["paymentMethodId"] = PaymentMethodId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -1621,17 +1701,18 @@ func (srv *Organizations) SetBackupPaymentMethod(OrganizationId string, PaymentM
 	return &parsed, nil
 
 }
-	
+
 // DeleteBackupPaymentMethod delete a backup payment method for an
 // organization.
-func (srv *Organizations) DeleteBackupPaymentMethod(OrganizationId string)(*models.Organization, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) DeleteBackupPaymentMethod(OrganizationId string) (*models.Organization, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/payment-method/backup")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -1658,16 +1739,18 @@ func (srv *Organizations) DeleteBackupPaymentMethod(OrganizationId string)(*mode
 	return &parsed, nil
 
 }
-			
+
 // GetPaymentMethod get an organization's payment method using it's payment
 // method ID.
-func (srv *Organizations) GetPaymentMethod(OrganizationId string, PaymentMethodId string)(*models.PaymentMethod, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId), "{paymentMethodId}", url.PathEscape(PaymentMethodId))
+func (srv *Organizations) GetPaymentMethod(OrganizationId string, PaymentMethodId string) (*models.PaymentMethod, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId, "{paymentMethodId}", PaymentMethodId)
 	path := r.Replace("/organizations/{organizationId}/payment-methods/{paymentMethodId}")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
+	params["paymentMethodId"] = PaymentMethodId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1694,15 +1777,16 @@ func (srv *Organizations) GetPaymentMethod(OrganizationId string, PaymentMethodI
 	return &parsed, nil
 
 }
-	
+
 // GetPlan get the details of the current billing plan for an organization.
-func (srv *Organizations) GetPlan(OrganizationId string)(*models.BillingPlan, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) GetPlan(OrganizationId string) (*models.BillingPlan, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/plan")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1729,27 +1813,31 @@ func (srv *Organizations) GetPlan(OrganizationId string)(*models.BillingPlan, er
 	return &parsed, nil
 
 }
+
 type UpdatePlanOptions struct {
-	PaymentMethodId string
+	PaymentMethodId  string
 	BillingAddressId string
-	Invites []string
-	CouponId string
-	TaxId string
-	Budget int
-	enabledSetters map[string]bool
+	Invites          []string
+	CouponId         string
+	TaxId            string
+	Budget           int
+	enabledSetters   map[string]bool
 }
+
 func (options UpdatePlanOptions) New() *UpdatePlanOptions {
 	options.enabledSetters = map[string]bool{
-		"PaymentMethodId": false,
+		"PaymentMethodId":  false,
 		"BillingAddressId": false,
-		"Invites": false,
-		"CouponId": false,
-		"TaxId": false,
-		"Budget": false,
+		"Invites":          false,
+		"CouponId":         false,
+		"TaxId":            false,
+		"Budget":           false,
 	}
 	return &options
 }
+
 type UpdatePlanOption func(*UpdatePlanOptions)
+
 func (srv *Organizations) WithUpdatePlanPaymentMethodId(v string) UpdatePlanOption {
 	return func(o *UpdatePlanOptions) {
 		o.PaymentMethodId = v
@@ -1786,16 +1874,17 @@ func (srv *Organizations) WithUpdatePlanBudget(v int) UpdatePlanOption {
 		o.enabledSetters["Budget"] = true
 	}
 }
-					
+
 // UpdatePlan update the billing plan for an organization.
-func (srv *Organizations) UpdatePlan(OrganizationId string, BillingPlan string, optionalSetters ...UpdatePlanOption)(*models.Organization, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) UpdatePlan(OrganizationId string, BillingPlan string, optionalSetters ...UpdatePlanOption) (*models.Organization, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/plan")
 	options := UpdatePlanOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	params["billingPlan"] = BillingPlan
 	if options.enabledSetters["PaymentMethodId"] {
 		params["paymentMethodId"] = options.PaymentMethodId
@@ -1817,8 +1906,8 @@ func (srv *Organizations) UpdatePlan(OrganizationId string, BillingPlan string, 
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -1845,16 +1934,17 @@ func (srv *Organizations) UpdatePlan(OrganizationId string, BillingPlan string, 
 	return &parsed, nil
 
 }
-	
+
 // CancelDowngrade cancel the downgrade initiated for an organization.
-func (srv *Organizations) CancelDowngrade(OrganizationId string)(*models.Organization, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) CancelDowngrade(OrganizationId string) (*models.Organization, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/plan/cancel")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -1881,19 +1971,23 @@ func (srv *Organizations) CancelDowngrade(OrganizationId string)(*models.Organiz
 	return &parsed, nil
 
 }
+
 type CreatePlanEstimationOptions struct {
-	Invites []string
-	CouponId string
+	Invites        []string
+	CouponId       string
 	enabledSetters map[string]bool
 }
+
 func (options CreatePlanEstimationOptions) New() *CreatePlanEstimationOptions {
 	options.enabledSetters = map[string]bool{
-		"Invites": false,
+		"Invites":  false,
 		"CouponId": false,
 	}
 	return &options
 }
+
 type CreatePlanEstimationOption func(*CreatePlanEstimationOptions)
+
 func (srv *Organizations) WithCreatePlanEstimationInvites(v []string) CreatePlanEstimationOption {
 	return func(o *CreatePlanEstimationOptions) {
 		o.Invites = v
@@ -1906,17 +2000,18 @@ func (srv *Organizations) WithCreatePlanEstimationCouponId(v string) CreatePlanE
 		o.enabledSetters["CouponId"] = true
 	}
 }
-					
+
 // CreatePlanEstimation create a billing plan estimation for upgrading or
 // downgrading an organization plan.
-func (srv *Organizations) CreatePlanEstimation(OrganizationId string, BillingPlan string, optionalSetters ...CreatePlanEstimationOption)(*models.EstimationPlanChange, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) CreatePlanEstimation(OrganizationId string, BillingPlan string, optionalSetters ...CreatePlanEstimationOption) (*models.EstimationPlanChange, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/plan/estimations")
 	options := CreatePlanEstimationOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	params["billingPlan"] = BillingPlan
 	if options.enabledSetters["Invites"] {
 		params["invites"] = options.Invites
@@ -1926,8 +2021,8 @@ func (srv *Organizations) CreatePlanEstimation(OrganizationId string, BillingPla
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -1954,15 +2049,16 @@ func (srv *Organizations) CreatePlanEstimation(OrganizationId string, BillingPla
 	return &parsed, nil
 
 }
-	
+
 // ListRegions get all available regions for an organization.
-func (srv *Organizations) ListRegions(OrganizationId string)(*models.ConsoleRegionList, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) ListRegions(OrganizationId string) (*models.ConsoleRegionList, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/regions")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1989,39 +2085,44 @@ func (srv *Organizations) ListRegions(OrganizationId string)(*models.ConsoleRegi
 	return &parsed, nil
 
 }
+
 type GetScopesOptions struct {
-	ProjectId string
+	ProjectId      string
 	enabledSetters map[string]bool
 }
+
 func (options GetScopesOptions) New() *GetScopesOptions {
 	options.enabledSetters = map[string]bool{
 		"ProjectId": false,
 	}
 	return &options
 }
+
 type GetScopesOption func(*GetScopesOptions)
+
 func (srv *Organizations) WithGetScopesProjectId(v string) GetScopesOption {
 	return func(o *GetScopesOptions) {
 		o.ProjectId = v
 		o.enabledSetters["ProjectId"] = true
 	}
 }
-			
+
 // GetScopes get Scopes
-func (srv *Organizations) GetScopes(OrganizationId string, optionalSetters ...GetScopesOption)(*models.Roles, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) GetScopes(OrganizationId string, optionalSetters ...GetScopesOption) (*models.Roles, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/roles")
 	options := GetScopesOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	if options.enabledSetters["ProjectId"] {
 		params["projectId"] = options.ProjectId
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -2048,17 +2149,18 @@ func (srv *Organizations) GetScopes(OrganizationId string, optionalSetters ...Ge
 	return &parsed, nil
 
 }
-			
+
 // SetBillingTaxId set an organization's billing tax ID.
-func (srv *Organizations) SetBillingTaxId(OrganizationId string, TaxId string)(*models.Organization, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) SetBillingTaxId(OrganizationId string, TaxId string) (*models.Organization, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/taxId")
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	params["taxId"] = TaxId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -2085,19 +2187,23 @@ func (srv *Organizations) SetBillingTaxId(OrganizationId string, TaxId string)(*
 	return &parsed, nil
 
 }
+
 type GetUsageOptions struct {
-	StartDate string
-	EndDate string
+	StartDate      string
+	EndDate        string
 	enabledSetters map[string]bool
 }
+
 func (options GetUsageOptions) New() *GetUsageOptions {
 	options.enabledSetters = map[string]bool{
 		"StartDate": false,
-		"EndDate": false,
+		"EndDate":   false,
 	}
 	return &options
 }
+
 type GetUsageOption func(*GetUsageOptions)
+
 func (srv *Organizations) WithGetUsageStartDate(v string) GetUsageOption {
 	return func(o *GetUsageOptions) {
 		o.StartDate = v
@@ -2110,16 +2216,17 @@ func (srv *Organizations) WithGetUsageEndDate(v string) GetUsageOption {
 		o.enabledSetters["EndDate"] = true
 	}
 }
-			
+
 // GetUsage get the usage data for an organization.
-func (srv *Organizations) GetUsage(OrganizationId string, optionalSetters ...GetUsageOption)(*models.UsageOrganization, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) GetUsage(OrganizationId string, optionalSetters ...GetUsageOption) (*models.UsageOrganization, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/usage")
 	options := GetUsageOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	if options.enabledSetters["StartDate"] {
 		params["startDate"] = options.StartDate
 	}
@@ -2128,7 +2235,7 @@ func (srv *Organizations) GetUsage(OrganizationId string, optionalSetters ...Get
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -2155,40 +2262,45 @@ func (srv *Organizations) GetUsage(OrganizationId string, optionalSetters ...Get
 	return &parsed, nil
 
 }
+
 type ValidatePaymentOptions struct {
-	Invites []string
+	Invites        []string
 	enabledSetters map[string]bool
 }
+
 func (options ValidatePaymentOptions) New() *ValidatePaymentOptions {
 	options.enabledSetters = map[string]bool{
 		"Invites": false,
 	}
 	return &options
 }
+
 type ValidatePaymentOption func(*ValidatePaymentOptions)
+
 func (srv *Organizations) WithValidatePaymentInvites(v []string) ValidatePaymentOption {
 	return func(o *ValidatePaymentOptions) {
 		o.Invites = v
 		o.enabledSetters["Invites"] = true
 	}
 }
-			
+
 // ValidatePayment validate payment for team after creation or upgrade.
-func (srv *Organizations) ValidatePayment(OrganizationId string, optionalSetters ...ValidatePaymentOption)(*models.Organization, error) {
-	r := strings.NewReplacer("{organizationId}", url.PathEscape(OrganizationId))
+func (srv *Organizations) ValidatePayment(OrganizationId string, optionalSetters ...ValidatePaymentOption) (*models.Organization, error) {
+	r := strings.NewReplacer("{organizationId}", OrganizationId)
 	path := r.Replace("/organizations/{organizationId}/validate")
 	options := ValidatePaymentOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["organizationId"] = OrganizationId
 	if options.enabledSetters["Invites"] {
 		params["invites"] = options.Invites
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)

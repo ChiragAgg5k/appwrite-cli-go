@@ -155,7 +155,11 @@ func (c *Checker) write(entry cache) {
 	if c.CachePath == "" {
 		return
 	}
-	if err := os.MkdirAll(filepath.Dir(c.CachePath), 0o755); err != nil {
+	// 0700, not 0755: this is the same directory that holds prefs.json, and so
+	// access and refresh tokens. MkdirAll never tightens a directory that already
+	// exists, and this runs from PersistentPreRun on every command -- so a 0755
+	// here wins the race on a fresh machine and config's 0700 never applies.
+	if err := os.MkdirAll(filepath.Dir(c.CachePath), 0o700); err != nil {
 		return
 	}
 
@@ -214,7 +218,7 @@ func (c *Checker) now() time.Time {
 // Compare orders two semantic versions: -1 when a is older, 0 when they match,
 // 1 when a is newer.
 //
-// Ports compareVersions. A build with no version stamped -- `(devel)`, what a
+// A build with no version stamped -- `(devel)`, what a
 // `go build` from source produces -- compares as newer than everything, so a
 // developer is never nagged to "update" to a release older than their tree.
 func Compare(a, b string) int {

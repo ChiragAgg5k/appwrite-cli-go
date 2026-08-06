@@ -18,7 +18,6 @@ func NewAccountCommand() *cobra.Command {
 
 	cmd.AddCommand(newAccountGetCommand())
 	cmd.AddCommand(newAccountCreateCommand())
-	cmd.AddCommand(newAccountDeleteCommand())
 	cmd.AddCommand(newAccountListConsentsCommand())
 	cmd.AddCommand(newAccountGetConsentCommand())
 	cmd.AddCommand(newAccountDeleteConsentCommand())
@@ -29,11 +28,6 @@ func NewAccountCommand() *cobra.Command {
 	cmd.AddCommand(newAccountListIdentitiesCommand())
 	cmd.AddCommand(newAccountDeleteIdentityCommand())
 	cmd.AddCommand(newAccountCreateJWTCommand())
-	cmd.AddCommand(newAccountListKeysCommand())
-	cmd.AddCommand(newAccountCreateKeyCommand())
-	cmd.AddCommand(newAccountGetKeyCommand())
-	cmd.AddCommand(newAccountUpdateKeyCommand())
-	cmd.AddCommand(newAccountDeleteKeyCommand())
 	cmd.AddCommand(newAccountListLogsCommand())
 	cmd.AddCommand(newAccountUpdateMFACommand())
 	cmd.AddCommand(newAccountCreateMfaAuthenticatorCommand())
@@ -57,16 +51,12 @@ func NewAccountCommand() *cobra.Command {
 	cmd.AddCommand(newAccountCreateAnonymousSessionCommand())
 	cmd.AddCommand(newAccountCreateEmailPasswordSessionCommand())
 	cmd.AddCommand(newAccountUpdateMagicURLSessionCommand())
-	cmd.AddCommand(newAccountCreateOAuth2SessionCommand())
 	cmd.AddCommand(newAccountUpdatePhoneSessionCommand())
 	cmd.AddCommand(newAccountCreateSessionCommand())
 	cmd.AddCommand(newAccountGetSessionCommand())
 	cmd.AddCommand(newAccountUpdateSessionCommand())
 	cmd.AddCommand(newAccountDeleteSessionCommand())
 	cmd.AddCommand(newAccountUpdateStatusCommand())
-	cmd.AddCommand(newAccountCreatePushTargetCommand())
-	cmd.AddCommand(newAccountUpdatePushTargetCommand())
-	cmd.AddCommand(newAccountDeletePushTargetCommand())
 	cmd.AddCommand(newAccountCreateEmailTokenCommand())
 	cmd.AddCommand(newAccountCreateMagicURLTokenCommand())
 	cmd.AddCommand(newAccountCreateOAuth2TokenCommand())
@@ -144,30 +134,6 @@ func newAccountCreateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&password, "password", "", "New user password. Must be between 8 and 256 chars.")
 	_ = cmd.MarkFlagRequired("password")
 	cmd.Flags().StringVar(&name, "name", "", "User name. Max length: 128 chars.")
-	return cmd
-}
-
-func newAccountDeleteCommand() *cobra.Command {
-
-	cmd := &cobra.Command{
-		Use:   "delete",
-		Short: "Delete the currently logged in user.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForConsole()
-			if err != nil {
-				return err
-			}
-			service := account.New(client)
-
-			result, err := service.Delete()
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
 	return cmd
 }
 
@@ -612,175 +578,6 @@ func newAccountCreateJWTCommand() *cobra.Command {
 	}
 
 	cmd.Flags().IntVar(&duration, "duration", 0, "Time in seconds before JWT expires. Default duration is 900 seconds, and maximum is 3600 seconds.")
-	return cmd
-}
-
-func newAccountListKeysCommand() *cobra.Command {
-	var total bool
-
-	cmd := &cobra.Command{
-		Use:   "list-keys",
-		Short: "Get a list of all API keys from the current account.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForConsole()
-			if err != nil {
-				return err
-			}
-			service := account.New(client)
-
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
-			options := []account.ListKeysOption{}
-			if cmd.Flags().Changed("total") {
-				options = append(options, service.WithListKeysTotal(total))
-			}
-
-			result, err := service.ListKeys(options...)
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
-	cmd.Flags().Lookup("total").NoOptDefVal = "true"
-	return cmd
-}
-
-func newAccountCreateKeyCommand() *cobra.Command {
-	var name string
-	var scopes []string
-	var expire string
-
-	cmd := &cobra.Command{
-		Use:   "create-key",
-		Short: "Create a new account API key.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForConsole()
-			if err != nil {
-				return err
-			}
-			service := account.New(client)
-
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
-			options := []account.CreateKeyOption{}
-			if cmd.Flags().Changed("expire") {
-				options = append(options, service.WithCreateKeyExpire(expire))
-			}
-
-			result, err := service.CreateKey(name, scopes, options...)
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&name, "name", "", "Key name. Max length: 128 chars.")
-	_ = cmd.MarkFlagRequired("name")
-	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "Key scopes list. Maximum of 200 scopes are allowed.")
-	_ = cmd.MarkFlagRequired("scopes")
-	cmd.Flags().StringVar(&expire, "expire", "", "Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.")
-	return cmd
-}
-
-func newAccountGetKeyCommand() *cobra.Command {
-	var keyId string
-
-	cmd := &cobra.Command{
-		Use:   "get-key",
-		Short: "Get a key by its unique ID. This endpoint returns details about a specific API key in your account including it's scopes.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForConsole()
-			if err != nil {
-				return err
-			}
-			service := account.New(client)
-
-			result, err := service.GetKey(keyId)
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&keyId, "key-id", "", "Key unique ID.")
-	_ = cmd.MarkFlagRequired("key-id")
-	return cmd
-}
-
-func newAccountUpdateKeyCommand() *cobra.Command {
-	var keyId string
-	var name string
-	var scopes []string
-	var expire string
-
-	cmd := &cobra.Command{
-		Use:   "update-key",
-		Short: "Update a key by its unique ID. Use this endpoint to update the name, scopes, or expiration time of an API key.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForConsole()
-			if err != nil {
-				return err
-			}
-			service := account.New(client)
-
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
-			options := []account.UpdateKeyOption{}
-			if cmd.Flags().Changed("expire") {
-				options = append(options, service.WithUpdateKeyExpire(expire))
-			}
-
-			result, err := service.UpdateKey(keyId, name, scopes, options...)
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&keyId, "key-id", "", "Key unique ID.")
-	_ = cmd.MarkFlagRequired("key-id")
-	cmd.Flags().StringVar(&name, "name", "", "Key name. Max length: 128 chars.")
-	_ = cmd.MarkFlagRequired("name")
-	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "Key scopes list. Maximum of 200 scopes are allowed.")
-	_ = cmd.MarkFlagRequired("scopes")
-	cmd.Flags().StringVar(&expire, "expire", "", "Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.")
-	return cmd
-}
-
-func newAccountDeleteKeyCommand() *cobra.Command {
-	var keyId string
-
-	cmd := &cobra.Command{
-		Use:   "delete-key",
-		Short: "Delete a key by its unique ID. Once deleted, the key can no longer be used to authenticate API calls.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForConsole()
-			if err != nil {
-				return err
-			}
-			service := account.New(client)
-
-			result, err := service.DeleteKey(keyId)
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&keyId, "key-id", "", "Key unique ID.")
-	_ = cmd.MarkFlagRequired("key-id")
 	return cmd
 }
 
@@ -1443,52 +1240,6 @@ func newAccountUpdateMagicURLSessionCommand() *cobra.Command {
 	return cmd
 }
 
-func newAccountCreateOAuth2SessionCommand() *cobra.Command {
-	var provider string
-	var success string
-	var failure string
-	var scopes []string
-
-	cmd := &cobra.Command{
-		Use:   "create-o-auth-2-session",
-		Short: "Allow the user to login to their account using the OAuth2 provider of their choice. Each OAuth2 provider should be enabled from the Appwrite console first. Use the success and failure arguments to provide a redirect URL's back to your app when login is completed.\n\nIf there is already an active session, the new session will be attached to the logged-in account. If there are no active sessions, the server will attempt to look for a user with the same email address as the email received from the OAuth2 provider and attach the new session to the existing user. If no matching user is found - the server will create a new user.\n\nA user is limited to 10 active sessions at a time by default. Learn more about session limits (https://appwrite.io/docs/authentication-security#limits).\n",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForConsole()
-			if err != nil {
-				return err
-			}
-			service := account.New(client)
-
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
-			options := []account.CreateOAuth2SessionOption{}
-			if cmd.Flags().Changed("success") {
-				options = append(options, service.WithCreateOAuth2SessionSuccess(success))
-			}
-			if cmd.Flags().Changed("failure") {
-				options = append(options, service.WithCreateOAuth2SessionFailure(failure))
-			}
-			if cmd.Flags().Changed("scopes") {
-				options = append(options, service.WithCreateOAuth2SessionScopes(scopes))
-			}
-
-			result, err := service.CreateOAuth2Session(provider, options...)
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&provider, "provider", "", "OAuth2 Provider. Currently, supported providers are: amazon, apple, appwrite, auth0, authentik, autodesk, bitbucket, bitly, box, dailymotion, discord, disqus, dropbox, etsy, facebook, figma, fusionauth, github, gitlab, google, keycloak, kick, linkedin, microsoft, notion, oidc, okta, paypal, paypalSandbox, podio, salesforce, slack, spotify, stripe, tradeshift, tradeshiftBox, twitch, wordpress, x, yahoo, yammer, yandex, zoho, zoom.")
-	_ = cmd.MarkFlagRequired("provider")
-	cmd.Flags().StringVar(&success, "success", "", "URL to redirect back to your app after a successful login attempt.  Only URLs from hostnames in your project's platform list are allowed. This requirement helps to prevent an open redirect (https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.")
-	cmd.Flags().StringVar(&failure, "failure", "", "URL to redirect back to your app after a failed login attempt.  Only URLs from hostnames in your project's platform list are allowed. This requirement helps to prevent an open redirect (https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.")
-	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "A list of custom OAuth2 scopes. Check each provider internal docs for a list of supported scopes. Maximum of 100 scopes are allowed, each 4096 characters long.")
-	return cmd
-}
-
 func newAccountUpdatePhoneSessionCommand() *cobra.Command {
 	var userId string
 	var secret string
@@ -1651,102 +1402,6 @@ func newAccountUpdateStatusCommand() *cobra.Command {
 		},
 	}
 
-	return cmd
-}
-
-func newAccountCreatePushTargetCommand() *cobra.Command {
-	var targetId string
-	var identifier string
-	var providerId string
-
-	cmd := &cobra.Command{
-		Use:   "create-push-target",
-		Short: "Use this endpoint to register a device for push notifications. Provide a target ID (custom or generated using ID.unique()), a device identifier (usually a device token), and optionally specify which provider should send notifications to this target. The target is automatically linked to the current session and includes device information like brand and model.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForConsole()
-			if err != nil {
-				return err
-			}
-			service := account.New(client)
-
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
-			options := []account.CreatePushTargetOption{}
-			if cmd.Flags().Changed("provider-id") {
-				options = append(options, service.WithCreatePushTargetProviderId(providerId))
-			}
-
-			result, err := service.CreatePushTarget(targetId, identifier, options...)
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&targetId, "target-id", "", "Target ID. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.")
-	_ = cmd.MarkFlagRequired("target-id")
-	cmd.Flags().StringVar(&identifier, "identifier", "", "The target identifier (token, email, phone etc.)")
-	_ = cmd.MarkFlagRequired("identifier")
-	cmd.Flags().StringVar(&providerId, "provider-id", "", "Provider ID. Message will be sent to this target from the specified provider ID. If no provider ID is set the first setup provider will be used.")
-	return cmd
-}
-
-func newAccountUpdatePushTargetCommand() *cobra.Command {
-	var targetId string
-	var identifier string
-
-	cmd := &cobra.Command{
-		Use:   "update-push-target",
-		Short: "Update the currently logged in user's push notification target. You can modify the target's identifier (device token) and provider ID (token, email, phone etc.). The target must exist and belong to the current user. If you change the provider ID, notifications will be sent through the new messaging provider instead.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForConsole()
-			if err != nil {
-				return err
-			}
-			service := account.New(client)
-
-			result, err := service.UpdatePushTarget(targetId, identifier)
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&targetId, "target-id", "", "Target ID.")
-	_ = cmd.MarkFlagRequired("target-id")
-	cmd.Flags().StringVar(&identifier, "identifier", "", "The target identifier (token, email, phone etc.)")
-	_ = cmd.MarkFlagRequired("identifier")
-	return cmd
-}
-
-func newAccountDeletePushTargetCommand() *cobra.Command {
-	var targetId string
-
-	cmd := &cobra.Command{
-		Use:   "delete-push-target",
-		Short: "Delete a push notification target for the currently logged in user. After deletion, the device will no longer receive push notifications. The target must exist and belong to the current user.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForConsole()
-			if err != nil {
-				return err
-			}
-			service := account.New(client)
-
-			result, err := service.DeletePushTarget(targetId)
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&targetId, "target-id", "", "Target ID.")
-	_ = cmd.MarkFlagRequired("target-id")
 	return cmd
 }
 

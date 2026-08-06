@@ -113,7 +113,6 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectListEmailTemplatesCommand())
 	cmd.AddCommand(newProjectUpdateEmailTemplateCommand())
 	cmd.AddCommand(newProjectGetEmailTemplateCommand())
-	cmd.AddCommand(newProjectGetUsageCommand())
 	cmd.AddCommand(newProjectListVariablesCommand())
 	cmd.AddCommand(newProjectCreateVariableCommand())
 	cmd.AddCommand(newProjectGetVariableCommand())
@@ -4299,47 +4298,6 @@ func newProjectGetEmailTemplateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&templateId, "template-id", "", "Custom email template type. Can be one of: verification, magicSession, recovery, invitation, mfaChallenge, sessionAlert, otpSession")
 	_ = cmd.MarkFlagRequired("template-id")
 	cmd.Flags().StringVar(&locale, "locale", "", "Custom email template locale. If left empty, the fallback locale (en) will be used.")
-	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-	return cmd
-}
-
-func newProjectGetUsageCommand() *cobra.Command {
-	var startDate string
-	var endDate string
-	var period string
-	var projectId string
-
-	cmd := &cobra.Command{
-		Use:   "get-usage",
-		Short: "Get comprehensive usage statistics for your project. View metrics including network requests, bandwidth, storage, function executions, database usage, and user activity. Specify a time range with startDate and endDate, and optionally set the data granularity with period (1h or 1d). The response includes both total counts and detailed breakdowns by resource, along with historical data over the specified period.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForProject(projectId)
-			if err != nil {
-				return err
-			}
-			service := project.New(client)
-
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
-			options := []project.GetUsageOption{}
-			if cmd.Flags().Changed("period") {
-				options = append(options, service.WithGetUsagePeriod(period))
-			}
-
-			result, err := service.GetUsage(startDate, endDate, options...)
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&startDate, "start-date", "", "Starting date for the usage")
-	_ = cmd.MarkFlagRequired("start-date")
-	cmd.Flags().StringVar(&endDate, "end-date", "", "End date for the usage")
-	_ = cmd.MarkFlagRequired("end-date")
-	cmd.Flags().StringVar(&period, "period", "", "Period used")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }

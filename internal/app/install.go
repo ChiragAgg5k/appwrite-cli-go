@@ -10,8 +10,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/update"
 )
 
-// Ports the installation-method detection in templates/cli/lib/utils.ts:302.
-//
 // `update` has to know how the CLI got onto the machine, because updating a
 // Homebrew install with npm leaves two copies and updates neither the one on
 // PATH.
@@ -76,7 +74,7 @@ func DetectInstallMethod() InstallMethod {
 
 // ReleaseAssetName is the release artifact for the running platform.
 //
-// Ports getStandaloneBinaryArtifactName(). Kept identical to the TypeScript's
+// Kept identical to the TypeScript's
 // naming so a Go build can replace a TypeScript one in place: the asset a user
 // already has installed and the asset they upgrade to have the same name.
 func ReleaseAssetName() (string, error) {
@@ -144,9 +142,17 @@ func HomebrewFormula() string {
 
 // NPMRegistryURL is where the newest published version is looked up.
 //
-// Ports NPM_REGISTRY_URL. Homebrew installs are updated through brew, but the
+// Homebrew installs are updated through brew, but the
 // version published to npm is the same release, so one source answers for both
 // and the check costs one request rather than shelling out to brew.
+//
+// This is also the constraint on how this CLI is VERSIONED. Both CLIs publish to
+// the same npm package, so a Go build numbered below the TypeScript CLI's
+// current version would tell every user an upgrade is available and then replace
+// their Go binary with the TypeScript one. The version line has to continue the
+// TypeScript CLI's -- an rc is `26.0.0-rc.1`, the next major of the same
+// product, not `1.0.0-rc.1`. Check what the registry currently serves as
+// `latest` before picking a number.
 const NPMRegistryURL = "https://registry.npmjs.org/" + NPMPackageName + "/latest"
 
 // UpdateChecker builds the once-a-day version check, or nil when there is

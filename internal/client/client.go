@@ -12,10 +12,9 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
+	"sync"
 	"time"
 )
-
-// Ports templates/cli/lib/client.ts.
 
 // ResponseFormat pins the API response shape the CLI is written against.
 //
@@ -40,15 +39,42 @@ const (
 )
 
 // Client is a thin HTTP client for the Appwrite API.
+//
+// One client is shared across concurrent requests -- `push` runs
+// deploy.UploadConcurrency chunk uploads through a single instance -- and every
+// response can carry a Set-Cookie. The two cookie fields are the only mutable
+// state, so one mutex covers them both.
 type Client struct {
 	Endpoint   string
 	HTTP       *http.Client
 	headers    map[string]string
-	cookie     string
 	SDKVersion string
-	// SessionCookie is the console session cookie the server last set, which
-	// an email-and-password sign-in has to persist.
-	SessionCookie string
+
+	// mutex guards cookie and sessionCookie, nothing else.
+	mutex  sync.RWMutex
+	cookie string
+	// sessionCookie is the console session cookie the server last set, which an
+	// email-and-password sign-in has to persist.
+	sessionCookie string
+}
+
+// SessionCookie is the console session cookie the server last set.
+//
+// An accessor rather than a field because reading it unsynchronised while an
+// upload is in flight is a data race.
+func (c *Client) SessionCookie() string {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+
+	return c.sessionCookie
+}
+
+// outboundCookie is the Cookie header to send, or "" for none.
+func (c *Client) outboundCookie() string {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+
+	return c.cookie
 }
 
 // RequestLog receives one line per HTTP request when --verbose is on.
@@ -74,10 +100,36 @@ func logRequest(method, path string, status int, elapsed time.Duration) {
 }
 
 // New returns a client with the headers every request carries.
+// responseHeaderTimeout bounds the wait for response headers.
+//
+// Measured from the moment the request body finishes, so it constrains a server
+// that accepted everything and then went quiet, without constraining how long
+// sending takes.
+const responseHeaderTimeout = 60 * time.Second
+
+// baseTransport is the process default's tuning plus a bound on response
+// headers.
+//
+// Per phase rather than one http.Client.Timeout covering connect, write, read
+// and body streaming together: a 5 MB `push` chunk failed every upload under
+// roughly 90 KB/s of upstream and reported it as a server error. Bounding each
+// phase catches a stuck connection without punishing a merely slow one.
+func baseTransport() *http.Transport {
+	transport := &http.Transport{}
+	if standard, ok := http.DefaultTransport.(*http.Transport); ok {
+		// Keeps the default dial and TLS handshake timeouts, and the connection
+		// pooling, rather than restating them here.
+		transport = standard.Clone()
+	}
+	transport.ResponseHeaderTimeout = responseHeaderTimeout
+
+	return transport
+}
+
 func New(endpoint, sdkVersion string) *Client {
 	return &Client{
 		Endpoint:   strings.TrimRight(endpoint, "/"),
-		HTTP:       &http.Client{Timeout: 60 * time.Second},
+		HTTP:       &http.Client{Transport: baseTransport()},
 		SDKVersion: sdkVersion,
 		headers: map[string]string{
 			"content-type":   "application/json",
@@ -105,8 +157,8 @@ func (c *Client) Download(path string) ([]byte, error) {
 	for name, value := range c.headers {
 		request.Header.Set(name, value)
 	}
-	if c.cookie != "" {
-		request.Header.Set("Cookie", c.cookie)
+	if cookie := c.outboundCookie(); cookie != "" {
+		request.Header.Set("Cookie", cookie)
 	}
 
 	response, err := c.HTTP.Do(request)
@@ -132,35 +184,38 @@ func (c *Client) Download(path string) ([]byte, error) {
 	return payload, nil
 }
 
-// WithoutResponseFormat drops the x-appwrite-response-format header.
-//
-// That header does not merely declare a version -- it asks the API for THAT
-// version's response shape. The console routes still answer it with a legacy
-// flat project (serviceStatusForAccount, authEmailPassword, ...) instead of the
-// `services`/`protocols`/`authMethods` arrays the config is built from.
-//
-// The TypeScript never hits this because its console calls go through
-// @appwrite.io/console, which sends no such header; only its own client.ts
-// sends one. This is how a call reproduces the console SDK.
+// WithoutResponseFormat drops the x-appwrite-response-format header, which asks
+// the API for that version's response shape: the console routes answer it with a
+// legacy flat project instead of the `services`/`protocols`/`authMethods` arrays
+// the config is built from. This reproduces what the console SDK sends.
 func (c *Client) WithoutResponseFormat() *Client {
 	delete(c.headers, headerFormat)
 
 	return c
 }
 
-// Clone returns a copy with its own header map.
+// Clone returns a copy with its own header map, so that scoping one call to an
+// organization does not scope the next unrelated one.
 //
-// Needed because one console client lists organizations and then acts within
-// one: setting X-Appwrite-Organization on the shared client would scope the
-// next unrelated call as well.
+// Field by field rather than `copied := *c`, which would copy the mutex -- vet
+// rejects it, and it would snapshot the cookies without holding the lock.
 func (c *Client) Clone() *Client {
-	copied := *c
-	copied.headers = make(map[string]string, len(c.headers))
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+
+	copied := &Client{
+		Endpoint:      c.Endpoint,
+		HTTP:          c.HTTP,
+		SDKVersion:    c.SDKVersion,
+		headers:       make(map[string]string, len(c.headers)),
+		cookie:        c.cookie,
+		sessionCookie: c.sessionCookie,
+	}
 	for name, value := range c.headers {
 		copied.headers[name] = value
 	}
 
-	return &copied
+	return copied
 }
 
 // SetHeader sets one header.
@@ -205,43 +260,49 @@ const consoleSessionCookie = "a_session_console="
 
 // captureSessionCookie remembers a console session cookie the server set.
 //
-// Ports the Set-Cookie handling in the TypeScript client (client.ts:327). The
+// The
 // email-and-password flow has no other way to learn its session: the cookie IS
 // the credential, and it arrives on the response to POST /account/sessions/email.
 func (c *Client) captureSessionCookie(response *http.Response) {
 	for _, cookie := range response.Header.Values("Set-Cookie") {
 		if strings.HasPrefix(cookie, consoleSessionCookie) {
+			c.mutex.Lock()
 			c.cookie = cookie
-			c.SessionCookie = cookie
+			c.sessionCookie = cookie
+			c.mutex.Unlock()
 		}
 	}
 }
 
 // SetSelfSigned accepts a self-signed TLS certificate.
 //
-// Ports `rejectUnauthorized: !this.selfSigned` on the TypeScript client's HTTPS
-// agent (client.ts:236). A self-hosted instance behind its own certificate is
-// the whole reason `client --self-signed` exists, and without this the flag was
-// stored and never acted on.
-//
-// The transport is this client's own, not http.DefaultTransport: mutating the
-// shared default would turn verification off for every request the process makes
-// afterwards, including ones to Appwrite Cloud.
+// Both the transport and the http.Client are copies, never the shared default
+// and never mutated in place: Clone copies the *http.Client by pointer, so
+// mutating either would disable certificate verification for every clone and
+// sibling -- including calls to Appwrite Cloud this client never made.
 func (c *Client) SetSelfSigned(selfSigned bool) *Client {
 	if !selfSigned {
 		return c
 	}
 
-	transport := http.DefaultTransport.(*http.Transport).Clone()
+	// Built from the same base as every other client, so opting into a
+	// self-signed certificate does not quietly discard the response-header bound
+	// along with the verification.
+	transport := baseTransport()
 	transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-	c.HTTP.Transport = transport
+
+	replacement := *c.HTTP
+	replacement.Transport = transport
+	c.HTTP = &replacement
 
 	return c
 }
 
 // SetCookie authenticates with a legacy session cookie.
 func (c *Client) SetCookie(cookie string) *Client {
+	c.mutex.Lock()
 	c.cookie = cookie
+	c.mutex.Unlock()
 
 	return c
 }
@@ -286,16 +347,11 @@ func (e *APIError) Error() string {
 }
 
 // unauthenticated reports whether this is the API refusing an unauthenticated
-// request, rather than refusing a real account something.
-//
-// Ports the isUnauthorized branch of client.ts:292. Without it the CLI repeats
-// the API verbatim -- `User (role: guests) missing scopes (["account"])` --
-// which describes a permission model the user did not ask about and names no way
-// out of it.
-//
-// All three parts are matched, exactly as the TypeScript matches them, and Code
-// rather than Status: a 401 of any other type is a different problem, and
-// rewriting those would hide them behind a message about signing in.
+// request, rather than refusing a real account something. Without it the CLI
+// repeats `User (role: guests) missing scopes (["account"])`, which names no way
+// out. All three parts are matched, and Code rather than Status -- a 401 of
+// another type is a different problem and must not be hidden behind a sign-in
+// message.
 func (e *APIError) unauthenticated() bool {
 	return e.Code == 401 && e.Type == unauthorizedScopeType && guestRole.MatchString(e.Message)
 }
@@ -322,8 +378,8 @@ func (c *Client) Call(method, path string, body any, out any) error {
 	for name, value := range c.headers {
 		request.Header.Set(name, value)
 	}
-	if c.cookie != "" {
-		request.Header.Set("Cookie", c.cookie)
+	if cookie := c.outboundCookie(); cookie != "" {
+		request.Header.Set("Cookie", cookie)
 	}
 
 	return c.send(request, out)
@@ -402,8 +458,8 @@ func (c *Client) Upload(part UploadPart, out any) error {
 		}
 		request.Header.Set(name, value)
 	}
-	if c.cookie != "" {
-		request.Header.Set("Cookie", c.cookie)
+	if cookie := c.outboundCookie(); cookie != "" {
+		request.Header.Set("Cookie", cookie)
 	}
 	request.Header.Set(headerContentType, writer.FormDataContentType())
 	if part.Range != "" {

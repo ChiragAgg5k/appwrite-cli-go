@@ -137,7 +137,7 @@ func (s *Spinner) Update(status, end string) {
 
 // Log prints a line ABOVE the spinner, which then redraws below it.
 //
-// Ports Spinner.log (spinner.ts:57). Without this a build log line and the
+// Without this a build log line and the
 // status line would fight over the same row.
 func (s *Spinner) Log(line string) {
 	s.mutex.Lock()
@@ -347,7 +347,6 @@ func fitMiddle(middle string, target int) string {
 	return truncated + "…"
 }
 
-// pad right-pads to width, measuring display columns rather than bytes.
 // Pad right-pads text to width.
 //
 // Measured with lipgloss.Width rather than len: a styled or non-ASCII cell

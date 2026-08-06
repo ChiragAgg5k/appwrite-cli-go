@@ -182,3 +182,216 @@ func TestWriteCreatesPrivateFile(t *testing.T) {
 		t.Errorf("prefs.json mode = %o, want 600 -- it holds access tokens", perm)
 	}
 }
+
+// prefs.json holds access and refresh tokens, so neither it nor the directory
+// around it may be readable by other accounts.
+//
+// Both cases matter, and the second is the common one: this file is shared with
+// the TypeScript CLI, so on most machines the directory and the file already
+// exist -- and neither MkdirAll nor WriteFile changes the mode of something that
+// is already there. Creating them correctly only protects a fresh install.
+func TestGlobalWriteTightensPermissions(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("POSIX permission bits")
+	}
+
+	t.Run("fresh install", func(t *testing.T) {
+		directory := filepath.Join(t.TempDir(), ".appwrite")
+		path := filepath.Join(directory, "prefs.json")
+
+		if err := LoadGlobal(path).Write(); err != nil {
+			t.Fatal(err)
+		}
+
+		assertPermissions(t, directory, 0o700)
+		assertPermissions(t, path, 0o600)
+	})
+
+	t.Run("already created with looser modes", func(t *testing.T) {
+		directory := filepath.Join(t.TempDir(), ".appwrite")
+		if err := os.MkdirAll(directory, 0o755); err != nil {
+			t.Fatal(err)
+		}
+		path := filepath.Join(directory, "prefs.json")
+		if err := os.WriteFile(path, []byte(realPrefs), 0o644); err != nil {
+			t.Fatal(err)
+		}
+
+		if err := LoadGlobal(path).Write(); err != nil {
+			t.Fatal(err)
+		}
+
+		assertPermissions(t, directory, 0o700)
+		assertPermissions(t, path, 0o600)
+	})
+}
+
+func assertPermissions(t *testing.T, path string, want os.FileMode) {
+	t.Helper()
+
+	info, err := os.Stat(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := info.Mode().Perm(); got != want {
+		t.Errorf("%s has mode %04o, want %04o", path, got, want)
+	}
+}
+
+// A write that cannot complete must leave the previous file exactly as it was.
+// prefs.json holds every stored session, and LoadGlobal reads an unparseable one
+// as empty preferences -- so a half-written file does not report an error, it
+// silently logs the user out of everything.
+func TestWriteFileAtomicallyKeepsTheOldFileWhenItFails(t *testing.T) {
+	if runtime.GOOS == "windows" || os.Geteuid() == 0 {
+		t.Skip("relies on directory permissions being enforced")
+	}
+
+	directory := t.TempDir()
+	path := filepath.Join(directory, "prefs.json")
+	if err := os.WriteFile(path, []byte(realPrefs), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	// No temporary file can be created here, so the write fails before it could
+	// have replaced anything.
+	if err := os.Chmod(directory, 0o500); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.Chmod(directory, 0o700) })
+
+	if err := writeFileAtomically(path, []byte(`{"current":"replaced"}`), 0o600); err == nil {
+		t.Error("a write into an unwritable directory reported success")
+	}
+
+	contents, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(contents) != realPrefs {
+		t.Errorf("a failed write damaged the previous preferences:\n%s", contents)
+	}
+}
+
+// The temporary file must never outlive the call, on either path. Left behind in
+// ~/.appwrite it would be a stray copy of the user's tokens.
+func TestWriteFileAtomicallyLeavesNoTemporaryFile(t *testing.T) {
+	directory := t.TempDir()
+	path := filepath.Join(directory, "prefs.json")
+
+	if err := writeFileAtomically(path, []byte(realPrefs), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	entries, err := os.ReadDir(directory)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(entries) != 1 || entries[0].Name() != "prefs.json" {
+		names := make([]string, 0, len(entries))
+		for _, entry := range entries {
+			names = append(names, entry.Name())
+		}
+		t.Errorf("directory holds %v, want only prefs.json", names)
+	}
+}
+
+// Replacing an existing file must carry the requested mode rather than inherit
+// the old one -- the rename installs a new inode, which is what lets a
+// TypeScript CLI user's 0644 prefs.json become 0600 without a chmod.
+func TestWriteFileAtomicallyReplacesContentsAndMode(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("POSIX permission bits")
+	}
+
+	directory := t.TempDir()
+	path := filepath.Join(directory, "prefs.json")
+	if err := os.WriteFile(path, []byte("stale"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := writeFileAtomically(path, []byte(realPrefs), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	contents, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(contents) != realPrefs {
+		t.Errorf("contents = %q", contents)
+	}
+	assertPermissions(t, path, 0o600)
+}
+
+// prefs.json used to hold one endpoint and cookie at the top level, before
+// sessions replaced that with a keyed array. Reading a legacy file correctly is
+// not enough: without lifting it into the new shape, an upgrading user's cookie
+// sits somewhere nothing looks, and the first command tells them to log in.
+func TestMigrateLegacySessionLiftsTheOldShape(t *testing.T) {
+	const legacy = `{
+    "endpoint": "https://selfhosted.example/v1",
+    "cookie": "a_session_console=legacycookie"
+}`
+
+	path := filepath.Join(t.TempDir(), "prefs.json")
+	if err := os.WriteFile(path, []byte(legacy), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	global := LoadGlobal(path)
+	if !global.MigrateLegacySession("session1") {
+		t.Fatal("a legacy prefs.json was not migrated")
+	}
+
+	if got := global.CurrentSessionID(); got != "session1" {
+		t.Errorf("current session = %q, want the migrated one", got)
+	}
+	session := global.SessionData("session1")
+	if session == nil {
+		t.Fatal("the migrated session was not stored")
+	}
+	if got := session.GetString(PreferenceCookie); got != "a_session_console=legacycookie" {
+		t.Errorf("cookie = %q, the credential was lost", got)
+	}
+	if got := session.GetString(PreferenceEndpoint); got != "https://selfhosted.example/v1" {
+		t.Errorf("endpoint = %q", got)
+	}
+	if got := session.GetString(PreferenceEmail); got != LegacyEmail {
+		t.Errorf("email = %q, want %q", got, LegacyEmail)
+	}
+
+	// The old keys have to go, or the migration runs again on every command and
+	// adds a further session each time.
+	if global.MigrateLegacySession("session2") {
+		t.Error("the migration ran a second time")
+	}
+	if got := global.CurrentSessionID(); got != "session1" {
+		t.Errorf("a second run moved the current session to %q", got)
+	}
+}
+
+// Either key alone is not a legacy session. A bare endpoint is what
+// `client --endpoint` writes before anyone signs in, and inventing a session
+// from it would claim a login that never happened.
+func TestMigrateLegacySessionIgnoresAPartialOrModernFile(t *testing.T) {
+	for name, contents := range map[string]string{
+		"endpoint only": `{"endpoint":"https://selfhosted.example/v1"}`,
+		"cookie only":   `{"cookie":"a_session_console=x"}`,
+		"empty":         `{}`,
+		"already migrated": `{"current":"abc","abc":{` +
+			`"endpoint":"https://cloud.appwrite.io/v1","email":"someone@example.com"}}`,
+	} {
+		t.Run(name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "prefs.json")
+			if err := os.WriteFile(path, []byte(contents), 0o600); err != nil {
+				t.Fatal(err)
+			}
+
+			global := LoadGlobal(path)
+			if global.MigrateLegacySession("new") {
+				t.Errorf("migrated a file that is not a legacy session: %s", contents)
+			}
+		})
+	}
+}

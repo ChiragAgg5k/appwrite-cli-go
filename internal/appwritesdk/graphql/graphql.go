@@ -18,17 +18,16 @@ func New(clt client.Client) *Graphql {
 	}
 }
 
-	
 // Query execute a GraphQL mutation.
-func (srv *Graphql) Query(Query interface{})(*interface{}, error) {
+func (srv *Graphql) Query(Query interface{}) (*interface{}, error) {
 	path := "/graphql"
 	params := map[string]interface{}{}
 	params["query"] = Query
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"x-sdk-graphql": "true",
-		"content-type": "application/json",
-		"accept": "application/json",
+		"x-sdk-graphql":      "true",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -54,17 +53,17 @@ func (srv *Graphql) Query(Query interface{})(*interface{}, error) {
 	return &parsed, nil
 
 }
-	
+
 // Mutation execute a GraphQL mutation.
-func (srv *Graphql) Mutation(Query interface{})(*interface{}, error) {
+func (srv *Graphql) Mutation(Query interface{}) (*interface{}, error) {
 	path := "/graphql/mutation"
 	params := map[string]interface{}{}
 	params["query"] = Query
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"x-sdk-graphql": "true",
-		"content-type": "application/json",
-		"accept": "application/json",
+		"x-sdk-graphql":      "true",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)

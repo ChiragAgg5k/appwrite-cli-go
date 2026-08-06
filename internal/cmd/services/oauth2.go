@@ -20,8 +20,6 @@ func NewOauth2Command() *cobra.Command {
 	cmd.AddCommand(newOauth2CreateDeviceAuthorizationCommand())
 	cmd.AddCommand(newOauth2CreateGrantCommand())
 	cmd.AddCommand(newOauth2GetGrantCommand())
-	cmd.AddCommand(newOauth2LogoutCommand())
-	cmd.AddCommand(newOauth2LogoutPostCommand())
 	cmd.AddCommand(newOauth2ListOrganizationsCommand())
 	cmd.AddCommand(newOauth2CreatePARCommand())
 	cmd.AddCommand(newOauth2ListProjectsCommand())
@@ -351,122 +349,6 @@ func newOauth2GetGrantCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&grantId, "grant-id", "", "Grant ID made during authorization, provided to consent screen in URL search params.")
 	_ = cmd.MarkFlagRequired("grant-id")
-	return cmd
-}
-
-func newOauth2LogoutCommand() *cobra.Command {
-	var idTokenHint string
-	var logoutHint string
-	var clientId string
-	var postLogoutRedirectUri string
-	var state string
-	var uiLocales string
-
-	cmd := &cobra.Command{
-		Use:   "logout",
-		Short: "OpenID Connect RP-Initiated Logout. Ends the user session and revokes the tokens issued to the app identified by the `id_token_hint`, then redirects the user to `post_logout_redirect_uri` when it matches a URI registered on the app.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForProject("")
-			if err != nil {
-				return err
-			}
-			service := oauth2.New(client)
-
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
-			options := []oauth2.LogoutOption{}
-			if cmd.Flags().Changed("id-token-hint") {
-				options = append(options, service.WithLogoutIdTokenHint(idTokenHint))
-			}
-			if cmd.Flags().Changed("logout-hint") {
-				options = append(options, service.WithLogoutLogoutHint(logoutHint))
-			}
-			if cmd.Flags().Changed("client-id") {
-				options = append(options, service.WithLogoutClientId(clientId))
-			}
-			if cmd.Flags().Changed("post-logout-redirect-uri") {
-				options = append(options, service.WithLogoutPostLogoutRedirectUri(postLogoutRedirectUri))
-			}
-			if cmd.Flags().Changed("state") {
-				options = append(options, service.WithLogoutState(state))
-			}
-			if cmd.Flags().Changed("ui-locales") {
-				options = append(options, service.WithLogoutUiLocales(uiLocales))
-			}
-
-			result, err := service.Logout(options...)
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&idTokenHint, "id-token-hint", "", "ID Token previously issued to the app, used as proof of the logout request. Required to end the session; signature and issuer are validated while expiry is ignored.")
-	cmd.Flags().StringVar(&logoutHint, "logout-hint", "", "Hint about the user that is logging out. Accepted for OIDC compatibility.")
-	cmd.Flags().StringVar(&clientId, "client-id", "", "OAuth2 client ID. When both `client_id` and `id_token_hint` are provided, they must identify the same app.")
-	cmd.Flags().StringVar(&postLogoutRedirectUri, "post-logout-redirect-uri", "", "URI to redirect the user to after logout. Must exactly match a URI registered in the app's `postLogoutRedirectUris`.")
-	cmd.Flags().StringVar(&state, "state", "", "Opaque value passed back unchanged in the `state` query param of the post-logout redirect.")
-	cmd.Flags().StringVar(&uiLocales, "ui-locales", "", "Preferred languages for any logout UI, as space-separated BCP47 tags. Accepted for OIDC compatibility.")
-	return cmd
-}
-
-func newOauth2LogoutPostCommand() *cobra.Command {
-	var idTokenHint string
-	var logoutHint string
-	var clientId string
-	var postLogoutRedirectUri string
-	var state string
-	var uiLocales string
-
-	cmd := &cobra.Command{
-		Use:   "logout-post",
-		Short: "OpenID Connect RP-Initiated Logout. Ends the user session and revokes the tokens issued to the app identified by the `id_token_hint`, then redirects the user to `post_logout_redirect_uri` when it matches a URI registered on the app.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForProject("")
-			if err != nil {
-				return err
-			}
-			service := oauth2.New(client)
-
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
-			options := []oauth2.LogoutPostOption{}
-			if cmd.Flags().Changed("id-token-hint") {
-				options = append(options, service.WithLogoutPostIdTokenHint(idTokenHint))
-			}
-			if cmd.Flags().Changed("logout-hint") {
-				options = append(options, service.WithLogoutPostLogoutHint(logoutHint))
-			}
-			if cmd.Flags().Changed("client-id") {
-				options = append(options, service.WithLogoutPostClientId(clientId))
-			}
-			if cmd.Flags().Changed("post-logout-redirect-uri") {
-				options = append(options, service.WithLogoutPostPostLogoutRedirectUri(postLogoutRedirectUri))
-			}
-			if cmd.Flags().Changed("state") {
-				options = append(options, service.WithLogoutPostState(state))
-			}
-			if cmd.Flags().Changed("ui-locales") {
-				options = append(options, service.WithLogoutPostUiLocales(uiLocales))
-			}
-
-			result, err := service.LogoutPost(options...)
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&idTokenHint, "id-token-hint", "", "ID Token previously issued to the app, used as proof of the logout request. Required to end the session; signature and issuer are validated while expiry is ignored.")
-	cmd.Flags().StringVar(&logoutHint, "logout-hint", "", "Hint about the user that is logging out. Accepted for OIDC compatibility.")
-	cmd.Flags().StringVar(&clientId, "client-id", "", "OAuth2 client ID. When both `client_id` and `id_token_hint` are provided, they must identify the same app.")
-	cmd.Flags().StringVar(&postLogoutRedirectUri, "post-logout-redirect-uri", "", "URI to redirect the user to after logout. Must exactly match a URI registered in the app's `postLogoutRedirectUris`.")
-	cmd.Flags().StringVar(&state, "state", "", "Opaque value passed back unchanged in the `state` query param of the post-logout redirect.")
-	cmd.Flags().StringVar(&uiLocales, "ui-locales", "", "Preferred languages for any logout UI, as space-separated BCP47 tags. Accepted for OIDC compatibility.")
 	return cmd
 }
 

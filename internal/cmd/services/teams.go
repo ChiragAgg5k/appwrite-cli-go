@@ -26,7 +26,6 @@ func NewTeamsCommand() *cobra.Command {
 	cmd.AddCommand(newTeamsGetInstallationCommand())
 	cmd.AddCommand(newTeamsUpdateInstallationCommand())
 	cmd.AddCommand(newTeamsDeleteInstallationCommand())
-	cmd.AddCommand(newTeamsListLogsCommand())
 	cmd.AddCommand(newTeamsListMembershipsCommand())
 	cmd.AddCommand(newTeamsCreateMembershipCommand())
 	cmd.AddCommand(newTeamsGetMembershipCommand())
@@ -463,61 +462,6 @@ func newTeamsDeleteInstallationCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("team-id")
 	cmd.Flags().StringVar(&installationId, "installation-id", "", "Installation unique ID.")
 	_ = cmd.MarkFlagRequired("installation-id")
-	return cmd
-}
-
-func newTeamsListLogsCommand() *cobra.Command {
-	var teamId string
-	var queries []string
-	var total bool
-	var limit int
-	var offset int
-
-	cmd := &cobra.Command{
-		Use:   "list-logs",
-		Short: "Get the team activity logs list by its unique ID.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForProject("")
-			if err != nil {
-				return err
-			}
-			service := teams.New(client)
-
-			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Limit:   app.FlagInt(cmd, "limit", limit),
-				Offset:  app.FlagInt(cmd, "offset", offset),
-			})
-			if err != nil {
-				return err
-			}
-
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
-			options := []teams.ListLogsOption{}
-			if cmd.Flags().Changed("queries") {
-				options = append(options, service.WithListLogsQueries(queries))
-			}
-			if cmd.Flags().Changed("total") {
-				options = append(options, service.WithListLogsTotal(total))
-			}
-
-			result, err := service.ListLogs(teamId, options...)
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&teamId, "team-id", "", "Team ID.")
-	_ = cmd.MarkFlagRequired("team-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset")
-	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
-	cmd.Flags().Lookup("total").NoOptDefVal = "true"
-	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
-	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	return cmd
 }
 

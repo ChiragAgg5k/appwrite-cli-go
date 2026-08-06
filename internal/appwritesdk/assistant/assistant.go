@@ -18,19 +18,18 @@ func New(clt client.Client) *Assistant {
 	}
 }
 
-	
 // Chat send a prompt to the AI assistant and receive a response. This
 // endpoint allows you to interact with Appwrite's AI assistant by sending
 // questions or prompts and receiving helpful responses in real-time through a
 // server-sent events stream.
-func (srv *Assistant) Chat(Prompt string)(*interface{}, error) {
+func (srv *Assistant) Chat(Prompt string) (*interface{}, error) {
 	path := "/console/assistant"
 	params := map[string]interface{}{}
 	params["prompt"] = Prompt
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "text/plain",
+		"content-type":       "application/json",
+		"accept":             "text/plain",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)

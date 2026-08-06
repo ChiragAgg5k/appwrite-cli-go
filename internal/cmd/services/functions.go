@@ -20,8 +20,6 @@ func NewFunctionsCommand() *cobra.Command {
 	cmd.AddCommand(newFunctionsCreateCommand())
 	cmd.AddCommand(newFunctionsListRuntimesCommand())
 	cmd.AddCommand(newFunctionsListSpecificationsCommand())
-	cmd.AddCommand(newFunctionsListTemplatesCommand())
-	cmd.AddCommand(newFunctionsGetTemplateCommand())
 	cmd.AddCommand(newFunctionsGetCommand())
 	cmd.AddCommand(newFunctionsUpdateCommand())
 	cmd.AddCommand(newFunctionsDeleteCommand())
@@ -321,87 +319,6 @@ func newFunctionsListSpecificationsCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&typeArg, "type", "", "Specification type to list. Can be one of: runtimes, builds.")
-	return cmd
-}
-
-func newFunctionsListTemplatesCommand() *cobra.Command {
-	var runtimes []string
-	var useCases []string
-	var limit int
-	var offset int
-	var total bool
-
-	cmd := &cobra.Command{
-		Use:   "list-templates",
-		Short: "List available function templates. You can use template details in createFunction method.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForProject("")
-			if err != nil {
-				return err
-			}
-			service := functions.New(client)
-
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
-			options := []functions.ListTemplatesOption{}
-			if cmd.Flags().Changed("runtimes") {
-				options = append(options, service.WithListTemplatesRuntimes(runtimes))
-			}
-			if cmd.Flags().Changed("use-cases") {
-				options = append(options, service.WithListTemplatesUseCases(useCases))
-			}
-			if cmd.Flags().Changed("limit") {
-				options = append(options, service.WithListTemplatesLimit(limit))
-			}
-			if cmd.Flags().Changed("offset") {
-				options = append(options, service.WithListTemplatesOffset(offset))
-			}
-			if cmd.Flags().Changed("total") {
-				options = append(options, service.WithListTemplatesTotal(total))
-			}
-
-			result, err := service.ListTemplates(options...)
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringArrayVar(&runtimes, "runtimes", nil, "List of runtimes allowed for filtering function templates. Maximum of 100 runtimes are allowed.")
-	cmd.Flags().StringArrayVar(&useCases, "use-cases", nil, "List of use cases allowed for filtering function templates. Maximum of 100 use cases are allowed.")
-	cmd.Flags().IntVar(&limit, "limit", 0, "Limit the number of templates returned in the response. Default limit is 25, and maximum limit is 5000.")
-	cmd.Flags().IntVar(&offset, "offset", 0, "Offset the list of returned templates. Maximum offset is 5000.")
-	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
-	cmd.Flags().Lookup("total").NoOptDefVal = "true"
-	return cmd
-}
-
-func newFunctionsGetTemplateCommand() *cobra.Command {
-	var templateId string
-
-	cmd := &cobra.Command{
-		Use:   "get-template",
-		Short: "Get a function template using ID. You can use template details in createFunction method.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForProject("")
-			if err != nil {
-				return err
-			}
-			service := functions.New(client)
-
-			result, err := service.GetTemplate(templateId)
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&templateId, "template-id", "", "Template ID.")
-	_ = cmd.MarkFlagRequired("template-id")
 	return cmd
 }
 

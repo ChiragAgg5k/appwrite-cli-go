@@ -27,7 +27,6 @@ func NewUsersCommand() *cobra.Command {
 	cmd.AddCommand(newUsersCreateScryptUserCommand())
 	cmd.AddCommand(newUsersCreateScryptModifiedUserCommand())
 	cmd.AddCommand(newUsersCreateSHAUserCommand())
-	cmd.AddCommand(newUsersGetUsageCommand())
 	cmd.AddCommand(newUsersGetCommand())
 	cmd.AddCommand(newUsersDeleteCommand())
 	cmd.AddCommand(newUsersUpdateEmailCommand())
@@ -630,39 +629,6 @@ func newUsersCreateSHAUserCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("password")
 	cmd.Flags().StringVar(&passwordVersion, "password-version", "", "Optional SHA version used to hash password. Allowed values are: 'sha1', 'sha224', 'sha256', 'sha384', 'sha512/224', 'sha512/256', 'sha512', 'sha3-224', 'sha3-256', 'sha3-384', 'sha3-512'")
 	cmd.Flags().StringVar(&name, "name", "", "User name. Max length: 128 chars.")
-	return cmd
-}
-
-func newUsersGetUsageCommand() *cobra.Command {
-	var rangeArg string
-
-	cmd := &cobra.Command{
-		Use:   "get-usage",
-		Short: "Get usage metrics and statistics for all users in the project. You can view the total number of users and sessions. The response includes both current totals and historical data over time. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, range defaults to 30 days.\n",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForProject("")
-			if err != nil {
-				return err
-			}
-			service := users.New(client)
-
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
-			options := []users.GetUsageOption{}
-			if cmd.Flags().Changed("range") {
-				options = append(options, service.WithGetUsageRange(rangeArg))
-			}
-
-			result, err := service.GetUsage(options...)
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&rangeArg, "range", "", "Date range.")
 	return cmd
 }
 

@@ -44,6 +44,12 @@ greeting() {
     echo -e "${RED}"
     cat << "EOF"
 
+     _                            _ _           ___   __   _____
+    /_\  _ __  _ ____      ___ __(_) |_ ___    / __\ / /   \_   \
+   //_\\| '_ \| '_ \ \ /\ / / '__| | __/ _ \  / /   / /     / /\/
+  /  _  \ |_) | |_) \ V  V /| |  | | ||  __/ / /___/ /___/\/ /_
+  \_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___| \____/\____/\____/
+        |_|   |_|                                                
 EOF
     echo -e "${NC}\n"
     echo "🔥 Welcome to the Appwrite CLI install shield 🛡"
@@ -114,7 +120,7 @@ verifyMacOSCodeSignature() {
 downloadBinary() {
     echo "[2/5] Downloading executable for $OS ($ARCH) ..."
 
-    GITHUB_LATEST_VERSION="0.7.16-preview"
+    GITHUB_LATEST_VERSION="0.7.17-preview"
     GITHUB_FILE="appwrite-cli-${OS}-${ARCH}"
     GITHUB_URL="https://github.com/$GITHUB_REPOSITORY_NAME/releases/download/$GITHUB_LATEST_VERSION/$GITHUB_FILE"
 
@@ -180,7 +186,7 @@ cleanup() {
 installCompleted() {
     echo "[5/5] Wrapping up installation ... "
     cleanup
-    echo "🚀 To get started with Appwrite CLI, please visit https://appwrite.io/docs/command-line"
+    echo "🚀 To get started with Appwrite CLI, please visit https://github.com/ChiragAgg5k/appwrite-cli-go/docs/command-line"
     echo "As first step, you can login to your Appwrite account using 'appwrite login'"
 }
 

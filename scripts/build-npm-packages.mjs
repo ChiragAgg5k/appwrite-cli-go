@@ -65,7 +65,7 @@ for (const target of TARGETS) {
         name: `${packageName}-${target.suffix}`,
         version,
         description: `${executable} binary for ${target.os} ${target.cpu}`,
-        license: "BSD-3-Clause",
+        license: "",
         repository: { type: "git", url: "" },
         os: [target.os],
         cpu: [target.cpu],

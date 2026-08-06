@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/models"
-	"net/url"
 	"strings"
 )
 
@@ -21,22 +20,25 @@ func New(clt client.Client) *Manager {
 }
 
 type CreateBlockOptions struct {
-	ResourceId string
-	Mode string
-	Reason string
-	ExpiredAt string
+	ResourceId     string
+	Mode           string
+	Reason         string
+	ExpiredAt      string
 	enabledSetters map[string]bool
 }
+
 func (options CreateBlockOptions) New() *CreateBlockOptions {
 	options.enabledSetters = map[string]bool{
 		"ResourceId": false,
-		"Mode": false,
-		"Reason": false,
-		"ExpiredAt": false,
+		"Mode":       false,
+		"Reason":     false,
+		"ExpiredAt":  false,
 	}
 	return &options
 }
+
 type CreateBlockOption func(*CreateBlockOptions)
+
 func (srv *Manager) WithCreateBlockResourceId(v string) CreateBlockOption {
 	return func(o *CreateBlockOptions) {
 		o.ResourceId = v
@@ -61,9 +63,9 @@ func (srv *Manager) WithCreateBlockExpiredAt(v string) CreateBlockOption {
 		o.enabledSetters["ExpiredAt"] = true
 	}
 }
-					
+
 // CreateBlock creates a new resource block.
-func (srv *Manager) CreateBlock(ProjectId string, ResourceType string, optionalSetters ...CreateBlockOption)(*models.Block, error) {
+func (srv *Manager) CreateBlock(ProjectId string, ResourceType string, optionalSetters ...CreateBlockOption) (*models.Block, error) {
 	path := "/manager/blocks"
 	options := CreateBlockOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -86,7 +88,7 @@ func (srv *Manager) CreateBlock(ProjectId string, ResourceType string, optionalS
 	}
 	headers := map[string]interface{}{
 		"content-type": "application/json",
-		"accept": "application/json",
+		"accept":       "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -113,26 +115,30 @@ func (srv *Manager) CreateBlock(ProjectId string, ResourceType string, optionalS
 	return &parsed, nil
 
 }
+
 type DeleteBlockOptions struct {
-	ResourceId string
+	ResourceId     string
 	enabledSetters map[string]bool
 }
+
 func (options DeleteBlockOptions) New() *DeleteBlockOptions {
 	options.enabledSetters = map[string]bool{
 		"ResourceId": false,
 	}
 	return &options
 }
+
 type DeleteBlockOption func(*DeleteBlockOptions)
+
 func (srv *Manager) WithDeleteBlockResourceId(v string) DeleteBlockOption {
 	return func(o *DeleteBlockOptions) {
 		o.ResourceId = v
 		o.enabledSetters["ResourceId"] = true
 	}
 }
-					
+
 // DeleteBlock deletes resource blocks for a project.
-func (srv *Manager) DeleteBlock(ProjectId string, ResourceType string, optionalSetters ...DeleteBlockOption)(*models.BlockDelete, error) {
+func (srv *Manager) DeleteBlock(ProjectId string, ResourceType string, optionalSetters ...DeleteBlockOption) (*models.BlockDelete, error) {
 	path := "/manager/blocks"
 	options := DeleteBlockOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -146,7 +152,7 @@ func (srv *Manager) DeleteBlock(ProjectId string, ResourceType string, optionalS
 	}
 	headers := map[string]interface{}{
 		"content-type": "application/json",
-		"accept": "application/json",
+		"accept":       "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -173,12 +179,13 @@ func (srv *Manager) DeleteBlock(ProjectId string, ResourceType string, optionalS
 	return &parsed, nil
 
 }
-	
+
 // ListBlocks lists all resource blocks for a project.
-func (srv *Manager) ListBlocks(ProjectId string)(*models.BlockList, error) {
-	r := strings.NewReplacer("{projectId}", url.PathEscape(ProjectId))
+func (srv *Manager) ListBlocks(ProjectId string) (*models.BlockList, error) {
+	r := strings.NewReplacer("{projectId}", ProjectId)
 	path := r.Replace("/manager/blocks/{projectId}")
 	params := map[string]interface{}{}
+	params["projectId"] = ProjectId
 	headers := map[string]interface{}{
 		"accept": "application/json",
 	}
@@ -207,29 +214,33 @@ func (srv *Manager) ListBlocks(ProjectId string)(*models.BlockList, error) {
 	return &parsed, nil
 
 }
+
 type DeleteCacheOptions struct {
-	Region string
-	Cache string
-	All bool
-	Database string
-	ProjectId string
-	CollectionId string
-	DocumentId string
+	Region         string
+	Cache          string
+	All            bool
+	Database       string
+	ProjectId      string
+	CollectionId   string
+	DocumentId     string
 	enabledSetters map[string]bool
 }
+
 func (options DeleteCacheOptions) New() *DeleteCacheOptions {
 	options.enabledSetters = map[string]bool{
-		"Region": false,
-		"Cache": false,
-		"All": false,
-		"Database": false,
-		"ProjectId": false,
+		"Region":       false,
+		"Cache":        false,
+		"All":          false,
+		"Database":     false,
+		"ProjectId":    false,
 		"CollectionId": false,
-		"DocumentId": false,
+		"DocumentId":   false,
 	}
 	return &options
 }
+
 type DeleteCacheOption func(*DeleteCacheOptions)
+
 func (srv *Manager) WithDeleteCacheRegion(v string) DeleteCacheOption {
 	return func(o *DeleteCacheOptions) {
 		o.Region = v
@@ -272,9 +283,9 @@ func (srv *Manager) WithDeleteCacheDocumentId(v string) DeleteCacheOption {
 		o.enabledSetters["DocumentId"] = true
 	}
 }
-	
+
 // DeleteCache clears internal cache.
-func (srv *Manager) DeleteCache(optionalSetters ...DeleteCacheOption)(*interface{}, error) {
+func (srv *Manager) DeleteCache(optionalSetters ...DeleteCacheOption) (*interface{}, error) {
 	path := "/manager/cache"
 	options := DeleteCacheOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -304,7 +315,7 @@ func (srv *Manager) DeleteCache(optionalSetters ...DeleteCacheOption)(*interface
 	}
 	headers := map[string]interface{}{
 		"content-type": "application/json",
-		"accept": "application/json",
+		"accept":       "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -330,21 +341,25 @@ func (srv *Manager) DeleteCache(optionalSetters ...DeleteCacheOption)(*interface
 	return &parsed, nil
 
 }
+
 type UpdateUserStatusOptions struct {
-	UserId string
-	Email string
-	Reason string
+	UserId         string
+	Email          string
+	Reason         string
 	enabledSetters map[string]bool
 }
+
 func (options UpdateUserStatusOptions) New() *UpdateUserStatusOptions {
 	options.enabledSetters = map[string]bool{
 		"UserId": false,
-		"Email": false,
+		"Email":  false,
 		"Reason": false,
 	}
 	return &options
 }
+
 type UpdateUserStatusOption func(*UpdateUserStatusOptions)
+
 func (srv *Manager) WithUpdateUserStatusUserId(v string) UpdateUserStatusOption {
 	return func(o *UpdateUserStatusOptions) {
 		o.UserId = v
@@ -363,29 +378,29 @@ func (srv *Manager) WithUpdateUserStatusReason(v string) UpdateUserStatusOption 
 		o.enabledSetters["Reason"] = true
 	}
 }
-			
+
 // UpdateUserStatus updates a console user status using a user ID or email
 // address.
-func (srv *Manager) UpdateUserStatus(Status bool, optionalSetters ...UpdateUserStatusOption)(*models.User, error) {
+func (srv *Manager) UpdateUserStatus(Status bool, optionalSetters ...UpdateUserStatusOption) (*models.User, error) {
 	path := "/manager/users/status"
 	options := UpdateUserStatusOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["status"] = Status
 	if options.enabledSetters["UserId"] {
 		params["userId"] = options.UserId
 	}
 	if options.enabledSetters["Email"] {
 		params["email"] = options.Email
 	}
-	params["status"] = Status
 	if options.enabledSetters["Reason"] {
 		params["reason"] = options.Reason
 	}
 	headers := map[string]interface{}{
 		"content-type": "application/json",
-		"accept": "application/json",
+		"accept":       "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)

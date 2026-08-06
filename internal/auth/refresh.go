@@ -11,8 +11,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/config"
 )
 
-// Ports getValidAccessToken() from templates/cli/lib/sdks.ts:33.
-
 // DefaultClientID is the OAuth2 client the CLI identifies as.
 const DefaultClientID = "appwrite-cli"
 

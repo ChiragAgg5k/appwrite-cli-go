@@ -103,7 +103,7 @@ const maximumReportTitleLength = 100
 
 // ReportURL builds a prefilled GitHub issue for a failed command.
 //
-// Ports the --report branch of parseError (parser.ts:878). Both CLIs tell the
+// Both CLIs tell the
 // user to "pass the --verbose or --report flag" on every error; in Go the
 // second half of that sentence was a lie, because the flag did not exist.
 func ReportURL(err error) string {
@@ -135,21 +135,10 @@ func ReportBlock(err error) string {
 		" - Create an issue in our Github\n   " + ReportURL(err)
 }
 
-// RequiredArgument validates a command that takes exactly one argument, and
-// says which one when it is missing.
-//
-// cobra's own message for this is
-//
-//	accepts 1 arg(s), received 0
-//
-// which names neither the argument, nor the command, nor a way to find out --
-// and `arg(s)` is a plural hedge in a sentence that already knows the number is
-// one. `appwrite types` is the command that hits it, where the missing value is
-// a directory the user has to choose, so the message has to say so.
-//
-// description is the argument's own help text, which the TypeScript declares
-// beside the argument ("The directory to write the types to") -- naming it is
-// what turns the error into an instruction.
+// RequiredArgument validates a command that takes exactly one argument, and says
+// which one when it is missing. cobra's own `accepts 1 arg(s), received 0` names
+// neither the argument nor the command; description is the argument's help text,
+// which is what turns the error into an instruction.
 func RequiredArgument(name, description string) cobra.PositionalArgs {
 	return func(command *cobra.Command, arguments []string) error {
 		if len(arguments) == 1 {
@@ -187,8 +176,6 @@ func IsCancelled(err error) bool {
 // Lives here rather than in main so it can be exercised: the difference between
 // what a user sees for a cancelled prompt and for a failed request is the whole
 // point of it, and main() is not reachable from a test.
-//
-// Ports the tail of parseError (parser.ts:936).
 func Report(writer io.Writer, executed *cobra.Command, err error) int {
 	if err == nil {
 		return 0
@@ -211,17 +198,9 @@ func Report(writer io.Writer, executed *cobra.Command, err error) int {
 
 	output.Failure(writer, "%s", FormatError(err))
 
-	// --verbose was documented as "Show full error stack traces" and showed
-	// none: it suppressed the advice line above and changed nothing else, so on
-	// the failure it is most needed for -- a response the SDK could not decode --
-	// it added exactly nothing to
-	//
-	//   ✗ Error: json: cannot unmarshal array into Go struct field
-	//     UsageProject.embeddingsText of type models.Metric
-	//
-	// which names a field and a type and gives no way to see what actually
-	// arrived. Ports the `cliConfig.verbose` branch of parseError
-	// (parser.ts:937), which prints formatErrorForLog(err).
+	// --verbose has to add the response body: on the failure it matters most for
+	// -- a response the SDK could not decode -- a message naming a field and a
+	// type gives no way to see what actually arrived.
 	if app.Flags().Verbose {
 		if detail := ErrorDetail(err); detail != "" {
 			fmt.Fprint(writer, detail)
@@ -237,15 +216,9 @@ func Report(writer io.Writer, executed *cobra.Command, err error) int {
 
 // ErrorDetail is everything known about a failure, for --verbose.
 //
-// Ports formatErrorForLog (parser.ts:847) and its ERROR_DETAIL_KEYS -- `code`,
-// `type`, `response` -- to what Go actually has. A Go error carries no stack, so
-// the UNWRAP CHAIN stands in for one: each layer names where the failure was
-// wrapped, which is the same question a stack answers.
-//
-// The response body is the reason this exists. internal/sdk records the last
-// one, and a decode failure never renders, so the body that could not be decoded
-// is still sitting there when this runs -- and it is the only thing that tells
-// the user whether the API changed shape or the CLI has the model wrong.
+// A Go error carries no stack, so the unwrap chain stands in for one. The
+// response body is the reason this exists: it is the only thing that says
+// whether the API changed shape or the CLI has the model wrong.
 func ErrorDetail(err error) string {
 	if err == nil {
 		return ""
@@ -283,17 +256,10 @@ func ErrorDetail(err error) string {
 // thousand lines to say "an array of {value, date}".
 const arrayPreview = 2
 
-// prettyJSON re-indents a body and collapses its long arrays.
-//
-// A body that is not JSON is printed untouched, which is the case that matters
-// most: an HTML error page or a proxy's plain-text refusal is the whole
-// diagnosis.
-//
-// Collapsing ARRAYS rather than truncating lines, and this is the difference
-// between a useful dump and a useless one. The field that fails to decode can be
-// anywhere in the response -- `embeddingsText` comes after fourteen other
-// metrics -- so a line or byte cap cuts off exactly the part the user needs. An
-// array is where the volume is, and its length is not what anyone is reading.
+// prettyJSON re-indents a body and collapses its long arrays. A body that is not
+// JSON is printed untouched -- an HTML error page or a proxy's refusal is the
+// whole diagnosis. Arrays are collapsed rather than lines truncated, because the
+// field that failed to decode can sit anywhere in the response.
 func prettyJSON(body []byte) string {
 	decoder := json.NewDecoder(bytes.NewReader(body))
 	// Numbers stay as written: an id that arrived as 20 digits must not be
@@ -301,7 +267,7 @@ func prettyJSON(body []byte) string {
 	decoder.UseNumber()
 
 	var builder strings.Builder
-	if err := writeJSONValue(decoder, &builder, 0); err != nil {
+	if err := writeJSONValue(decoder, &builder, 0, ""); err != nil {
 		// Not JSON, or truncated mid-stream. Either way the bytes are the
 		// evidence, so they are printed as they came.
 		var indented bytes.Buffer
@@ -317,12 +283,11 @@ func prettyJSON(body []byte) string {
 
 func jsonIndent(depth int) string { return strings.Repeat("  ", depth) }
 
-// writeJSONValue re-emits one value, in the order it was read.
-//
-// Re-emitted from tokens rather than decoded into a map, because a map loses key
-// order -- and a response printed with its fields shuffled is harder to compare
-// against a model than one printed as it arrived.
-func writeJSONValue(decoder *json.Decoder, builder *strings.Builder, depth int) error {
+// writeJSONValue re-emits one value in the order it was read, from tokens rather
+// than a map, which would lose key order. key is the field the value sits under
+// so credentials can be masked -- threaded through arrays too, since an array
+// under a sensitive key is a list of credentials.
+func writeJSONValue(decoder *json.Decoder, builder *strings.Builder, depth int, key string) error {
 	token, err := decoder.Token()
 	if err != nil {
 		return err
@@ -330,6 +295,9 @@ func writeJSONValue(decoder *json.Decoder, builder *strings.Builder, depth int) 
 
 	delimiter, isDelimiter := token.(json.Delim)
 	if !isDelimiter {
+		if text, isText := token.(string); isText {
+			token = maskJSONString(text, key)
+		}
 		encoded, err := json.Marshal(token)
 		if err != nil {
 			return err
@@ -341,12 +309,28 @@ func writeJSONValue(decoder *json.Decoder, builder *strings.Builder, depth int) 
 
 	switch delimiter {
 	case '{':
+		// A nested object's own field names govern its values, so the key does
+		// not carry any further down.
 		return writeJSONObject(decoder, builder, depth)
 	case '[':
-		return writeJSONArray(decoder, builder, depth)
+		return writeJSONArray(decoder, builder, depth, key)
 	default:
 		return fmt.Errorf("unexpected %v", delimiter)
 	}
+}
+
+// maskJSONString redacts a value --verbose would otherwise print in full.
+//
+// The captured body reaches the terminal through a path that never built a
+// Redactor, so `project create-key --verbose` printed the live secret that the
+// normal render path masks. Same bytes, two paths -- this closes the second one.
+// --show-secrets is honoured, exactly as it is on the first.
+func maskJSONString(text, key string) string {
+	if key == "" || app.Flags().ShowSecrets || !output.IsSensitiveKey(key) {
+		return text
+	}
+
+	return output.MaskString(text, key)
 }
 
 func writeJSONObject(decoder *json.Decoder, builder *strings.Builder, depth int) error {
@@ -372,7 +356,8 @@ func writeJSONObject(decoder *json.Decoder, builder *strings.Builder, depth int)
 		builder.Write(encoded)
 		builder.WriteString(": ")
 
-		if err := writeJSONValue(decoder, builder, depth+1); err != nil {
+		keyText, _ := key.(string)
+		if err := writeJSONValue(decoder, builder, depth+1, keyText); err != nil {
 			return err
 		}
 	}
@@ -391,7 +376,7 @@ func writeJSONObject(decoder *json.Decoder, builder *strings.Builder, depth int)
 	return nil
 }
 
-func writeJSONArray(decoder *json.Decoder, builder *strings.Builder, depth int) error {
+func writeJSONArray(decoder *json.Decoder, builder *strings.Builder, depth int, key string) error {
 	builder.WriteString("[")
 
 	total := 0
@@ -410,7 +395,7 @@ func writeJSONArray(decoder *json.Decoder, builder *strings.Builder, depth int) 
 			builder.WriteString("\n" + jsonIndent(depth+1))
 		}
 
-		if err := writeJSONValue(decoder, target, depth+1); err != nil {
+		if err := writeJSONValue(decoder, target, depth+1, key); err != nil {
 			return err
 		}
 	}
@@ -488,13 +473,55 @@ func CancellationNotice(command *cobra.Command) string {
 	return fmt.Sprintf("Cancelled `%s`. Nothing further was sent.", command.CommandPath())
 }
 
-// commandArguments is the invocation, minus the flag that asked for the report.
+// commandArguments is the invocation, minus the flag that asked for the report
+// and minus any credential the invocation carried.
+//
+// This goes into a prefilled issue body on a public tracker, so a credential
+// flag's value is replaced rather than quoted. `client --key standard_...` and
+// `login --password ...` are ordinary things to hit an error on and then report,
+// which put a live credential one click from being published.
 func commandArguments() []string {
 	arguments := make([]string, 0, len(os.Args))
+	redactValue := false
 	for _, argument := range os.Args[1:] {
-		if argument == "--report" {
+		if argument == "--report" || strings.HasPrefix(argument, "--report=") {
 			continue
 		}
+
+		if redactValue {
+			arguments = append(arguments, output.HiddenValue)
+			redactValue = false
+
+			continue
+		}
+
+		isFlag := strings.HasPrefix(argument, "-")
+
+		// One token carrying both: `--key=secret`, `-k=secret`.
+		if name, _, found := strings.Cut(argument, "="); found && isFlag {
+			if output.IsSensitiveFlagName(strings.TrimLeft(name, "-")) {
+				arguments = append(arguments, name+"="+output.HiddenValue)
+
+				continue
+			}
+			arguments = append(arguments, argument)
+
+			continue
+		}
+
+		// A shorthand can carry its value attached, with no separator: `-ksecret`.
+		if isFlag && !strings.HasPrefix(argument, "--") && len(argument) > 2 &&
+			output.IsSensitiveFlagName(argument[1:2]) {
+			arguments = append(arguments, argument[:2]+output.HiddenValue)
+
+			continue
+		}
+
+		// A bare credential flag takes the next token as its value.
+		if isFlag && output.IsSensitiveFlagName(strings.TrimLeft(argument, "-")) {
+			redactValue = true
+		}
+
 		arguments = append(arguments, argument)
 	}
 

@@ -3,11 +3,11 @@ package functions
 import (
 	"encoding/json"
 	"errors"
-	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
-	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/models"
-	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/file"
-	"net/url"
 	"fmt"
+	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
+	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/file"
+	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/models"
+	"net/url"
 	"strings"
 )
 
@@ -23,20 +23,23 @@ func New(clt client.Client) *Functions {
 }
 
 type ListOptions struct {
-	Queries []string
-	Search string
-	Total bool
+	Queries        []string
+	Search         string
+	Total          bool
 	enabledSetters map[string]bool
 }
+
 func (options ListOptions) New() *ListOptions {
 	options.enabledSetters = map[string]bool{
 		"Queries": false,
-		"Search": false,
-		"Total": false,
+		"Search":  false,
+		"Total":   false,
 	}
 	return &options
 }
+
 type ListOption func(*ListOptions)
+
 func (srv *Functions) WithListQueries(v []string) ListOption {
 	return func(o *ListOptions) {
 		o.Queries = v
@@ -55,10 +58,10 @@ func (srv *Functions) WithListTotal(v bool) ListOption {
 		o.enabledSetters["Total"] = true
 	}
 }
-	
+
 // List get a list of all the project's functions. You can use the query
 // params to filter your results.
-func (srv *Functions) List(optionalSetters ...ListOption)(*models.FunctionList, error) {
+func (srv *Functions) List(optionalSetters ...ListOption) (*models.FunctionList, error) {
 	path := "/functions"
 	options := ListOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -76,7 +79,7 @@ func (srv *Functions) List(optionalSetters ...ListOption)(*models.FunctionList, 
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -103,53 +106,57 @@ func (srv *Functions) List(optionalSetters ...ListOption)(*models.FunctionList, 
 	return &parsed, nil
 
 }
+
 type CreateOptions struct {
-	Execute []string
-	Events []string
-	Schedule string
-	Timeout int
-	Enabled bool
-	Logging bool
-	Entrypoint string
-	Commands string
-	Scopes []string
-	InstallationId string
-	ProviderRepositoryId string
-	ProviderBranch string
-	ProviderSilentMode bool
+	Execute               []string
+	Events                []string
+	Schedule              string
+	Timeout               int
+	Enabled               bool
+	Logging               bool
+	Entrypoint            string
+	Commands              string
+	Scopes                []string
+	InstallationId        string
+	ProviderRepositoryId  string
+	ProviderBranch        string
+	ProviderSilentMode    bool
 	ProviderRootDirectory string
-	ProviderBranches []string
-	ProviderPaths []string
-	BuildSpecification string
-	RuntimeSpecification string
-	DeploymentRetention int
-	enabledSetters map[string]bool
+	ProviderBranches      []string
+	ProviderPaths         []string
+	BuildSpecification    string
+	RuntimeSpecification  string
+	DeploymentRetention   int
+	enabledSetters        map[string]bool
 }
+
 func (options CreateOptions) New() *CreateOptions {
 	options.enabledSetters = map[string]bool{
-		"Execute": false,
-		"Events": false,
-		"Schedule": false,
-		"Timeout": false,
-		"Enabled": false,
-		"Logging": false,
-		"Entrypoint": false,
-		"Commands": false,
-		"Scopes": false,
-		"InstallationId": false,
-		"ProviderRepositoryId": false,
-		"ProviderBranch": false,
-		"ProviderSilentMode": false,
+		"Execute":               false,
+		"Events":                false,
+		"Schedule":              false,
+		"Timeout":               false,
+		"Enabled":               false,
+		"Logging":               false,
+		"Entrypoint":            false,
+		"Commands":              false,
+		"Scopes":                false,
+		"InstallationId":        false,
+		"ProviderRepositoryId":  false,
+		"ProviderBranch":        false,
+		"ProviderSilentMode":    false,
 		"ProviderRootDirectory": false,
-		"ProviderBranches": false,
-		"ProviderPaths": false,
-		"BuildSpecification": false,
-		"RuntimeSpecification": false,
-		"DeploymentRetention": false,
+		"ProviderBranches":      false,
+		"ProviderPaths":         false,
+		"BuildSpecification":    false,
+		"RuntimeSpecification":  false,
+		"DeploymentRetention":   false,
 	}
 	return &options
 }
+
 type CreateOption func(*CreateOptions)
+
 func (srv *Functions) WithCreateExecute(v []string) CreateOption {
 	return func(o *CreateOptions) {
 		o.Execute = v
@@ -264,12 +271,12 @@ func (srv *Functions) WithCreateDeploymentRetention(v int) CreateOption {
 		o.enabledSetters["DeploymentRetention"] = true
 	}
 }
-							
+
 // Create create a new function. You can pass a list of
 // [permissions](https://appwrite.io/docs/permissions) to allow different
 // project users or team with access to execute the function using the client
 // API.
-func (srv *Functions) Create(FunctionId string, Name string, Runtime string, optionalSetters ...CreateOption)(*models.Function, error) {
+func (srv *Functions) Create(FunctionId string, Name string, Runtime string, optionalSetters ...CreateOption) (*models.Function, error) {
 	path := "/functions"
 	options := CreateOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -338,8 +345,8 @@ func (srv *Functions) Create(FunctionId string, Name string, Runtime string, opt
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -369,12 +376,12 @@ func (srv *Functions) Create(FunctionId string, Name string, Runtime string, opt
 
 // ListRuntimes get a list of all runtimes that are currently active on your
 // instance.
-func (srv *Functions) ListRuntimes()(*models.RuntimeList, error) {
+func (srv *Functions) ListRuntimes() (*models.RuntimeList, error) {
 	path := "/functions/runtimes"
 	params := map[string]interface{}{}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -401,26 +408,30 @@ func (srv *Functions) ListRuntimes()(*models.RuntimeList, error) {
 	return &parsed, nil
 
 }
+
 type ListSpecificationsOptions struct {
-	Type string
+	Type           string
 	enabledSetters map[string]bool
 }
+
 func (options ListSpecificationsOptions) New() *ListSpecificationsOptions {
 	options.enabledSetters = map[string]bool{
 		"Type": false,
 	}
 	return &options
 }
+
 type ListSpecificationsOption func(*ListSpecificationsOptions)
+
 func (srv *Functions) WithListSpecificationsType(v string) ListSpecificationsOption {
 	return func(o *ListSpecificationsOptions) {
 		o.Type = v
 		o.enabledSetters["Type"] = true
 	}
 }
-	
+
 // ListSpecifications list allowed function specifications for this instance.
-func (srv *Functions) ListSpecifications(optionalSetters ...ListSpecificationsOption)(*models.SpecificationList, error) {
+func (srv *Functions) ListSpecifications(optionalSetters ...ListSpecificationsOption) (*models.SpecificationList, error) {
 	path := "/functions/specifications"
 	options := ListSpecificationsOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -432,7 +443,7 @@ func (srv *Functions) ListSpecifications(optionalSetters ...ListSpecificationsOp
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -459,25 +470,29 @@ func (srv *Functions) ListSpecifications(optionalSetters ...ListSpecificationsOp
 	return &parsed, nil
 
 }
+
 type ListTemplatesOptions struct {
-	Runtimes []string
-	UseCases []string
-	Limit int
-	Offset int
-	Total bool
+	Runtimes       []string
+	UseCases       []string
+	Limit          int
+	Offset         int
+	Total          bool
 	enabledSetters map[string]bool
 }
+
 func (options ListTemplatesOptions) New() *ListTemplatesOptions {
 	options.enabledSetters = map[string]bool{
 		"Runtimes": false,
 		"UseCases": false,
-		"Limit": false,
-		"Offset": false,
-		"Total": false,
+		"Limit":    false,
+		"Offset":   false,
+		"Total":    false,
 	}
 	return &options
 }
+
 type ListTemplatesOption func(*ListTemplatesOptions)
+
 func (srv *Functions) WithListTemplatesRuntimes(v []string) ListTemplatesOption {
 	return func(o *ListTemplatesOptions) {
 		o.Runtimes = v
@@ -508,12 +523,12 @@ func (srv *Functions) WithListTemplatesTotal(v bool) ListTemplatesOption {
 		o.enabledSetters["Total"] = true
 	}
 }
-	
+
 // ListTemplates list available function templates. You can use template
 // details in
 // [createFunction](/docs/references/cloud/server-nodejs/functions#create)
 // method.
-func (srv *Functions) ListTemplates(optionalSetters ...ListTemplatesOption)(*models.TemplateFunctionList, error) {
+func (srv *Functions) ListTemplates(optionalSetters ...ListTemplatesOption) (*models.TemplateFunctionList, error) {
 	path := "/functions/templates"
 	options := ListTemplatesOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -537,7 +552,7 @@ func (srv *Functions) ListTemplates(optionalSetters ...ListTemplatesOption)(*mod
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -564,17 +579,18 @@ func (srv *Functions) ListTemplates(optionalSetters ...ListTemplatesOption)(*mod
 	return &parsed, nil
 
 }
-	
+
 // GetTemplate get a function template using ID. You can use template details
 // in [createFunction](/docs/references/cloud/server-nodejs/functions#create)
 // method.
-func (srv *Functions) GetTemplate(TemplateId string)(*models.TemplateFunction, error) {
-	r := strings.NewReplacer("{templateId}", url.PathEscape(TemplateId))
+func (srv *Functions) GetTemplate(TemplateId string) (*models.TemplateFunction, error) {
+	r := strings.NewReplacer("{templateId}", TemplateId)
 	path := r.Replace("/functions/templates/{templateId}")
 	params := map[string]interface{}{}
+	params["templateId"] = TemplateId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -601,15 +617,16 @@ func (srv *Functions) GetTemplate(TemplateId string)(*models.TemplateFunction, e
 	return &parsed, nil
 
 }
-	
+
 // Get get a function by its unique ID.
-func (srv *Functions) Get(FunctionId string)(*models.Function, error) {
-	r := strings.NewReplacer("{functionId}", url.PathEscape(FunctionId))
+func (srv *Functions) Get(FunctionId string) (*models.Function, error) {
+	r := strings.NewReplacer("{functionId}", FunctionId)
 	path := r.Replace("/functions/{functionId}")
 	params := map[string]interface{}{}
+	params["functionId"] = FunctionId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -636,55 +653,59 @@ func (srv *Functions) Get(FunctionId string)(*models.Function, error) {
 	return &parsed, nil
 
 }
+
 type UpdateOptions struct {
-	Runtime string
-	Execute []string
-	Events []string
-	Schedule string
-	Timeout int
-	Enabled bool
-	Logging bool
-	Entrypoint string
-	Commands string
-	Scopes []string
-	InstallationId string
-	ProviderRepositoryId string
-	ProviderBranch string
-	ProviderSilentMode bool
+	Runtime               string
+	Execute               []string
+	Events                []string
+	Schedule              string
+	Timeout               int
+	Enabled               bool
+	Logging               bool
+	Entrypoint            string
+	Commands              string
+	Scopes                []string
+	InstallationId        string
+	ProviderRepositoryId  string
+	ProviderBranch        string
+	ProviderSilentMode    bool
 	ProviderRootDirectory string
-	ProviderBranches []string
-	ProviderPaths []string
-	BuildSpecification string
-	RuntimeSpecification string
-	DeploymentRetention int
-	enabledSetters map[string]bool
+	ProviderBranches      []string
+	ProviderPaths         []string
+	BuildSpecification    string
+	RuntimeSpecification  string
+	DeploymentRetention   int
+	enabledSetters        map[string]bool
 }
+
 func (options UpdateOptions) New() *UpdateOptions {
 	options.enabledSetters = map[string]bool{
-		"Runtime": false,
-		"Execute": false,
-		"Events": false,
-		"Schedule": false,
-		"Timeout": false,
-		"Enabled": false,
-		"Logging": false,
-		"Entrypoint": false,
-		"Commands": false,
-		"Scopes": false,
-		"InstallationId": false,
-		"ProviderRepositoryId": false,
-		"ProviderBranch": false,
-		"ProviderSilentMode": false,
+		"Runtime":               false,
+		"Execute":               false,
+		"Events":                false,
+		"Schedule":              false,
+		"Timeout":               false,
+		"Enabled":               false,
+		"Logging":               false,
+		"Entrypoint":            false,
+		"Commands":              false,
+		"Scopes":                false,
+		"InstallationId":        false,
+		"ProviderRepositoryId":  false,
+		"ProviderBranch":        false,
+		"ProviderSilentMode":    false,
 		"ProviderRootDirectory": false,
-		"ProviderBranches": false,
-		"ProviderPaths": false,
-		"BuildSpecification": false,
-		"RuntimeSpecification": false,
-		"DeploymentRetention": false,
+		"ProviderBranches":      false,
+		"ProviderPaths":         false,
+		"BuildSpecification":    false,
+		"RuntimeSpecification":  false,
+		"DeploymentRetention":   false,
 	}
 	return &options
 }
+
 type UpdateOption func(*UpdateOptions)
+
 func (srv *Functions) WithUpdateRuntime(v string) UpdateOption {
 	return func(o *UpdateOptions) {
 		o.Runtime = v
@@ -805,16 +826,17 @@ func (srv *Functions) WithUpdateDeploymentRetention(v int) UpdateOption {
 		o.enabledSetters["DeploymentRetention"] = true
 	}
 }
-					
+
 // Update update function by its unique ID.
-func (srv *Functions) Update(FunctionId string, Name string, optionalSetters ...UpdateOption)(*models.Function, error) {
-	r := strings.NewReplacer("{functionId}", url.PathEscape(FunctionId))
+func (srv *Functions) Update(FunctionId string, Name string, optionalSetters ...UpdateOption) (*models.Function, error) {
+	r := strings.NewReplacer("{functionId}", FunctionId)
 	path := r.Replace("/functions/{functionId}")
 	options := UpdateOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["functionId"] = FunctionId
 	params["name"] = Name
 	if options.enabledSetters["Runtime"] {
 		params["runtime"] = options.Runtime
@@ -878,8 +900,8 @@ func (srv *Functions) Update(FunctionId string, Name string, optionalSetters ...
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PUT", path, headers, params)
@@ -906,15 +928,16 @@ func (srv *Functions) Update(FunctionId string, Name string, optionalSetters ...
 	return &parsed, nil
 
 }
-	
+
 // Delete delete a function by its unique ID.
-func (srv *Functions) Delete(FunctionId string)(*interface{}, error) {
-	r := strings.NewReplacer("{functionId}", url.PathEscape(FunctionId))
+func (srv *Functions) Delete(FunctionId string) (*interface{}, error) {
+	r := strings.NewReplacer("{functionId}", FunctionId)
 	path := r.Replace("/functions/{functionId}")
 	params := map[string]interface{}{}
+	params["functionId"] = FunctionId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
+		"content-type":       "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -940,19 +963,20 @@ func (srv *Functions) Delete(FunctionId string)(*interface{}, error) {
 	return &parsed, nil
 
 }
-			
+
 // UpdateFunctionDeployment update the function active deployment. Use this
 // endpoint to switch the code deployment that should be used when visitor
 // opens your function.
-func (srv *Functions) UpdateFunctionDeployment(FunctionId string, DeploymentId string)(*models.Function, error) {
-	r := strings.NewReplacer("{functionId}", url.PathEscape(FunctionId))
+func (srv *Functions) UpdateFunctionDeployment(FunctionId string, DeploymentId string) (*models.Function, error) {
+	r := strings.NewReplacer("{functionId}", FunctionId)
 	path := r.Replace("/functions/{functionId}/deployment")
 	params := map[string]interface{}{}
+	params["functionId"] = FunctionId
 	params["deploymentId"] = DeploymentId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -979,21 +1003,25 @@ func (srv *Functions) UpdateFunctionDeployment(FunctionId string, DeploymentId s
 	return &parsed, nil
 
 }
+
 type ListDeploymentsOptions struct {
-	Queries []string
-	Search string
-	Total bool
+	Queries        []string
+	Search         string
+	Total          bool
 	enabledSetters map[string]bool
 }
+
 func (options ListDeploymentsOptions) New() *ListDeploymentsOptions {
 	options.enabledSetters = map[string]bool{
 		"Queries": false,
-		"Search": false,
-		"Total": false,
+		"Search":  false,
+		"Total":   false,
 	}
 	return &options
 }
+
 type ListDeploymentsOption func(*ListDeploymentsOptions)
+
 func (srv *Functions) WithListDeploymentsQueries(v []string) ListDeploymentsOption {
 	return func(o *ListDeploymentsOptions) {
 		o.Queries = v
@@ -1012,17 +1040,18 @@ func (srv *Functions) WithListDeploymentsTotal(v bool) ListDeploymentsOption {
 		o.enabledSetters["Total"] = true
 	}
 }
-			
+
 // ListDeployments get a list of all the function's code deployments. You can
 // use the query params to filter your results.
-func (srv *Functions) ListDeployments(FunctionId string, optionalSetters ...ListDeploymentsOption)(*models.DeploymentList, error) {
-	r := strings.NewReplacer("{functionId}", url.PathEscape(FunctionId))
+func (srv *Functions) ListDeployments(FunctionId string, optionalSetters ...ListDeploymentsOption) (*models.DeploymentList, error) {
+	r := strings.NewReplacer("{functionId}", FunctionId)
 	path := r.Replace("/functions/{functionId}/deployments")
 	options := ListDeploymentsOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["functionId"] = FunctionId
 	if options.enabledSetters["Queries"] {
 		params["queries"] = options.Queries
 	}
@@ -1034,7 +1063,7 @@ func (srv *Functions) ListDeployments(FunctionId string, optionalSetters ...List
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1061,19 +1090,23 @@ func (srv *Functions) ListDeployments(FunctionId string, optionalSetters ...List
 	return &parsed, nil
 
 }
+
 type CreateDeploymentOptions struct {
-	Entrypoint string
-	Commands string
+	Entrypoint     string
+	Commands       string
 	enabledSetters map[string]bool
 }
+
 func (options CreateDeploymentOptions) New() *CreateDeploymentOptions {
 	options.enabledSetters = map[string]bool{
 		"Entrypoint": false,
-		"Commands": false,
+		"Commands":   false,
 	}
 	return &options
 }
+
 type CreateDeploymentOption func(*CreateDeploymentOptions)
+
 func (srv *Functions) WithCreateDeploymentEntrypoint(v string) CreateDeploymentOption {
 	return func(o *CreateDeploymentOptions) {
 		o.Entrypoint = v
@@ -1086,44 +1119,44 @@ func (srv *Functions) WithCreateDeploymentCommands(v string) CreateDeploymentOpt
 		o.enabledSetters["Commands"] = true
 	}
 }
-							
+
 // CreateDeployment create a new function code deployment. Use this endpoint
 // to upload a new version of your code function. To execute your newly
 // uploaded code, you'll need to update the function's deployment to use your
 // new deployment UID.
-// 
+//
 // This endpoint accepts a tar.gz file compressed with your code. Make sure to
 // include any dependencies your code has within the compressed file. You can
 // learn more about code packaging in the [Appwrite Cloud Functions
 // tutorial](https://appwrite.io/docs/functions).
-// 
+//
 // Use the "command" param to set the entrypoint used to execute your code.
-func (srv *Functions) CreateDeployment(FunctionId string, Code file.InputFile, Activate bool, optionalSetters ...CreateDeploymentOption)(*models.Deployment, error) {
-	r := strings.NewReplacer("{functionId}", url.PathEscape(FunctionId))
+func (srv *Functions) CreateDeployment(FunctionId string, Code file.InputFile, Activate bool, optionalSetters ...CreateDeploymentOption) (*models.Deployment, error) {
+	r := strings.NewReplacer("{functionId}", FunctionId)
 	path := r.Replace("/functions/{functionId}/deployments")
 	options := CreateDeploymentOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["functionId"] = FunctionId
+	params["code"] = Code
+	params["activate"] = Activate
 	if options.enabledSetters["Entrypoint"] {
 		params["entrypoint"] = options.Entrypoint
 	}
 	if options.enabledSetters["Commands"] {
 		params["commands"] = options.Commands
 	}
-	params["code"] = Code
-	params["activate"] = Activate
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "multipart/form-data",
-		"accept": "application/json",
+		"content-type":       "multipart/form-data",
+		"accept":             "application/json",
 	}
 
-    paramName := "code"
+	paramName := "code"
 
-
-    uploadId := ""
+	uploadId := ""
 
 	resp, err := srv.client.FileUpload(path, headers, params, paramName, uploadId)
 	if err != nil {
@@ -1145,46 +1178,51 @@ func (srv *Functions) CreateDeployment(FunctionId string, Code file.InputFile, A
 	return &parsed, nil
 
 }
+
 type CreateDuplicateDeploymentOptions struct {
-	BuildId string
+	BuildId        string
 	enabledSetters map[string]bool
 }
+
 func (options CreateDuplicateDeploymentOptions) New() *CreateDuplicateDeploymentOptions {
 	options.enabledSetters = map[string]bool{
 		"BuildId": false,
 	}
 	return &options
 }
+
 type CreateDuplicateDeploymentOption func(*CreateDuplicateDeploymentOptions)
+
 func (srv *Functions) WithCreateDuplicateDeploymentBuildId(v string) CreateDuplicateDeploymentOption {
 	return func(o *CreateDuplicateDeploymentOptions) {
 		o.BuildId = v
 		o.enabledSetters["BuildId"] = true
 	}
 }
-					
+
 // CreateDuplicateDeployment create a new build for an existing function
 // deployment. This endpoint allows you to rebuild a deployment with the
 // updated function configuration, including its entrypoint and build commands
 // if they have been modified. The build process will be queued and executed
 // asynchronously. The original deployment's code will be preserved and used
 // for the new build.
-func (srv *Functions) CreateDuplicateDeployment(FunctionId string, DeploymentId string, optionalSetters ...CreateDuplicateDeploymentOption)(*models.Deployment, error) {
-	r := strings.NewReplacer("{functionId}", url.PathEscape(FunctionId))
+func (srv *Functions) CreateDuplicateDeployment(FunctionId string, DeploymentId string, optionalSetters ...CreateDuplicateDeploymentOption) (*models.Deployment, error) {
+	r := strings.NewReplacer("{functionId}", FunctionId)
 	path := r.Replace("/functions/{functionId}/deployments/duplicate")
 	options := CreateDuplicateDeploymentOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["functionId"] = FunctionId
 	params["deploymentId"] = DeploymentId
 	if options.enabledSetters["BuildId"] {
 		params["buildId"] = options.BuildId
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -1211,37 +1249,42 @@ func (srv *Functions) CreateDuplicateDeployment(FunctionId string, DeploymentId 
 	return &parsed, nil
 
 }
+
 type CreateTemplateDeploymentOptions struct {
-	Activate bool
+	Activate       bool
 	enabledSetters map[string]bool
 }
+
 func (options CreateTemplateDeploymentOptions) New() *CreateTemplateDeploymentOptions {
 	options.enabledSetters = map[string]bool{
 		"Activate": false,
 	}
 	return &options
 }
+
 type CreateTemplateDeploymentOption func(*CreateTemplateDeploymentOptions)
+
 func (srv *Functions) WithCreateTemplateDeploymentActivate(v bool) CreateTemplateDeploymentOption {
 	return func(o *CreateTemplateDeploymentOptions) {
 		o.Activate = v
 		o.enabledSetters["Activate"] = true
 	}
 }
-													
+
 // CreateTemplateDeployment create a deployment based on a template.
-// 
+//
 // Use this endpoint with combination of
 // [listTemplates](https://appwrite.io/docs/products/functions/templates) to
 // find the template details.
-func (srv *Functions) CreateTemplateDeployment(FunctionId string, Repository string, Owner string, RootDirectory string, Type string, Reference string, optionalSetters ...CreateTemplateDeploymentOption)(*models.Deployment, error) {
-	r := strings.NewReplacer("{functionId}", url.PathEscape(FunctionId))
+func (srv *Functions) CreateTemplateDeployment(FunctionId string, Repository string, Owner string, RootDirectory string, Type string, Reference string, optionalSetters ...CreateTemplateDeploymentOption) (*models.Deployment, error) {
+	r := strings.NewReplacer("{functionId}", FunctionId)
 	path := r.Replace("/functions/{functionId}/deployments/template")
 	options := CreateTemplateDeploymentOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["functionId"] = FunctionId
 	params["repository"] = Repository
 	params["owner"] = Owner
 	params["rootDirectory"] = RootDirectory
@@ -1252,8 +1295,8 @@ func (srv *Functions) CreateTemplateDeployment(FunctionId string, Repository str
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -1280,36 +1323,41 @@ func (srv *Functions) CreateTemplateDeployment(FunctionId string, Repository str
 	return &parsed, nil
 
 }
+
 type CreateVcsDeploymentOptions struct {
-	Activate bool
+	Activate       bool
 	enabledSetters map[string]bool
 }
+
 func (options CreateVcsDeploymentOptions) New() *CreateVcsDeploymentOptions {
 	options.enabledSetters = map[string]bool{
 		"Activate": false,
 	}
 	return &options
 }
+
 type CreateVcsDeploymentOption func(*CreateVcsDeploymentOptions)
+
 func (srv *Functions) WithCreateVcsDeploymentActivate(v bool) CreateVcsDeploymentOption {
 	return func(o *CreateVcsDeploymentOptions) {
 		o.Activate = v
 		o.enabledSetters["Activate"] = true
 	}
 }
-							
+
 // CreateVcsDeployment create a deployment when a function is connected to
 // VCS.
-// 
+//
 // This endpoint lets you create deployment from a branch, commit, or a tag.
-func (srv *Functions) CreateVcsDeployment(FunctionId string, Type string, Reference string, optionalSetters ...CreateVcsDeploymentOption)(*models.Deployment, error) {
-	r := strings.NewReplacer("{functionId}", url.PathEscape(FunctionId))
+func (srv *Functions) CreateVcsDeployment(FunctionId string, Type string, Reference string, optionalSetters ...CreateVcsDeploymentOption) (*models.Deployment, error) {
+	r := strings.NewReplacer("{functionId}", FunctionId)
 	path := r.Replace("/functions/{functionId}/deployments/vcs")
 	options := CreateVcsDeploymentOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["functionId"] = FunctionId
 	params["type"] = Type
 	params["reference"] = Reference
 	if options.enabledSetters["Activate"] {
@@ -1317,8 +1365,8 @@ func (srv *Functions) CreateVcsDeployment(FunctionId string, Type string, Refere
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -1345,15 +1393,17 @@ func (srv *Functions) CreateVcsDeployment(FunctionId string, Type string, Refere
 	return &parsed, nil
 
 }
-			
+
 // GetDeployment get a function deployment by its unique ID.
-func (srv *Functions) GetDeployment(FunctionId string, DeploymentId string)(*models.Deployment, error) {
-	r := strings.NewReplacer("{functionId}", url.PathEscape(FunctionId), "{deploymentId}", url.PathEscape(DeploymentId))
+func (srv *Functions) GetDeployment(FunctionId string, DeploymentId string) (*models.Deployment, error) {
+	r := strings.NewReplacer("{functionId}", FunctionId, "{deploymentId}", DeploymentId)
 	path := r.Replace("/functions/{functionId}/deployments/{deploymentId}")
 	params := map[string]interface{}{}
+	params["functionId"] = FunctionId
+	params["deploymentId"] = DeploymentId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1380,15 +1430,17 @@ func (srv *Functions) GetDeployment(FunctionId string, DeploymentId string)(*mod
 	return &parsed, nil
 
 }
-			
+
 // DeleteDeployment delete a code deployment by its unique ID.
-func (srv *Functions) DeleteDeployment(FunctionId string, DeploymentId string)(*interface{}, error) {
-	r := strings.NewReplacer("{functionId}", url.PathEscape(FunctionId), "{deploymentId}", url.PathEscape(DeploymentId))
+func (srv *Functions) DeleteDeployment(FunctionId string, DeploymentId string) (*interface{}, error) {
+	r := strings.NewReplacer("{functionId}", FunctionId, "{deploymentId}", DeploymentId)
 	path := r.Replace("/functions/{functionId}/deployments/{deploymentId}")
 	params := map[string]interface{}{}
+	params["functionId"] = FunctionId
+	params["deploymentId"] = DeploymentId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
+		"content-type":       "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -1414,19 +1466,23 @@ func (srv *Functions) DeleteDeployment(FunctionId string, DeploymentId string)(*
 	return &parsed, nil
 
 }
+
 type GetDeploymentDownloadOptions struct {
-	Type string
-	Token string
+	Type           string
+	Token          string
 	enabledSetters map[string]bool
 }
+
 func (options GetDeploymentDownloadOptions) New() *GetDeploymentDownloadOptions {
 	options.enabledSetters = map[string]bool{
-		"Type": false,
+		"Type":  false,
 		"Token": false,
 	}
 	return &options
 }
+
 type GetDeploymentDownloadOption func(*GetDeploymentDownloadOptions)
+
 func (srv *Functions) WithGetDeploymentDownloadType(v string) GetDeploymentDownloadOption {
 	return func(o *GetDeploymentDownloadOptions) {
 		o.Type = v
@@ -1439,19 +1495,21 @@ func (srv *Functions) WithGetDeploymentDownloadToken(v string) GetDeploymentDown
 		o.enabledSetters["Token"] = true
 	}
 }
-					
+
 // GetDeploymentDownload get a function deployment content by its unique ID.
 // The endpoint response return with a 'Content-Disposition: attachment'
 // header that tells the browser to start downloading the file to user
 // downloads directory.
-func (srv *Functions) GetDeploymentDownload(FunctionId string, DeploymentId string, optionalSetters ...GetDeploymentDownloadOption)(*[]byte, error) {
-	r := strings.NewReplacer("{functionId}", url.PathEscape(FunctionId), "{deploymentId}", url.PathEscape(DeploymentId))
+func (srv *Functions) GetDeploymentDownload(FunctionId string, DeploymentId string, optionalSetters ...GetDeploymentDownloadOption) (*[]byte, error) {
+	r := strings.NewReplacer("{functionId}", FunctionId, "{deploymentId}", DeploymentId)
 	path := r.Replace("/functions/{functionId}/deployments/{deploymentId}/download")
 	options := GetDeploymentDownloadOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["functionId"] = FunctionId
+	params["deploymentId"] = DeploymentId
 	if options.enabledSetters["Type"] {
 		params["type"] = options.Type
 	}
@@ -1460,7 +1518,7 @@ func (srv *Functions) GetDeploymentDownload(FunctionId string, DeploymentId stri
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "*/*",
+		"accept":             "*/*",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1486,13 +1544,14 @@ func (srv *Functions) GetDeploymentDownload(FunctionId string, DeploymentId stri
 	return &parsed, nil
 
 }
+
 // GetDeploymentDownloadURL get a function deployment content by its unique
 // ID. The endpoint response return with a 'Content-Disposition: attachment'
 // header that tells the browser to start downloading the file to user
 // downloads directory.
 // Returns the URL for the resource instead of the content.
 func (srv *Functions) GetDeploymentDownloadURL(FunctionId string, DeploymentId string, optionalSetters ...GetDeploymentDownloadOption) (*string, error) {
-	r := strings.NewReplacer("{functionId}", url.PathEscape(FunctionId), "{deploymentId}", url.PathEscape(DeploymentId))
+	r := strings.NewReplacer("{functionId}", FunctionId, "{deploymentId}", DeploymentId)
 	path := r.Replace("/functions/{functionId}/deployments/{deploymentId}/download")
 	options := GetDeploymentDownloadOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -1513,21 +1572,23 @@ func (srv *Functions) GetDeploymentDownloadURL(FunctionId string, DeploymentId s
 	result := u.String()
 	return &result, nil
 }
-			
+
 // UpdateDeploymentStatus cancel an ongoing function deployment build. If the
 // build is already in progress, it will be stopped and marked as canceled. If
 // the build hasn't started yet, it will be marked as canceled without
 // executing. You cannot cancel builds that have already completed (status
 // 'ready') or failed. The response includes the final build status and
 // details.
-func (srv *Functions) UpdateDeploymentStatus(FunctionId string, DeploymentId string)(*models.Deployment, error) {
-	r := strings.NewReplacer("{functionId}", url.PathEscape(FunctionId), "{deploymentId}", url.PathEscape(DeploymentId))
+func (srv *Functions) UpdateDeploymentStatus(FunctionId string, DeploymentId string) (*models.Deployment, error) {
+	r := strings.NewReplacer("{functionId}", FunctionId, "{deploymentId}", DeploymentId)
 	path := r.Replace("/functions/{functionId}/deployments/{deploymentId}/status")
 	params := map[string]interface{}{}
+	params["functionId"] = FunctionId
+	params["deploymentId"] = DeploymentId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -1554,19 +1615,23 @@ func (srv *Functions) UpdateDeploymentStatus(FunctionId string, DeploymentId str
 	return &parsed, nil
 
 }
+
 type ListExecutionsOptions struct {
-	Queries []string
-	Total bool
+	Queries        []string
+	Total          bool
 	enabledSetters map[string]bool
 }
+
 func (options ListExecutionsOptions) New() *ListExecutionsOptions {
 	options.enabledSetters = map[string]bool{
 		"Queries": false,
-		"Total": false,
+		"Total":   false,
 	}
 	return &options
 }
+
 type ListExecutionsOption func(*ListExecutionsOptions)
+
 func (srv *Functions) WithListExecutionsQueries(v []string) ListExecutionsOption {
 	return func(o *ListExecutionsOptions) {
 		o.Queries = v
@@ -1579,17 +1644,18 @@ func (srv *Functions) WithListExecutionsTotal(v bool) ListExecutionsOption {
 		o.enabledSetters["Total"] = true
 	}
 }
-			
+
 // ListExecutions get a list of all the current user function execution logs.
 // You can use the query params to filter your results.
-func (srv *Functions) ListExecutions(FunctionId string, optionalSetters ...ListExecutionsOption)(*models.ExecutionList, error) {
-	r := strings.NewReplacer("{functionId}", url.PathEscape(FunctionId))
+func (srv *Functions) ListExecutions(FunctionId string, optionalSetters ...ListExecutionsOption) (*models.ExecutionList, error) {
+	r := strings.NewReplacer("{functionId}", FunctionId)
 	path := r.Replace("/functions/{functionId}/executions")
 	options := ListExecutionsOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["functionId"] = FunctionId
 	if options.enabledSetters["Queries"] {
 		params["queries"] = options.Queries
 	}
@@ -1598,7 +1664,7 @@ func (srv *Functions) ListExecutions(FunctionId string, optionalSetters ...ListE
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1625,27 +1691,31 @@ func (srv *Functions) ListExecutions(FunctionId string, optionalSetters ...ListE
 	return &parsed, nil
 
 }
+
 type CreateExecutionOptions struct {
-	Body string
-	Async bool
-	Path string
-	Method string
-	Headers interface{}
-	ScheduledAt string
+	Body           string
+	Async          bool
+	Path           string
+	Method         string
+	Headers        interface{}
+	ScheduledAt    string
 	enabledSetters map[string]bool
 }
+
 func (options CreateExecutionOptions) New() *CreateExecutionOptions {
 	options.enabledSetters = map[string]bool{
-		"Body": false,
-		"Async": false,
-		"Path": false,
-		"Method": false,
-		"Headers": false,
+		"Body":        false,
+		"Async":       false,
+		"Path":        false,
+		"Method":      false,
+		"Headers":     false,
 		"ScheduledAt": false,
 	}
 	return &options
 }
+
 type CreateExecutionOption func(*CreateExecutionOptions)
+
 func (srv *Functions) WithCreateExecutionBody(v string) CreateExecutionOption {
 	return func(o *CreateExecutionOptions) {
 		o.Body = v
@@ -1682,19 +1752,20 @@ func (srv *Functions) WithCreateExecutionScheduledAt(v string) CreateExecutionOp
 		o.enabledSetters["ScheduledAt"] = true
 	}
 }
-			
+
 // CreateExecution trigger a function execution. The returned object will
 // return you the current execution status. You can ping the `Get Execution`
 // endpoint to get updates on the current execution status. Once this endpoint
 // is called, your function execution process will start asynchronously.
-func (srv *Functions) CreateExecution(FunctionId string, optionalSetters ...CreateExecutionOption)(*models.Execution, error) {
-	r := strings.NewReplacer("{functionId}", url.PathEscape(FunctionId))
+func (srv *Functions) CreateExecution(FunctionId string, optionalSetters ...CreateExecutionOption) (*models.Execution, error) {
+	r := strings.NewReplacer("{functionId}", FunctionId)
 	path := r.Replace("/functions/{functionId}/executions")
 	options := CreateExecutionOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["functionId"] = FunctionId
 	if options.enabledSetters["Body"] {
 		params["body"] = options.Body
 	}
@@ -1715,8 +1786,8 @@ func (srv *Functions) CreateExecution(FunctionId string, optionalSetters ...Crea
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -1743,15 +1814,17 @@ func (srv *Functions) CreateExecution(FunctionId string, optionalSetters ...Crea
 	return &parsed, nil
 
 }
-			
+
 // GetExecution get a function execution log by its unique ID.
-func (srv *Functions) GetExecution(FunctionId string, ExecutionId string)(*models.Execution, error) {
-	r := strings.NewReplacer("{functionId}", url.PathEscape(FunctionId), "{executionId}", url.PathEscape(ExecutionId))
+func (srv *Functions) GetExecution(FunctionId string, ExecutionId string) (*models.Execution, error) {
+	r := strings.NewReplacer("{functionId}", FunctionId, "{executionId}", ExecutionId)
 	path := r.Replace("/functions/{functionId}/executions/{executionId}")
 	params := map[string]interface{}{}
+	params["functionId"] = FunctionId
+	params["executionId"] = ExecutionId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1778,15 +1851,17 @@ func (srv *Functions) GetExecution(FunctionId string, ExecutionId string)(*model
 	return &parsed, nil
 
 }
-			
+
 // DeleteExecution delete a function execution by its unique ID.
-func (srv *Functions) DeleteExecution(FunctionId string, ExecutionId string)(*interface{}, error) {
-	r := strings.NewReplacer("{functionId}", url.PathEscape(FunctionId), "{executionId}", url.PathEscape(ExecutionId))
+func (srv *Functions) DeleteExecution(FunctionId string, ExecutionId string) (*interface{}, error) {
+	r := strings.NewReplacer("{functionId}", FunctionId, "{executionId}", ExecutionId)
 	path := r.Replace("/functions/{functionId}/executions/{executionId}")
 	params := map[string]interface{}{}
+	params["functionId"] = FunctionId
+	params["executionId"] = ExecutionId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
+		"content-type":       "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -1812,19 +1887,23 @@ func (srv *Functions) DeleteExecution(FunctionId string, ExecutionId string)(*in
 	return &parsed, nil
 
 }
+
 type ListVariablesOptions struct {
-	Queries []string
-	Total bool
+	Queries        []string
+	Total          bool
 	enabledSetters map[string]bool
 }
+
 func (options ListVariablesOptions) New() *ListVariablesOptions {
 	options.enabledSetters = map[string]bool{
 		"Queries": false,
-		"Total": false,
+		"Total":   false,
 	}
 	return &options
 }
+
 type ListVariablesOption func(*ListVariablesOptions)
+
 func (srv *Functions) WithListVariablesQueries(v []string) ListVariablesOption {
 	return func(o *ListVariablesOptions) {
 		o.Queries = v
@@ -1837,16 +1916,17 @@ func (srv *Functions) WithListVariablesTotal(v bool) ListVariablesOption {
 		o.enabledSetters["Total"] = true
 	}
 }
-			
+
 // ListVariables get a list of all variables of a specific function.
-func (srv *Functions) ListVariables(FunctionId string, optionalSetters ...ListVariablesOption)(*models.VariableList, error) {
-	r := strings.NewReplacer("{functionId}", url.PathEscape(FunctionId))
+func (srv *Functions) ListVariables(FunctionId string, optionalSetters ...ListVariablesOption) (*models.VariableList, error) {
+	r := strings.NewReplacer("{functionId}", FunctionId)
 	path := r.Replace("/functions/{functionId}/variables")
 	options := ListVariablesOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["functionId"] = FunctionId
 	if options.enabledSetters["Queries"] {
 		params["queries"] = options.Queries
 	}
@@ -1855,7 +1935,7 @@ func (srv *Functions) ListVariables(FunctionId string, optionalSetters ...ListVa
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1882,34 +1962,39 @@ func (srv *Functions) ListVariables(FunctionId string, optionalSetters ...ListVa
 	return &parsed, nil
 
 }
+
 type CreateVariableOptions struct {
-	Secret bool
+	Secret         bool
 	enabledSetters map[string]bool
 }
+
 func (options CreateVariableOptions) New() *CreateVariableOptions {
 	options.enabledSetters = map[string]bool{
 		"Secret": false,
 	}
 	return &options
 }
+
 type CreateVariableOption func(*CreateVariableOptions)
+
 func (srv *Functions) WithCreateVariableSecret(v bool) CreateVariableOption {
 	return func(o *CreateVariableOptions) {
 		o.Secret = v
 		o.enabledSetters["Secret"] = true
 	}
 }
-									
+
 // CreateVariable create a new function environment variable. These variables
 // can be accessed in the function at runtime as environment variables.
-func (srv *Functions) CreateVariable(FunctionId string, VariableId string, Key string, Value string, optionalSetters ...CreateVariableOption)(*models.Variable, error) {
-	r := strings.NewReplacer("{functionId}", url.PathEscape(FunctionId))
+func (srv *Functions) CreateVariable(FunctionId string, VariableId string, Key string, Value string, optionalSetters ...CreateVariableOption) (*models.Variable, error) {
+	r := strings.NewReplacer("{functionId}", FunctionId)
 	path := r.Replace("/functions/{functionId}/variables")
 	options := CreateVariableOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["functionId"] = FunctionId
 	params["variableId"] = VariableId
 	params["key"] = Key
 	params["value"] = Value
@@ -1918,8 +2003,8 @@ func (srv *Functions) CreateVariable(FunctionId string, VariableId string, Key s
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -1946,15 +2031,17 @@ func (srv *Functions) CreateVariable(FunctionId string, VariableId string, Key s
 	return &parsed, nil
 
 }
-			
+
 // GetVariable get a variable by its unique ID.
-func (srv *Functions) GetVariable(FunctionId string, VariableId string)(*models.Variable, error) {
-	r := strings.NewReplacer("{functionId}", url.PathEscape(FunctionId), "{variableId}", url.PathEscape(VariableId))
+func (srv *Functions) GetVariable(FunctionId string, VariableId string) (*models.Variable, error) {
+	r := strings.NewReplacer("{functionId}", FunctionId, "{variableId}", VariableId)
 	path := r.Replace("/functions/{functionId}/variables/{variableId}")
 	params := map[string]interface{}{}
+	params["functionId"] = FunctionId
+	params["variableId"] = VariableId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1981,21 +2068,25 @@ func (srv *Functions) GetVariable(FunctionId string, VariableId string)(*models.
 	return &parsed, nil
 
 }
+
 type UpdateVariableOptions struct {
-	Key string
-	Value string
-	Secret bool
+	Key            string
+	Value          string
+	Secret         bool
 	enabledSetters map[string]bool
 }
+
 func (options UpdateVariableOptions) New() *UpdateVariableOptions {
 	options.enabledSetters = map[string]bool{
-		"Key": false,
-		"Value": false,
+		"Key":    false,
+		"Value":  false,
 		"Secret": false,
 	}
 	return &options
 }
+
 type UpdateVariableOption func(*UpdateVariableOptions)
+
 func (srv *Functions) WithUpdateVariableKey(v string) UpdateVariableOption {
 	return func(o *UpdateVariableOptions) {
 		o.Key = v
@@ -2014,16 +2105,18 @@ func (srv *Functions) WithUpdateVariableSecret(v bool) UpdateVariableOption {
 		o.enabledSetters["Secret"] = true
 	}
 }
-					
+
 // UpdateVariable update variable by its unique ID.
-func (srv *Functions) UpdateVariable(FunctionId string, VariableId string, optionalSetters ...UpdateVariableOption)(*models.Variable, error) {
-	r := strings.NewReplacer("{functionId}", url.PathEscape(FunctionId), "{variableId}", url.PathEscape(VariableId))
+func (srv *Functions) UpdateVariable(FunctionId string, VariableId string, optionalSetters ...UpdateVariableOption) (*models.Variable, error) {
+	r := strings.NewReplacer("{functionId}", FunctionId, "{variableId}", VariableId)
 	path := r.Replace("/functions/{functionId}/variables/{variableId}")
 	options := UpdateVariableOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["functionId"] = FunctionId
+	params["variableId"] = VariableId
 	if options.enabledSetters["Key"] {
 		params["key"] = options.Key
 	}
@@ -2035,8 +2128,8 @@ func (srv *Functions) UpdateVariable(FunctionId string, VariableId string, optio
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PUT", path, headers, params)
@@ -2063,15 +2156,17 @@ func (srv *Functions) UpdateVariable(FunctionId string, VariableId string, optio
 	return &parsed, nil
 
 }
-			
+
 // DeleteVariable delete a variable by its unique ID.
-func (srv *Functions) DeleteVariable(FunctionId string, VariableId string)(*interface{}, error) {
-	r := strings.NewReplacer("{functionId}", url.PathEscape(FunctionId), "{variableId}", url.PathEscape(VariableId))
+func (srv *Functions) DeleteVariable(FunctionId string, VariableId string) (*interface{}, error) {
+	r := strings.NewReplacer("{functionId}", FunctionId, "{variableId}", VariableId)
 	path := r.Replace("/functions/{functionId}/variables/{variableId}")
 	params := map[string]interface{}{}
+	params["functionId"] = FunctionId
+	params["variableId"] = VariableId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
+		"content-type":       "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)

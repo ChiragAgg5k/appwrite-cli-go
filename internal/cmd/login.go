@@ -21,8 +21,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Ports templates/cli/lib/auth/login.ts.
-//
 // TWO SIGN-IN FLOWS, chosen by the endpoint. Cloud signs in through the
 // browser with a device code; a self-hosted instance signs in with an email
 // and a password, and may then ask for a second factor. isCloudLoginEndpoint
@@ -146,14 +144,10 @@ func runLogin(command *cobra.Command, options loginOptions) error {
 
 // currentAccount reads the signed-in account.
 //
-// Ports getCurrentAccount (login.ts:124). The error is RETURNED rather than
-// folded into a nil account, because the two callers ask different questions of
-// it. `login` asks "is someone signed in already?", where every failure means
-// no and the reason does not matter. `login --switch` asks "does this stored
-// session work?", and there the reason is the whole answer -- the TypeScript
-// rethrows it (login.ts:318) for exactly that reason, and reporting a locked
-// keyring or an unreachable endpoint as a dead session sends the user to
-// re-authenticate against a problem that re-authenticating does not fix.
+// The error is returned rather than folded into a nil account: `login` only asks
+// whether anyone is signed in, but `login --switch` needs the reason -- reporting
+// a locked keyring or an unreachable endpoint as a dead session sends the user to
+// re-authenticate against a problem re-authenticating does not fix.
 func currentAccount() (*jsonx.Object, error) {
 	api, _, err := consoleClient()
 	if err != nil {
@@ -170,8 +164,6 @@ func currentAccount() (*jsonx.Object, error) {
 
 // verifyEndpoint checks that an endpoint is an Appwrite server before a
 // password is typed into it.
-//
-// Ports verifyEndpoint (session.ts:41).
 func verifyEndpoint(endpoint string, selfSigned bool) error {
 	parsed, err := url.Parse(endpoint)
 	if err != nil || (parsed.Scheme != "http" && parsed.Scheme != "https") {
@@ -195,7 +187,7 @@ func verifyEndpoint(endpoint string, selfSigned bool) error {
 
 // switchAccount makes a different signed-in account current.
 //
-// Ports switchToAccount (login.ts:291). The switch is applied first and rolled
+// The switch is applied first and rolled
 // back if the account turns out to be unusable, because whether a stored
 // session still works can only be answered by using it.
 func switchAccount(command *cobra.Command, global *config.Global, previous string) error {
@@ -257,14 +249,10 @@ func switchAccount(command *cobra.Command, global *config.Global, previous strin
 	return nil
 }
 
-// unusableSessionError explains why the selected session could not be used.
-//
-// The reason is carried when there is one. Without it the only thing this could
-// say was "run `login --switch` again", which is the command that just failed --
-// so a locked keyring, an unreachable endpoint and a genuinely dead session all
-// pointed at the same dead end. The TypeScript rethrows the underlying error
-// here (login.ts:318) and keeps the generic wording for the one case that has no
-// error behind it.
+// unusableSessionError explains why the selected session could not be used,
+// carrying the underlying reason when there is one -- otherwise a locked
+// keyring, an unreachable endpoint and a dead session all point at the same
+// dead end, "run `login --switch` again", which is what just failed.
 func unusableSessionError(reason error) error {
 	if reason != nil {
 		return fmt.Errorf("selected account session cannot be used: %w", reason)
@@ -275,13 +263,10 @@ func unusableSessionError(reason error) error {
 		app.ExecutableName)
 }
 
-// loginWithPassword signs in to a self-hosted instance.
-//
-// Ports loginWithEmailPassword (login.ts:207). The session is written BEFORE
-// the request and removed if it fails, because the client that makes the
-// request reads its endpoint from the session -- and a half-written session
-// left behind on a bad password would make the next command think it was
-// signed in.
+// loginWithPassword signs in to a self-hosted instance. The session is written
+// before the request and removed if it fails, because the client reads its
+// endpoint from the session -- and one left behind on a bad password would make
+// the next command think it was signed in.
 func loginWithPassword(
 	command *cobra.Command,
 	global *config.Global,
@@ -354,12 +339,13 @@ func loginWithPassword(
 
 	// The cookie IS the credential for this flow, so a sign-in that does not
 	// produce one has not signed anyone in.
-	if api.SessionCookie == "" {
+	sessionCookie := api.SessionCookie()
+	if sessionCookie == "" {
 		abandon()
 
 		return errors.New("sign-in did not return a session")
 	}
-	session.Set(config.PreferenceCookie, api.SessionCookie)
+	session.Set(config.PreferenceCookie, sessionCookie)
 
 	account := jsonx.NewObject()
 	if err := api.Call("GET", "/account", nil, account); err != nil {
@@ -386,7 +372,7 @@ func loginWithPassword(
 
 // completeMFA answers a second-factor challenge.
 //
-// Ports completeMfaLogin (login.ts:159). The challenge is created against the
+// The challenge is created against the
 // half-authenticated session the password already established, which is why it
 // reuses the same client and its cookie.
 func completeMFA(command *cobra.Command, api *client.Client, options loginOptions) error {
@@ -527,24 +513,14 @@ func loginWithDevice(command *cobra.Command, endpoint string) error {
 // cloudSessionID keys a browser-flow session on the endpoint as well as the
 // account.
 //
-// The subject alone is not unique. Every `*.appwrite.io` host takes this flow,
-// and a staging deployment seeded from a production dump hands out the very
-// same account IDs, so keying on the subject alone lets a second sign-in
-// overwrite the first endpoint's session -- and, because the same string names
-// the keyring entry, its refresh token with it.
+// The subject alone is not unique: a staging deployment seeded from a production
+// dump hands out the same account IDs, so a second sign-in would overwrite the
+// first endpoint's session and its refresh token. Keying on a unique id instead
+// would avoid that but accumulate an entry per sign-in; composing the two keeps
+// the deduplication and drops the collision.
 //
-// The TypeScript avoids this by keying on `ID.unique()` (login.ts:548), which
-// is collision-free but accumulates a fresh entry every time you sign in to an
-// account you are already signed in to. Composing the two keeps the
-// deduplication and drops the collision. The key is internal -- `session list`
-// and `login --switch` label sessions by email and endpoint -- so its spelling
-// is free.
-//
-// The WHOLE endpoint goes into the key, not just its host. Two self-hosted
-// instances can share a host and differ only by scheme or base path -- one
-// reverse-proxied at /staging/v1 and another at /prod/v1, or an http and an https
-// URL for the same box during a migration -- and reducing them to the host would
-// reintroduce exactly the collision this function exists to remove.
+// The whole endpoint goes into the key, not just its host -- two instances can
+// share a host and differ only by scheme or base path.
 func cloudSessionID(endpoint, subject string) string {
 	if subject == "" {
 		// No subject claim leaves nothing stable to key on, so fall back to the

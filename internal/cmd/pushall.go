@@ -6,8 +6,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Ports pushResources (templates/cli/lib/commands/push.ts:3257).
-//
 // `push all` is the fan-out. With --all it runs every resource in turn;
 // without it, it asks which single resource to push.
 //
@@ -81,13 +79,13 @@ func pushActions(logs bool) []pushAction {
 		{
 			Value: "tables", Label: "Tables (TablesDB)",
 			Run: func(command *cobra.Command) error {
-				return runPushTable(command, pushDatabaseResources[0])
+				return runPushTable(command, pushTable)
 			},
 		},
 		{
 			Value: "collections", Label: "Collections (Legacy Databases)",
 			Run: func(command *cobra.Command) error {
-				return runPushCollection(command, pushDatabaseResources[1])
+				return runPushCollection(command, pushCollection)
 			},
 			Deprecated: true,
 		},
@@ -128,7 +126,7 @@ func newPushAllCommand() *cobra.Command {
 
 // runPush is the body of both `push` and `push all`.
 //
-// Ports pushResources(). With everything selected it runs every non-deprecated
+// With everything selected it runs every non-deprecated
 // action; otherwise it asks which one. Collections are always skipped in the
 // everything case: they are the legacy databases API, and pushing both writes
 // two representations of the same data to one project.

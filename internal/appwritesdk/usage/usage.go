@@ -20,32 +20,35 @@ func New(clt client.Client) *Usage {
 }
 
 type ListEventsOptions struct {
-	Queries []string
-	Interval string
-	Dimensions []string
-	StartAt string
-	EndAt string
-	OrderBy string
-	OrderDir string
-	Limit int
-	Offset int
+	Queries        []string
+	Interval       string
+	Dimensions     []string
+	StartAt        string
+	EndAt          string
+	OrderBy        string
+	OrderDir       string
+	Limit          int
+	Offset         int
 	enabledSetters map[string]bool
 }
+
 func (options ListEventsOptions) New() *ListEventsOptions {
 	options.enabledSetters = map[string]bool{
-		"Queries": false,
-		"Interval": false,
+		"Queries":    false,
+		"Interval":   false,
 		"Dimensions": false,
-		"StartAt": false,
-		"EndAt": false,
-		"OrderBy": false,
-		"OrderDir": false,
-		"Limit": false,
-		"Offset": false,
+		"StartAt":    false,
+		"EndAt":      false,
+		"OrderBy":    false,
+		"OrderDir":   false,
+		"Limit":      false,
+		"Offset":     false,
 	}
 	return &options
 }
+
 type ListEventsOption func(*ListEventsOptions)
+
 func (srv *Usage) WithListEventsQueries(v []string) ListEventsOption {
 	return func(o *ListEventsOptions) {
 		o.Queries = v
@@ -100,18 +103,18 @@ func (srv *Usage) WithListEventsOffset(v int) ListEventsOption {
 		o.enabledSetters["Offset"] = true
 	}
 }
-			
+
 // ListEvents aggregate usage event metrics. `metrics[]` (1-10) is required;
 // the response always contains one entry per requested metric, each with its
 // own `points[]` time series.
-// 
+//
 // **Two response shapes**:
 // - Omit `interval` for a flat top-N table — one point per dimension
 // combination, no time axis. Useful for "top 10 paths by bandwidth in the
 // last 7 days".
 // - Pass `interval` (`1m`, `15m`, `30m`, `1h`, `1d`) for a time series —
 // one point per (time bucket × dimension combination).
-// 
+//
 // `dimensions[]` breaks each point down by one or more attributes (service,
 // path, status, country, …). `queries[]` filters the underlying events
 // using the standard Utopia query syntax — `equal("path",
@@ -124,7 +127,7 @@ func (srv *Usage) WithListEventsOffset(v int) ListEventsOption {
 // `orderBy=value`+`orderDir=desc`+`limit=N` returns the top-N by aggregated
 // value. When `startAt` is omitted, the default window adapts to `interval`
 // (or 7d when interval is omitted).
-func (srv *Usage) ListEvents(Metrics []string, optionalSetters ...ListEventsOption)(*models.UsageEventList, error) {
+func (srv *Usage) ListEvents(Metrics []string, optionalSetters ...ListEventsOption) (*models.UsageEventList, error) {
 	path := "/usage/events"
 	options := ListEventsOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -161,7 +164,7 @@ func (srv *Usage) ListEvents(Metrics []string, optionalSetters ...ListEventsOpti
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -188,33 +191,37 @@ func (srv *Usage) ListEvents(Metrics []string, optionalSetters ...ListEventsOpti
 	return &parsed, nil
 
 }
+
 type ListGaugesOptions struct {
-	Queries []string
-	Interval string
-	Dimensions []string
-	StartAt string
-	EndAt string
-	OrderBy string
-	OrderDir string
-	Limit int
-	Offset int
+	Queries        []string
+	Interval       string
+	Dimensions     []string
+	StartAt        string
+	EndAt          string
+	OrderBy        string
+	OrderDir       string
+	Limit          int
+	Offset         int
 	enabledSetters map[string]bool
 }
+
 func (options ListGaugesOptions) New() *ListGaugesOptions {
 	options.enabledSetters = map[string]bool{
-		"Queries": false,
-		"Interval": false,
+		"Queries":    false,
+		"Interval":   false,
 		"Dimensions": false,
-		"StartAt": false,
-		"EndAt": false,
-		"OrderBy": false,
-		"OrderDir": false,
-		"Limit": false,
-		"Offset": false,
+		"StartAt":    false,
+		"EndAt":      false,
+		"OrderBy":    false,
+		"OrderDir":   false,
+		"Limit":      false,
+		"Offset":     false,
 	}
 	return &options
 }
+
 type ListGaugesOption func(*ListGaugesOptions)
+
 func (srv *Usage) WithListGaugesQueries(v []string) ListGaugesOption {
 	return func(o *ListGaugesOptions) {
 		o.Queries = v
@@ -269,40 +276,43 @@ func (srv *Usage) WithListGaugesOffset(v int) ListGaugesOption {
 		o.enabledSetters["Offset"] = true
 	}
 }
-			
+
 // ListGauges aggregate usage gauge snapshots. Gauges are point-in-time values
 // (storage totals, resource counts, …); each point carries the latest
 // snapshot in its interval via `argMax(value, time)`. `metrics[]` (1-10) is
 // required; the response always contains one entry per requested metric, each
 // with its own `points[]` time series.
-// 
+//
 // A metric with no stored samples in the window returns an empty `points[]`.
 // A metric that really did read zero returns a point whose `value` is `0`, so
 // "no such series" and "a genuine zero" are different answers.
-// 
+//
 // **Two response shapes**:
 // - Omit `interval` for a flat top-N table — `argMax(value, time)` per
 // dimension combination over the whole window, no time axis. Useful for "top
 // 10 resources by current storage".
 // - Pass `interval` (`1m`, `15m`, `30m`, `1h`, `1d`) for a time series —
 // one snapshot per (time bucket × dimension combination).
-// 
+//
 // `dimensions[]` breaks each point down further. Supported on gauges:
 // `resourceId`, `teamId`, `service`, `resourceType`, `ordinal`. `service` and
 // `resourceType` enable per-service / per-resource-type panels (e.g.
 // storage-by-service: group `files.storage`, `deployments.storage`,
 // `builds.storage`, `databases.storage` by `service`). `ordinal` separates
-// per-node series for multi-node resources such as dedicated databases (0 is
-// the primary; 1+ are replicas). `queries[]` filters the underlying rows
-// using the standard Utopia query syntax — `equal("resourceType",
-// ["bucket"])`, `equal("resourceId", ["abc123"])`, `equal("teamId",
-// ["team_x"])`, `equal("ordinal", ["0"])`, `isNotNull("teamId")`. Supported
-// attributes: see `queries[]` param. Supported methods: `equal`, `notEqual`,
-// `isNull`, `isNotNull`. Pass multiple metrics to render stacked charts in
-// one round-trip. `orderBy=value`+`orderDir=desc`+`limit=N` returns the
-// top-N. When `startAt` is omitted, the default window adapts to interval (or
-// 7d when interval is omitted).
-func (srv *Usage) ListGauges(Metrics []string, optionalSetters ...ListGaugesOption)(*models.UsageGaugeList, error) {
+// per-node series for multi-node resources such as dedicated databases. It is
+// a stable per-node identity, not a role — ordinal 0 is the first member
+// created, and a failover can leave the primary on any ordinal, so read the
+// role from the database's replicas endpoint rather than inferring it here.
+// `queries[]` filters the underlying rows using the standard Utopia query
+// syntax — `equal("resourceType", ["bucket"])`, `equal("resourceId",
+// ["abc123"])`, `equal("teamId", ["team_x"])`, `equal("ordinal", ["0"])`,
+// `isNotNull("teamId")`. Supported attributes: see `queries[]` param.
+// Supported methods: `equal`, `notEqual`, `isNull`, `isNotNull`. Pass
+// multiple metrics to render stacked charts in one round-trip.
+// `orderBy=value`+`orderDir=desc`+`limit=N` returns the top-N. When `startAt`
+// is omitted, the default window adapts to interval (or 7d when interval is
+// omitted).
+func (srv *Usage) ListGauges(Metrics []string, optionalSetters ...ListGaugesOption) (*models.UsageGaugeList, error) {
 	path := "/usage/gauges"
 	options := ListGaugesOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -339,7 +349,7 @@ func (srv *Usage) ListGauges(Metrics []string, optionalSetters ...ListGaugesOpti
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)

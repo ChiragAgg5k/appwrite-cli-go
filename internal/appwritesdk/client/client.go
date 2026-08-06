@@ -14,10 +14,10 @@ import (
 	"net/url"
 	"os"
 	"reflect"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
-	"runtime"
 
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/file"
 )
@@ -41,7 +41,7 @@ type ClientResponse struct {
 	StatusCode int
 	Header     http.Header
 	Result     interface{}
-	Type	   string
+	Type       string
 }
 
 func (ce *AppwriteError) Error() string {
@@ -74,12 +74,12 @@ type Client struct {
 // Initialize a new Appwrite client with a given timeout
 func New(optionalSetters ...ClientOption) Client {
 	headers := map[string]string{
-		"X-Appwrite-Response-Format" : "1.9.5",
-		"user-agent" : fmt.Sprintf("AppwriteGoSDK/1.0.0 (%s; %s)", runtime.GOOS, runtime.GOARCH),
-		"x-sdk-name": "Go",
-		"x-sdk-platform": "server",
-		"x-sdk-language": "go",
-		"x-sdk-version": "1.0.0",
+		"X-Appwrite-Response-Format": "1.9.6",
+		"user-agent":                 fmt.Sprintf("AppwriteGoSDK/6.4.0 (%s; %s)", runtime.GOOS, runtime.GOARCH),
+		"x-sdk-name":                 "Appwrite",
+		"x-sdk-platform":             "",
+		"x-sdk-language":             "go",
+		"x-sdk-version":              "6.4.0",
 	}
 	httpClient, err := GetDefaultClient(defaultTimeout)
 	if err != nil {
@@ -102,6 +102,15 @@ func New(optionalSetters ...ClientOption) Client {
 		}
 	}
 
+	// After the options, so WithSelfSigned is applied whichever order it was
+	// passed in and whether or not WithTimeout replaced the http.Client.
+	if client.SelfSigned {
+		client.Client, err = withSelfSigned(client.Client)
+		if err != nil {
+			panic(err)
+		}
+	}
+
 	return client
 }
 
@@ -118,6 +127,40 @@ func GetDefaultClient(timeout time.Duration) (*http.Client, error) {
 		Jar:     jar,
 		Timeout: timeout,
 	}, nil
+}
+
+// withSelfSigned returns an HTTP client with certificate verification disabled.
+// It clones the client, transport, and TLS configuration before changing them so
+// caller-owned and process-global HTTP configuration remains untouched.
+func withSelfSigned(httpClient *http.Client) (*http.Client, error) {
+	if httpClient == nil {
+		return nil, errors.New("cannot configure self-signed certificates on a nil HTTP client")
+	}
+
+	roundTripper := httpClient.Transport
+	if roundTripper == nil {
+		roundTripper = http.DefaultTransport
+	}
+
+	transport, ok := roundTripper.(*http.Transport)
+	if !ok {
+		return nil, fmt.Errorf("cannot configure self-signed certificates on HTTP transport %T", roundTripper)
+	}
+
+	if transport.TLSClientConfig != nil && transport.TLSClientConfig.InsecureSkipVerify {
+		return httpClient, nil
+	}
+
+	transport = transport.Clone()
+	if transport.TLSClientConfig == nil {
+		transport.TLSClientConfig = &tls.Config{}
+	}
+	transport.TLSClientConfig.InsecureSkipVerify = true
+
+	configuredClient := *httpClient
+	configuredClient.Transport = transport
+
+	return &configuredClient, nil
 }
 
 type ClientOption func(*Client) error
@@ -393,8 +436,13 @@ func (client *Client) Call(method string, path string, headers map[string]interf
 		client.Client = httpClient
 	}
 
+	httpClient := client.Client
 	if client.SelfSigned {
-		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+		var err error
+		httpClient, err = withSelfSigned(httpClient)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	urlPath := client.Endpoint + path
@@ -480,11 +528,7 @@ func (client *Client) Call(method string, path string, headers map[string]interf
 				case reflect.Slice:
 					arr := reflect.ValueOf(val)
 					for i := 0; i < arr.Len(); i++ {
-						// Indexed, not bare `key[]`: the Node, Python and PHP
-						// SDKs all send `key[0]`, and Go was the only one that
-						// did not. The API accepts both, so this is about the
-						// SDKs agreeing rather than about a broken request.
-						q.Add(fmt.Sprintf("%s[%d]", key, i), toString(arr.Index(i)))
+						q.Add(fmt.Sprintf("%s[]", key), toString(arr.Index(i)))
 					}
 				default:
 					if strVal := toString(val); strVal != "" {
@@ -508,7 +552,7 @@ func (client *Client) Call(method string, path string, headers map[string]interf
 	}
 
 	// Make request
-	resp, err := client.Client.Do(req)
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -542,7 +586,7 @@ func (client *Client) Call(method string, path string, headers map[string]interf
 			StatusCode: resp.StatusCode,
 			Header:     resp.Header,
 			Result:     string(responseData),
-			Type:	   contentType,
+			Type:       contentType,
 		}, nil
 	}
 
@@ -558,7 +602,7 @@ func (client *Client) Call(method string, path string, headers map[string]interf
 		StatusCode: resp.StatusCode,
 		Header:     resp.Header,
 		Result:     responseData,
-		Type:	   contentType,
+		Type:       contentType,
 	}, nil
 }
 
@@ -629,11 +673,11 @@ func flatten(params interface{}, prefix string, result *map[string]string) error
 				return err
 			}
 		}
-		default:
-			if prefix == "" {
-				return fmt.Errorf("prefix is empty for %s", params)
-			}
-			(*result)[prefix] = toString(params)
+	default:
+		if prefix == "" {
+			return fmt.Errorf("prefix is empty for %s", params)
+		}
+		(*result)[prefix] = toString(params)
 	}
 	return nil
 }

@@ -16,6 +16,7 @@ func NewProxyCommand() *cobra.Command {
 		Short: "The Proxy Service allows you to configure actions for your domains beyond DNS configuration.",
 	}
 
+	cmd.AddCommand(newProxyCreateInvalidationCommand())
 	cmd.AddCommand(newProxyListRulesCommand())
 	cmd.AddCommand(newProxyCreateAPIRuleCommand())
 	cmd.AddCommand(newProxyCreateFunctionRuleCommand())
@@ -25,6 +26,45 @@ func NewProxyCommand() *cobra.Command {
 	cmd.AddCommand(newProxyDeleteRuleCommand())
 	cmd.AddCommand(newProxyUpdateRuleStatusCommand())
 
+	return cmd
+}
+
+func newProxyCreateInvalidationCommand() *cobra.Command {
+	var domain string
+	var typeArg string
+	var reference string
+
+	cmd := &cobra.Command{
+		Use:   "create-invalidation",
+		Short: "Create a new CDN cache invalidation for a domain. Executes a hard purge of cached content.\n\nDepending on type, the invalidation purges a single cache tag, a single URL path, or all cached content for the domain.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := proxy.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value: the
+			// TypeScript passes undefined and the SDK drops it.
+			options := []proxy.CreateInvalidationOption{}
+			if cmd.Flags().Changed("reference") {
+				options = append(options, service.WithCreateInvalidationReference(reference))
+			}
+
+			result, err := service.CreateInvalidation(domain, typeArg, options...)
+			if err != nil {
+				return err
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&domain, "domain", "", "Domain name.")
+	_ = cmd.MarkFlagRequired("domain")
+	cmd.Flags().StringVar(&typeArg, "type", "", "Type of reference passed. Allowed values are: tag, path, all")
+	_ = cmd.MarkFlagRequired("type")
+	cmd.Flags().StringVar(&reference, "reference", "", "Reference to invalidate. Depending on type this can be: cache tag name (up to 128 characters), URL path (up to 2048 characters). Not required when type is all.")
 	return cmd
 }
 

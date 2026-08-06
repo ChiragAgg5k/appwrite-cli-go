@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"os/signal"
@@ -21,8 +22,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Ports templates/cli/lib/commands/run.ts.
-//
 // `appwrite run function` builds a function in its open-runtimes image, starts
 // it, and rebuilds or hot-swaps it as the sources change. Nothing here talks to
 // the Appwrite API except the optional remote-variable fetch and the JWT setup,
@@ -116,6 +115,9 @@ func runFunction(command *cobra.Command, options runOptions) error {
 	if err != nil {
 		return err
 	}
+	if notice := portNotice(options.Port, port); notice != "" {
+		output.Log(out, "%s", notice)
+	}
 
 	client := &docker.Client{Stdout: out, Stderr: command.ErrOrStderr()}
 	if !client.Available() {
@@ -153,7 +155,6 @@ func runFunction(command *cobra.Command, options runOptions) error {
 	// Announced before it starts. A runtime image is hundreds of megabytes
 	// and `docker pull` runs with its output piped, so without this line the
 	// CLI sits silent for however long the download takes and reads as hung.
-	// Ports the log in dockerPull (emulation/docker.ts:188).
 	output.Log(out, "Verifying Docker image ...")
 	if err := client.Pull(ctx, docker.ImageName(function)); err != nil {
 		return err
@@ -188,7 +189,8 @@ func runFunction(command *cobra.Command, options runOptions) error {
 	output.Log(out, "Function automatically restarts when you edit your code.")
 	command.Println()
 
-	if _, err := emulator.Start(ctx, port, keys, variables); err != nil {
+	wait, err := emulator.Start(ctx, port, keys, variables)
+	if err != nil {
 		return err
 	}
 
@@ -198,10 +200,29 @@ func runFunction(command *cobra.Command, options runOptions) error {
 
 	queue.Unlock()
 
-	return serve(ctx, command, emulator, tool, queue, port, keys, variables)
+	return serve(ctx, command, emulator, tool, queue, port, keys, variables, wait)
 }
 
-// serve reloads on every debounced change until the context is cancelled.
+// watchExit reports a container's own exit, once. Buffered by one so the
+// goroutine always finishes whether or not anyone is listening -- a deliberate
+// restart also makes wait return, and serve stops listening across it so the
+// expected exit is dropped rather than reported as a crash. A nil wait means no
+// container is running, and a nil channel blocks in select.
+func watchExit(wait func() error) <-chan error {
+	if wait == nil {
+		return nil
+	}
+
+	exited := make(chan error, 1)
+	go func() { exited <- wait() }()
+
+	return exited
+}
+
+// serve reloads on every debounced change until the context is cancelled, or
+// until the container stops on its own. That second case is why wait is threaded
+// through: without it a container that died after startup left "Visit
+// http://localhost:<port>/" on screen and waited on a dead port forever.
 func serve(
 	ctx context.Context,
 	command *cobra.Command,
@@ -211,8 +232,10 @@ func serve(
 	port int,
 	keys []string,
 	variables map[string]string,
+	wait func() error,
 ) error {
 	out := command.OutOrStdout()
+	exited := watchExit(wait)
 
 	for {
 		select {
@@ -225,19 +248,43 @@ func serve(
 
 			return nil
 
+		case err := <-exited:
+			// Nobody asked for this, so it is a failure rather than a shutdown:
+			// say so and stop, instead of leaving a URL on screen that nothing
+			// is listening on.
+			output.Failure(command.ErrOrStderr(), "The function stopped running.")
+			_ = emulator.Cleanup(context.WithoutCancel(ctx))
+
+			if err != nil {
+				return fmt.Errorf("the function's container stopped: %w", err)
+			}
+
+			return errors.New("the function's container stopped")
+
 		case files := <-queue.Events():
 			queue.Lock()
 
-			if err := reloadOnce(ctx, command, emulator, tool, queue, port, keys, variables, files); err != nil {
+			// The reload stops the container, so its exit is expected. Dropping
+			// the channel first means that exit is not reported as a crash.
+			exited = nil
+
+			restarted, err := reloadOnce(ctx, command, emulator, tool, queue, port, keys, variables, files)
+			if err != nil {
 				output.Failure(command.ErrOrStderr(), "Failed to reload function with error: %v", err)
 			}
+			exited = watchExit(restarted)
 
 			queue.Unlock()
 		}
 	}
 }
 
-// reloadOnce rebuilds or hot-swaps, then restarts.
+// reloadOnce rebuilds or hot-swaps, then restarts, returning the wait function
+// for the container it started.
+//
+// A nil wait means nothing is running: either the build failed, or it was
+// cancelled because another change had already queued, in which case the next
+// event reloads again.
 func reloadOnce(
 	ctx context.Context,
 	command *cobra.Command,
@@ -248,13 +295,13 @@ func reloadOnce(
 	keys []string,
 	variables map[string]string,
 	files []string,
-) error {
+) (func() error, error) {
 	out := command.OutOrStdout()
 
 	emulator.Client.Stop(ctx, emulator.Function.ID)
 
 	if err := docker.AssertSource(emulator.Local, emulator.Function); err != nil {
-		return err
+		return nil, err
 	}
 
 	// A compiled runtime, or a change to a file the build step consumes, needs
@@ -265,22 +312,20 @@ func reloadOnce(
 
 		cancelled, err := emulator.Build(ctx, keys, variables, func() bool { return !queue.Empty() })
 		if err != nil {
-			return err
+			return nil, err
 		}
 		if cancelled {
-			return nil
+			return nil, nil
 		}
 	} else {
 		output.Log(out, "Hot-swapping function.. Files with change are %s", strings.Join(files, ", "))
 
 		if err := emulator.HotSwap(); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
-	_, err := emulator.Start(ctx, port, keys, variables)
-
-	return err
+	return emulator.Start(ctx, port, keys, variables)
 }
 
 // sourceMatcher is the watcher's ignore predicate.
@@ -321,7 +366,7 @@ func selectFunction(command *cobra.Command, local *config.Local, id string) (con
 		return functions[0], nil
 	}
 
-	// Ports questionsRunFunctions. Without a terminal this reports
+	// Without a terminal this reports
 	// --function-id rather than blocking, which is what the prompt package's
 	// NonInteractive does with the Flag below.
 	options := make([]prompt.Option, 0, len(functions))
@@ -363,6 +408,26 @@ func resolvePort(requested int) (int, error) {
 	}
 
 	return port, nil
+}
+
+// portNotice explains a port the user did not choose, so a function that came up
+// on 3001 does not look like it was always there. Silent when the port was asked
+// for explicitly or the search settled on its first try.
+//
+// The skipped range is derived rather than collected: FindPort scans upward and
+// returns the first free port, so everything below the result was busy.
+func portNotice(requested, chosen int) string {
+	if requested > 0 || chosen <= portSearchStart {
+		return ""
+	}
+
+	if chosen == portSearchStart+1 {
+		return fmt.Sprintf("Port %d is in use, so this function is on %d.",
+			portSearchStart, chosen)
+	}
+
+	return fmt.Sprintf("Ports %d-%d are in use, so this function is on %d.",
+		portSearchStart, chosen-1, chosen)
 }
 
 // printSettings shows what the local run will use, and what it will ignore.

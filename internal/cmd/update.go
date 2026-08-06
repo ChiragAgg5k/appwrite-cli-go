@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"bufio"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"io"
 	"net/http"
@@ -16,8 +19,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Ports templates/cli/lib/commands/update.ts.
-//
 // The update path has to work for someone whose current install is the
 // TypeScript CLI: an npm or Homebrew install is updated through that tool, and
 // a standalone binary is replaced in place. The release asset names match the
@@ -33,8 +34,11 @@ const releasesPageURL = "https://github.com/ChiragAgg5k/appwrite-cli-go/releases
 // updating itself would silently walk backwards onto the last stable build.
 // The version comes from the same registry lookup that decided an update was
 // available, so the binary that lands is the one the user was told about.
+//
+// The tag is the bare version: releases are tagged `25.1.0`, not `v25.1.0`, so
+// prefixing one here 404s on every asset.
 func releaseAssetURL(version, asset string) string {
-	return fmt.Sprintf("%s/download/v%s/%s", releasesPageURL, strings.TrimPrefix(version, "v"), asset)
+	return fmt.Sprintf("%s/download/%s/%s", releasesPageURL, strings.TrimPrefix(version, "v"), asset)
 }
 
 // resolveReleaseVersion is the version a standalone update would install, or
@@ -103,7 +107,7 @@ func newUpdateCommand() *cobra.Command {
 
 // printManualInstructions lists every way to update by hand.
 //
-// Ports showManualInstructions (update.ts:288). The one case this is for is an
+// The one case this is for is an
 // install the CLI cannot drive itself -- a distro package, a vendored copy, a
 // binary someone put on PATH -- where the useful answer is the command to run
 // rather than an attempt that fails.
@@ -210,7 +214,10 @@ func updateStandalone(command *cobra.Command, force bool) error {
 	temporaryPath := temporary.Name()
 	defer os.Remove(temporaryPath)
 
-	if _, err := io.Copy(temporary, body); err != nil {
+	// Hashed on the way through rather than by re-reading the file afterwards:
+	// the bytes are already streaming past.
+	digest := sha256.New()
+	if _, err := io.Copy(io.MultiWriter(temporary, digest), body); err != nil {
 		temporary.Close()
 
 		return err
@@ -218,6 +225,13 @@ func updateStandalone(command *cobra.Command, force bool) error {
 	if err := temporary.Close(); err != nil {
 		return err
 	}
+
+	// Before the rename, and before the executable bit: this replaces the running
+	// binary, and nothing else in the tool has that reach.
+	if err := verifyDownload(version, asset, digest.Sum(nil)); err != nil {
+		return err
+	}
+
 	if err := os.Chmod(temporaryPath, 0o755); err != nil {
 		return err
 	}
@@ -234,6 +248,64 @@ func updateStandalone(command *cobra.Command, force bool) error {
 	command.Printf("Updated %s.\n", target)
 
 	return nil
+}
+
+// checksumsAsset is the digest manifest goreleaser publishes beside the
+// binaries, and the release workflow recomputes after Windows signing.
+const checksumsAsset = "checksums.txt"
+
+// verifyDownload checks the bytes against the digest the release published.
+//
+// The pipeline has always published checksums.txt and nothing ever read it, so
+// this path overwrote the running executable with whatever arrived. TLS proves
+// who served the bytes, not that they are the bytes that were built: a 200-OK
+// error page from a proxy, or a body a CDN truncated, would otherwise become the
+// user's CLI.
+//
+// Fails closed. Verifying only when a manifest happens to be present would make
+// the check decorative, since the case it guards against is exactly the one
+// where the response is not what it should be. Releases published before the Go
+// CLI carry no checksums.txt, so updating onto one of those now stops and says
+// so instead of quietly installing it.
+func verifyDownload(version, asset string, sum []byte) error {
+	body, err := download(releaseAssetURL(version, checksumsAsset))
+	if err != nil {
+		return fmt.Errorf(
+			"cannot verify the download: %w. Nothing was installed; fetch it manually at %s",
+			err, releasesPageURL)
+	}
+	defer body.Close()
+
+	expected, err := checksumFor(body, asset)
+	if err != nil {
+		return fmt.Errorf("%w. Nothing was installed; fetch it manually at %s", err, releasesPageURL)
+	}
+
+	if actual := hex.EncodeToString(sum); !strings.EqualFold(actual, expected) {
+		return fmt.Errorf(
+			"%s does not match its published checksum (expected %s, got %s). "+
+				"Nothing was installed; fetch it manually at %s",
+			asset, expected, actual, releasesPageURL)
+	}
+
+	return nil
+}
+
+// checksumFor finds one asset's digest in a `sha256sum`-style manifest, whose
+// lines are a hex digest and a filename separated by spaces.
+func checksumFor(manifest io.Reader, asset string) (string, error) {
+	scanner := bufio.NewScanner(manifest)
+	for scanner.Scan() {
+		fields := strings.Fields(scanner.Text())
+		if len(fields) == 2 && fields[1] == asset {
+			return fields[0], nil
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		return "", fmt.Errorf("cannot read %s: %w", checksumsAsset, err)
+	}
+
+	return "", fmt.Errorf("%s lists no checksum for %s", checksumsAsset, asset)
 }
 
 func download(url string) (io.ReadCloser, error) {

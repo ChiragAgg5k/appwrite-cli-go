@@ -8,8 +8,6 @@ import (
 	"strings"
 )
 
-// Ports templates/cli/lib/config.ts -- the `Config` base class and `Global`.
-
 // Preference keys stored in prefs.json. Names match the TypeScript CLI exactly:
 // the same file is read and written by both binaries during the migration.
 const (
@@ -29,8 +27,6 @@ const (
 )
 
 // DefaultEndpoint is used when a session records none.
-//
-// Ports DEFAULT_ENDPOINT from templates/cli/lib/constants.ts:30.
 const DefaultEndpoint = "https://cloud.appwrite.io/v1"
 
 const (
@@ -41,8 +37,6 @@ const (
 
 // ignoredAttributes are top-level keys in prefs.json that are settings rather
 // than sessions. Everything else at the top level is a session ID.
-//
-// Ports Global.IGNORE_ATTRIBUTES.
 var ignoredAttributes = map[string]bool{
 	PreferenceCurrent:      true,
 	PreferenceSelfSigned:   true,
@@ -108,19 +102,28 @@ func (g *Global) Path() string {
 
 // Write persists preferences, creating the directory if needed.
 //
-// 0600 on the file and 0700 on the directory: this holds access and refresh
-// tokens.
+// 0600 on the file and 0700 on the directory, because this holds access and
+// refresh tokens. The directory is tightened explicitly: MkdirAll leaves an
+// existing one alone, and a user upgrading from the TypeScript CLI has it at
+// 0755. The file needs no fix-up -- the atomic write renames a fresh 0600 file
+// into place.
 func (g *Global) Write() error {
-	if err := os.MkdirAll(filepath.Dir(g.path), 0o700); err != nil {
+	directory := filepath.Dir(g.path)
+	if err := os.MkdirAll(directory, 0o700); err != nil {
 		return err
 	}
+
+	// Best-effort: the directory may predate this CLI and belong to someone else,
+	// and failing to tighten it is not a reason to refuse to save a session --
+	// which would leave the user unable to log in at all.
+	_ = os.Chmod(directory, 0o700)
 
 	encoded, err := Marshal(g.data)
 	if err != nil {
 		return err
 	}
 
-	return os.WriteFile(g.path, encoded, 0o600)
+	return writeFileAtomically(g.path, encoded, 0o600)
 }
 
 // CurrentSessionID returns the active session ID, or "" if none is set.
@@ -278,13 +281,10 @@ var (
 // baseCloudHostname strips a regional prefix such as `fra.` from a Cloud
 // hostname, returning "" when the host is not Appwrite Cloud.
 //
-// Only a single label is stripped, and only when it is a known region code.
-// Matching on suffix alone would treat any `*.cloud.appwrite.io` host as Cloud,
-// including one an attacker controls, and normalising it would let a session
-// stored for real Cloud be selected for that endpoint.
-//
-// Ports getCloudBaseHostname(). JavaScript's URL parser lower-cases hostnames
-// and Go's does not, hence the explicit fold.
+// Only a single label, and only a known region code: matching on suffix alone
+// would treat any `*.cloud.appwrite.io` host as Cloud, including one an attacker
+// controls, and let a session stored for real Cloud be selected for it. Go's URL
+// parser does not lower-case hostnames, hence the explicit fold.
 func baseCloudHostname(hostname string) string {
 	hostname = strings.ToLower(hostname)
 	if cloudBaseHostnames[hostname] {
@@ -319,8 +319,6 @@ func CloudBaseHost(endpoint string) (string, bool) {
 
 // NormalizeCloudConsoleEndpoint collapses a regional Cloud endpoint onto its
 // base host, leaving self-hosted endpoints untouched.
-//
-// Ports normalizeCloudConsoleEndpoint().
 func NormalizeCloudConsoleEndpoint(endpoint string) string {
 	parsed, err := url.Parse(endpoint)
 	if err != nil || parsed.Hostname() == "" {
@@ -335,13 +333,9 @@ func NormalizeCloudConsoleEndpoint(endpoint string) string {
 	return "https://" + base + "/v1"
 }
 
-// IsCloudLoginEndpoint reports whether an endpoint signs in through the
-// browser rather than with an email and a password.
-//
-// Ports isCloudLoginEndpoint (utils.ts:503). The TypeScript also accepts
-// localhost behind the `devCloudLogin` feature flag; there is no flag registry
-// in this port, so localhost is treated as self-hosted -- which is what it is
-// for everyone outside Appwrite.
+// IsCloudLoginEndpoint reports whether an endpoint signs in through the browser
+// rather than with an email and a password. localhost is treated as self-hosted:
+// the TypeScript accepts it behind a feature flag this port has no registry for.
 func IsCloudLoginEndpoint(endpoint string) bool {
 	parsed, err := url.Parse(endpoint)
 	if err != nil {
@@ -353,8 +347,6 @@ func IsCloudLoginEndpoint(endpoint string) bool {
 
 // IsRegionalCloudEndpoint reports whether an endpoint names a Cloud REGION,
 // like fra.cloud.appwrite.io, rather than the base host.
-//
-// Ports isRegionalCloudEndpoint (utils.ts:472).
 func IsRegionalCloudEndpoint(endpoint string) bool {
 	parsed, err := url.Parse(endpoint)
 	if err != nil || parsed.Hostname() == "" {
@@ -368,12 +360,41 @@ func IsRegionalCloudEndpoint(endpoint string) bool {
 
 // EndpointsMatch compares two endpoints for session matching, normalising
 // regional Cloud hosts and ignoring trailing slashes.
-//
-// Ports endpointsMatch().
 func EndpointsMatch(a, b string) bool {
 	trim := func(value string) string {
 		return strings.TrimRight(NormalizeCloudConsoleEndpoint(value), "/")
 	}
 
 	return trim(a) == trim(b)
+}
+
+// LegacyEmail marks a session recovered from the pre-sessions prefs format,
+// where there was no email to record. Ports the literal in generic.ts:migrate.
+const LegacyEmail = "legacy"
+
+// MigrateLegacySession lifts a pre-sessions prefs.json -- a single endpoint and
+// cookie at the top level -- into the sessions array, reporting whether it
+// changed anything. Without it, a user upgrading from an older CLI is told they
+// are logged out.
+//
+// Both keys have to be present: a bare endpoint is what `client --endpoint`
+// writes before anyone signs in.
+func (g *Global) MigrateLegacySession(id string) bool {
+	if !g.data.Has(PreferenceEndpoint) || !g.data.Has(PreferenceCookie) {
+		return false
+	}
+
+	session := NewObject()
+	session.Set(PreferenceEndpoint, g.data.GetString(PreferenceEndpoint))
+	session.Set(PreferenceCookie, g.data.GetString(PreferenceCookie))
+	session.Set(PreferenceEmail, LegacyEmail)
+
+	// AddSession makes it current, which is what migrate() does by calling
+	// setCurrentSession -- a legacy prefs.json has exactly one login, so there is
+	// nothing else it could switch to.
+	g.AddSession(id, session)
+	g.data.Delete(PreferenceEndpoint)
+	g.data.Delete(PreferenceCookie)
+
+	return true
 }

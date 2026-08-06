@@ -17,12 +17,11 @@ import (
 //
 // Registration is deliberately eager. Phase 0 measured the complete tree at
 // 5.0ms against 206ms for the TypeScript CLI, so lazy construction would add
-// complexity to generated code for no measurable gain -- see
-// docs/go-cli/BENCHMARKS.md.
+// complexity to generated code for no measurable gain.
 func NewRootCommand() *cobra.Command {
 	root := &cobra.Command{
 		Use:     "appwrite",
-		Short:   "The Appwrite CLI, rewritten in Go",
+		Short:   "Preview build of the Go Appwrite CLI",
 		Version: app.Version,
 		// Errors and usage are rendered by the output package, not by cobra.
 		SilenceUsage:  true,
@@ -53,6 +52,19 @@ func NewRootCommand() *cobra.Command {
 				}
 			}
 
+			// Deliberately outside the --verbose branch above: which store
+			// holds a long-lived refresh token is not a diagnostic, and the
+			// user cannot opt into hearing about it after the fact. Stderr, so
+			// it never lands in --json output.
+			auth.Warn = func(format string, arguments ...any) {
+				output.Warn(command.ErrOrStderr(), format, arguments...)
+			}
+
+			// Before anything reads a session, and on every command, because
+			// that is when an upgrading user's prefs.json is still in the old
+			// shape. The TypeScript runs it in the same place.
+			migrateLegacyPreferences()
+
 			noticeUpdateAvailable(command)
 		},
 	}
@@ -71,7 +83,7 @@ func NewRootCommand() *cobra.Command {
 
 // noticeUpdateAvailable tells the user when a newer version exists.
 //
-// Ports maybeShowUpdateNotice (cli.ts.twig). Reads a cache and only reaches the
+// Reads a cache and only reaches the
 // network once a day, because the whole point of this binary is that it starts
 // in single-digit milliseconds.
 func noticeUpdateAvailable(command *cobra.Command) {

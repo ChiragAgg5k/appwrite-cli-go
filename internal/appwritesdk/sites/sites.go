@@ -3,11 +3,11 @@ package sites
 import (
 	"encoding/json"
 	"errors"
-	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
-	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/models"
-	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/file"
-	"net/url"
 	"fmt"
+	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
+	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/file"
+	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/models"
+	"net/url"
 	"strings"
 )
 
@@ -23,20 +23,23 @@ func New(clt client.Client) *Sites {
 }
 
 type ListOptions struct {
-	Queries []string
-	Search string
-	Total bool
+	Queries        []string
+	Search         string
+	Total          bool
 	enabledSetters map[string]bool
 }
+
 func (options ListOptions) New() *ListOptions {
 	options.enabledSetters = map[string]bool{
 		"Queries": false,
-		"Search": false,
-		"Total": false,
+		"Search":  false,
+		"Total":   false,
 	}
 	return &options
 }
+
 type ListOption func(*ListOptions)
+
 func (srv *Sites) WithListQueries(v []string) ListOption {
 	return func(o *ListOptions) {
 		o.Queries = v
@@ -55,10 +58,10 @@ func (srv *Sites) WithListTotal(v bool) ListOption {
 		o.enabledSetters["Total"] = true
 	}
 }
-	
+
 // List get a list of all the project's sites. You can use the query params to
 // filter your results.
-func (srv *Sites) List(optionalSetters ...ListOption)(*models.SiteList, error) {
+func (srv *Sites) List(optionalSetters ...ListOption) (*models.SiteList, error) {
 	path := "/sites"
 	options := ListOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -76,7 +79,7 @@ func (srv *Sites) List(optionalSetters ...ListOption)(*models.SiteList, error) {
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -103,53 +106,57 @@ func (srv *Sites) List(optionalSetters ...ListOption)(*models.SiteList, error) {
 	return &parsed, nil
 
 }
+
 type CreateOptions struct {
-	Enabled bool
-	Logging bool
-	Timeout int
-	InstallCommand string
-	BuildCommand string
-	StartCommand string
-	OutputDirectory string
-	Adapter string
-	InstallationId string
-	FallbackFile string
-	ProviderRepositoryId string
-	ProviderBranch string
-	ProviderSilentMode bool
+	Enabled               bool
+	Logging               bool
+	Timeout               int
+	InstallCommand        string
+	BuildCommand          string
+	StartCommand          string
+	OutputDirectory       string
+	Adapter               string
+	InstallationId        string
+	FallbackFile          string
+	ProviderRepositoryId  string
+	ProviderBranch        string
+	ProviderSilentMode    bool
 	ProviderRootDirectory string
-	ProviderBranches []string
-	ProviderPaths []string
-	BuildSpecification string
-	RuntimeSpecification string
-	DeploymentRetention int
-	enabledSetters map[string]bool
+	ProviderBranches      []string
+	ProviderPaths         []string
+	BuildSpecification    string
+	RuntimeSpecification  string
+	DeploymentRetention   int
+	enabledSetters        map[string]bool
 }
+
 func (options CreateOptions) New() *CreateOptions {
 	options.enabledSetters = map[string]bool{
-		"Enabled": false,
-		"Logging": false,
-		"Timeout": false,
-		"InstallCommand": false,
-		"BuildCommand": false,
-		"StartCommand": false,
-		"OutputDirectory": false,
-		"Adapter": false,
-		"InstallationId": false,
-		"FallbackFile": false,
-		"ProviderRepositoryId": false,
-		"ProviderBranch": false,
-		"ProviderSilentMode": false,
+		"Enabled":               false,
+		"Logging":               false,
+		"Timeout":               false,
+		"InstallCommand":        false,
+		"BuildCommand":          false,
+		"StartCommand":          false,
+		"OutputDirectory":       false,
+		"Adapter":               false,
+		"InstallationId":        false,
+		"FallbackFile":          false,
+		"ProviderRepositoryId":  false,
+		"ProviderBranch":        false,
+		"ProviderSilentMode":    false,
 		"ProviderRootDirectory": false,
-		"ProviderBranches": false,
-		"ProviderPaths": false,
-		"BuildSpecification": false,
-		"RuntimeSpecification": false,
-		"DeploymentRetention": false,
+		"ProviderBranches":      false,
+		"ProviderPaths":         false,
+		"BuildSpecification":    false,
+		"RuntimeSpecification":  false,
+		"DeploymentRetention":   false,
 	}
 	return &options
 }
+
 type CreateOption func(*CreateOptions)
+
 func (srv *Sites) WithCreateEnabled(v bool) CreateOption {
 	return func(o *CreateOptions) {
 		o.Enabled = v
@@ -264,9 +271,9 @@ func (srv *Sites) WithCreateDeploymentRetention(v int) CreateOption {
 		o.enabledSetters["DeploymentRetention"] = true
 	}
 }
-									
+
 // Create create a new site.
-func (srv *Sites) Create(SiteId string, Name string, Framework string, BuildRuntime string, optionalSetters ...CreateOption)(*models.Site, error) {
+func (srv *Sites) Create(SiteId string, Name string, Framework string, BuildRuntime string, optionalSetters ...CreateOption) (*models.Site, error) {
 	path := "/sites"
 	options := CreateOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -276,6 +283,7 @@ func (srv *Sites) Create(SiteId string, Name string, Framework string, BuildRunt
 	params["siteId"] = SiteId
 	params["name"] = Name
 	params["framework"] = Framework
+	params["buildRuntime"] = BuildRuntime
 	if options.enabledSetters["Enabled"] {
 		params["enabled"] = options.Enabled
 	}
@@ -297,7 +305,6 @@ func (srv *Sites) Create(SiteId string, Name string, Framework string, BuildRunt
 	if options.enabledSetters["OutputDirectory"] {
 		params["outputDirectory"] = options.OutputDirectory
 	}
-	params["buildRuntime"] = BuildRuntime
 	if options.enabledSetters["Adapter"] {
 		params["adapter"] = options.Adapter
 	}
@@ -336,8 +343,8 @@ func (srv *Sites) Create(SiteId string, Name string, Framework string, BuildRunt
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -367,12 +374,12 @@ func (srv *Sites) Create(SiteId string, Name string, Framework string, BuildRunt
 
 // ListFrameworks get a list of all frameworks that are currently available on
 // the server instance.
-func (srv *Sites) ListFrameworks()(*models.FrameworkList, error) {
+func (srv *Sites) ListFrameworks() (*models.FrameworkList, error) {
 	path := "/sites/frameworks"
 	params := map[string]interface{}{}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -399,26 +406,30 @@ func (srv *Sites) ListFrameworks()(*models.FrameworkList, error) {
 	return &parsed, nil
 
 }
+
 type ListSpecificationsOptions struct {
-	Type string
+	Type           string
 	enabledSetters map[string]bool
 }
+
 func (options ListSpecificationsOptions) New() *ListSpecificationsOptions {
 	options.enabledSetters = map[string]bool{
 		"Type": false,
 	}
 	return &options
 }
+
 type ListSpecificationsOption func(*ListSpecificationsOptions)
+
 func (srv *Sites) WithListSpecificationsType(v string) ListSpecificationsOption {
 	return func(o *ListSpecificationsOptions) {
 		o.Type = v
 		o.enabledSetters["Type"] = true
 	}
 }
-	
+
 // ListSpecifications list allowed site specifications for this instance.
-func (srv *Sites) ListSpecifications(optionalSetters ...ListSpecificationsOption)(*models.SpecificationList, error) {
+func (srv *Sites) ListSpecifications(optionalSetters ...ListSpecificationsOption) (*models.SpecificationList, error) {
 	path := "/sites/specifications"
 	options := ListSpecificationsOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -430,7 +441,7 @@ func (srv *Sites) ListSpecifications(optionalSetters ...ListSpecificationsOption
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -457,23 +468,27 @@ func (srv *Sites) ListSpecifications(optionalSetters ...ListSpecificationsOption
 	return &parsed, nil
 
 }
+
 type ListTemplatesOptions struct {
-	Frameworks []string
-	UseCases []string
-	Limit int
-	Offset int
+	Frameworks     []string
+	UseCases       []string
+	Limit          int
+	Offset         int
 	enabledSetters map[string]bool
 }
+
 func (options ListTemplatesOptions) New() *ListTemplatesOptions {
 	options.enabledSetters = map[string]bool{
 		"Frameworks": false,
-		"UseCases": false,
-		"Limit": false,
-		"Offset": false,
+		"UseCases":   false,
+		"Limit":      false,
+		"Offset":     false,
 	}
 	return &options
 }
+
 type ListTemplatesOption func(*ListTemplatesOptions)
+
 func (srv *Sites) WithListTemplatesFrameworks(v []string) ListTemplatesOption {
 	return func(o *ListTemplatesOptions) {
 		o.Frameworks = v
@@ -498,10 +513,10 @@ func (srv *Sites) WithListTemplatesOffset(v int) ListTemplatesOption {
 		o.enabledSetters["Offset"] = true
 	}
 }
-	
+
 // ListTemplates list available site templates. You can use template details
 // in [createSite](/docs/references/cloud/server-nodejs/sites#create) method.
-func (srv *Sites) ListTemplates(optionalSetters ...ListTemplatesOption)(*models.TemplateSiteList, error) {
+func (srv *Sites) ListTemplates(optionalSetters ...ListTemplatesOption) (*models.TemplateSiteList, error) {
 	path := "/sites/templates"
 	options := ListTemplatesOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -522,7 +537,7 @@ func (srv *Sites) ListTemplates(optionalSetters ...ListTemplatesOption)(*models.
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -549,16 +564,17 @@ func (srv *Sites) ListTemplates(optionalSetters ...ListTemplatesOption)(*models.
 	return &parsed, nil
 
 }
-	
+
 // GetTemplate get a site template using ID. You can use template details in
 // [createSite](/docs/references/cloud/server-nodejs/sites#create) method.
-func (srv *Sites) GetTemplate(TemplateId string)(*models.TemplateSite, error) {
-	r := strings.NewReplacer("{templateId}", url.PathEscape(TemplateId))
+func (srv *Sites) GetTemplate(TemplateId string) (*models.TemplateSite, error) {
+	r := strings.NewReplacer("{templateId}", TemplateId)
 	path := r.Replace("/sites/templates/{templateId}")
 	params := map[string]interface{}{}
+	params["templateId"] = TemplateId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -585,15 +601,16 @@ func (srv *Sites) GetTemplate(TemplateId string)(*models.TemplateSite, error) {
 	return &parsed, nil
 
 }
-	
+
 // Get get a site by its unique ID.
-func (srv *Sites) Get(SiteId string)(*models.Site, error) {
-	r := strings.NewReplacer("{siteId}", url.PathEscape(SiteId))
+func (srv *Sites) Get(SiteId string) (*models.Site, error) {
+	r := strings.NewReplacer("{siteId}", SiteId)
 	path := r.Replace("/sites/{siteId}")
 	params := map[string]interface{}{}
+	params["siteId"] = SiteId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -620,55 +637,59 @@ func (srv *Sites) Get(SiteId string)(*models.Site, error) {
 	return &parsed, nil
 
 }
+
 type UpdateOptions struct {
-	Enabled bool
-	Logging bool
-	Timeout int
-	InstallCommand string
-	BuildCommand string
-	StartCommand string
-	OutputDirectory string
-	BuildRuntime string
-	Adapter string
-	FallbackFile string
-	InstallationId string
-	ProviderRepositoryId string
-	ProviderBranch string
-	ProviderSilentMode bool
+	Enabled               bool
+	Logging               bool
+	Timeout               int
+	InstallCommand        string
+	BuildCommand          string
+	StartCommand          string
+	OutputDirectory       string
+	BuildRuntime          string
+	Adapter               string
+	FallbackFile          string
+	InstallationId        string
+	ProviderRepositoryId  string
+	ProviderBranch        string
+	ProviderSilentMode    bool
 	ProviderRootDirectory string
-	ProviderBranches []string
-	ProviderPaths []string
-	BuildSpecification string
-	RuntimeSpecification string
-	DeploymentRetention int
-	enabledSetters map[string]bool
+	ProviderBranches      []string
+	ProviderPaths         []string
+	BuildSpecification    string
+	RuntimeSpecification  string
+	DeploymentRetention   int
+	enabledSetters        map[string]bool
 }
+
 func (options UpdateOptions) New() *UpdateOptions {
 	options.enabledSetters = map[string]bool{
-		"Enabled": false,
-		"Logging": false,
-		"Timeout": false,
-		"InstallCommand": false,
-		"BuildCommand": false,
-		"StartCommand": false,
-		"OutputDirectory": false,
-		"BuildRuntime": false,
-		"Adapter": false,
-		"FallbackFile": false,
-		"InstallationId": false,
-		"ProviderRepositoryId": false,
-		"ProviderBranch": false,
-		"ProviderSilentMode": false,
+		"Enabled":               false,
+		"Logging":               false,
+		"Timeout":               false,
+		"InstallCommand":        false,
+		"BuildCommand":          false,
+		"StartCommand":          false,
+		"OutputDirectory":       false,
+		"BuildRuntime":          false,
+		"Adapter":               false,
+		"FallbackFile":          false,
+		"InstallationId":        false,
+		"ProviderRepositoryId":  false,
+		"ProviderBranch":        false,
+		"ProviderSilentMode":    false,
 		"ProviderRootDirectory": false,
-		"ProviderBranches": false,
-		"ProviderPaths": false,
-		"BuildSpecification": false,
-		"RuntimeSpecification": false,
-		"DeploymentRetention": false,
+		"ProviderBranches":      false,
+		"ProviderPaths":         false,
+		"BuildSpecification":    false,
+		"RuntimeSpecification":  false,
+		"DeploymentRetention":   false,
 	}
 	return &options
 }
+
 type UpdateOption func(*UpdateOptions)
+
 func (srv *Sites) WithUpdateEnabled(v bool) UpdateOption {
 	return func(o *UpdateOptions) {
 		o.Enabled = v
@@ -789,16 +810,17 @@ func (srv *Sites) WithUpdateDeploymentRetention(v int) UpdateOption {
 		o.enabledSetters["DeploymentRetention"] = true
 	}
 }
-							
+
 // Update update site by its unique ID.
-func (srv *Sites) Update(SiteId string, Name string, Framework string, optionalSetters ...UpdateOption)(*models.Site, error) {
-	r := strings.NewReplacer("{siteId}", url.PathEscape(SiteId))
+func (srv *Sites) Update(SiteId string, Name string, Framework string, optionalSetters ...UpdateOption) (*models.Site, error) {
+	r := strings.NewReplacer("{siteId}", SiteId)
 	path := r.Replace("/sites/{siteId}")
 	options := UpdateOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["siteId"] = SiteId
 	params["name"] = Name
 	params["framework"] = Framework
 	if options.enabledSetters["Enabled"] {
@@ -863,8 +885,8 @@ func (srv *Sites) Update(SiteId string, Name string, Framework string, optionalS
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PUT", path, headers, params)
@@ -891,15 +913,16 @@ func (srv *Sites) Update(SiteId string, Name string, Framework string, optionalS
 	return &parsed, nil
 
 }
-	
+
 // Delete delete a site by its unique ID.
-func (srv *Sites) Delete(SiteId string)(*interface{}, error) {
-	r := strings.NewReplacer("{siteId}", url.PathEscape(SiteId))
+func (srv *Sites) Delete(SiteId string) (*interface{}, error) {
+	r := strings.NewReplacer("{siteId}", SiteId)
 	path := r.Replace("/sites/{siteId}")
 	params := map[string]interface{}{}
+	params["siteId"] = SiteId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
+		"content-type":       "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -925,19 +948,20 @@ func (srv *Sites) Delete(SiteId string)(*interface{}, error) {
 	return &parsed, nil
 
 }
-			
+
 // UpdateSiteDeployment update the site active deployment. Use this endpoint
 // to switch the code deployment that should be used when visitor opens your
 // site.
-func (srv *Sites) UpdateSiteDeployment(SiteId string, DeploymentId string)(*models.Site, error) {
-	r := strings.NewReplacer("{siteId}", url.PathEscape(SiteId))
+func (srv *Sites) UpdateSiteDeployment(SiteId string, DeploymentId string) (*models.Site, error) {
+	r := strings.NewReplacer("{siteId}", SiteId)
 	path := r.Replace("/sites/{siteId}/deployment")
 	params := map[string]interface{}{}
+	params["siteId"] = SiteId
 	params["deploymentId"] = DeploymentId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -964,21 +988,25 @@ func (srv *Sites) UpdateSiteDeployment(SiteId string, DeploymentId string)(*mode
 	return &parsed, nil
 
 }
+
 type ListDeploymentsOptions struct {
-	Queries []string
-	Search string
-	Total bool
+	Queries        []string
+	Search         string
+	Total          bool
 	enabledSetters map[string]bool
 }
+
 func (options ListDeploymentsOptions) New() *ListDeploymentsOptions {
 	options.enabledSetters = map[string]bool{
 		"Queries": false,
-		"Search": false,
-		"Total": false,
+		"Search":  false,
+		"Total":   false,
 	}
 	return &options
 }
+
 type ListDeploymentsOption func(*ListDeploymentsOptions)
+
 func (srv *Sites) WithListDeploymentsQueries(v []string) ListDeploymentsOption {
 	return func(o *ListDeploymentsOptions) {
 		o.Queries = v
@@ -997,17 +1025,18 @@ func (srv *Sites) WithListDeploymentsTotal(v bool) ListDeploymentsOption {
 		o.enabledSetters["Total"] = true
 	}
 }
-			
+
 // ListDeployments get a list of all the site's code deployments. You can use
 // the query params to filter your results.
-func (srv *Sites) ListDeployments(SiteId string, optionalSetters ...ListDeploymentsOption)(*models.DeploymentList, error) {
-	r := strings.NewReplacer("{siteId}", url.PathEscape(SiteId))
+func (srv *Sites) ListDeployments(SiteId string, optionalSetters ...ListDeploymentsOption) (*models.DeploymentList, error) {
+	r := strings.NewReplacer("{siteId}", SiteId)
 	path := r.Replace("/sites/{siteId}/deployments")
 	options := ListDeploymentsOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["siteId"] = SiteId
 	if options.enabledSetters["Queries"] {
 		params["queries"] = options.Queries
 	}
@@ -1019,7 +1048,7 @@ func (srv *Sites) ListDeployments(SiteId string, optionalSetters ...ListDeployme
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1046,23 +1075,27 @@ func (srv *Sites) ListDeployments(SiteId string, optionalSetters ...ListDeployme
 	return &parsed, nil
 
 }
+
 type CreateDeploymentOptions struct {
-	InstallCommand string
-	BuildCommand string
+	InstallCommand  string
+	BuildCommand    string
 	OutputDirectory string
-	Activate bool
-	enabledSetters map[string]bool
+	Activate        bool
+	enabledSetters  map[string]bool
 }
+
 func (options CreateDeploymentOptions) New() *CreateDeploymentOptions {
 	options.enabledSetters = map[string]bool{
-		"InstallCommand": false,
-		"BuildCommand": false,
+		"InstallCommand":  false,
+		"BuildCommand":    false,
 		"OutputDirectory": false,
-		"Activate": false,
+		"Activate":        false,
 	}
 	return &options
 }
+
 type CreateDeploymentOption func(*CreateDeploymentOptions)
+
 func (srv *Sites) WithCreateDeploymentInstallCommand(v string) CreateDeploymentOption {
 	return func(o *CreateDeploymentOptions) {
 		o.InstallCommand = v
@@ -1087,19 +1120,21 @@ func (srv *Sites) WithCreateDeploymentActivate(v bool) CreateDeploymentOption {
 		o.enabledSetters["Activate"] = true
 	}
 }
-					
+
 // CreateDeployment create a new site code deployment. Use this endpoint to
 // upload a new version of your site code. To activate your newly uploaded
 // code, you'll need to update the site's deployment to use your new
 // deployment ID.
-func (srv *Sites) CreateDeployment(SiteId string, Code file.InputFile, optionalSetters ...CreateDeploymentOption)(*models.Deployment, error) {
-	r := strings.NewReplacer("{siteId}", url.PathEscape(SiteId))
+func (srv *Sites) CreateDeployment(SiteId string, Code file.InputFile, optionalSetters ...CreateDeploymentOption) (*models.Deployment, error) {
+	r := strings.NewReplacer("{siteId}", SiteId)
 	path := r.Replace("/sites/{siteId}/deployments")
 	options := CreateDeploymentOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["siteId"] = SiteId
+	params["code"] = Code
 	if options.enabledSetters["InstallCommand"] {
 		params["installCommand"] = options.InstallCommand
 	}
@@ -1109,20 +1144,18 @@ func (srv *Sites) CreateDeployment(SiteId string, Code file.InputFile, optionalS
 	if options.enabledSetters["OutputDirectory"] {
 		params["outputDirectory"] = options.OutputDirectory
 	}
-	params["code"] = Code
 	if options.enabledSetters["Activate"] {
 		params["activate"] = options.Activate
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "multipart/form-data",
-		"accept": "application/json",
+		"content-type":       "multipart/form-data",
+		"accept":             "application/json",
 	}
 
-    paramName := "code"
+	paramName := "code"
 
-
-    uploadId := ""
+	uploadId := ""
 
 	resp, err := srv.client.FileUpload(path, headers, params, paramName, uploadId)
 	if err != nil {
@@ -1144,22 +1177,23 @@ func (srv *Sites) CreateDeployment(SiteId string, Code file.InputFile, optionalS
 	return &parsed, nil
 
 }
-			
+
 // CreateDuplicateDeployment create a new build for an existing site
 // deployment. This endpoint allows you to rebuild a deployment with the
 // updated site configuration, including its commands and output directory if
 // they have been modified. The build process will be queued and executed
 // asynchronously. The original deployment's code will be preserved and used
 // for the new build.
-func (srv *Sites) CreateDuplicateDeployment(SiteId string, DeploymentId string)(*models.Deployment, error) {
-	r := strings.NewReplacer("{siteId}", url.PathEscape(SiteId))
+func (srv *Sites) CreateDuplicateDeployment(SiteId string, DeploymentId string) (*models.Deployment, error) {
+	r := strings.NewReplacer("{siteId}", SiteId)
 	path := r.Replace("/sites/{siteId}/deployments/duplicate")
 	params := map[string]interface{}{}
+	params["siteId"] = SiteId
 	params["deploymentId"] = DeploymentId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -1186,37 +1220,42 @@ func (srv *Sites) CreateDuplicateDeployment(SiteId string, DeploymentId string)(
 	return &parsed, nil
 
 }
+
 type CreateTemplateDeploymentOptions struct {
-	Activate bool
+	Activate       bool
 	enabledSetters map[string]bool
 }
+
 func (options CreateTemplateDeploymentOptions) New() *CreateTemplateDeploymentOptions {
 	options.enabledSetters = map[string]bool{
 		"Activate": false,
 	}
 	return &options
 }
+
 type CreateTemplateDeploymentOption func(*CreateTemplateDeploymentOptions)
+
 func (srv *Sites) WithCreateTemplateDeploymentActivate(v bool) CreateTemplateDeploymentOption {
 	return func(o *CreateTemplateDeploymentOptions) {
 		o.Activate = v
 		o.enabledSetters["Activate"] = true
 	}
 }
-													
+
 // CreateTemplateDeployment create a deployment based on a template.
-// 
+//
 // Use this endpoint with combination of
 // [listTemplates](https://appwrite.io/docs/products/sites/templates) to find
 // the template details.
-func (srv *Sites) CreateTemplateDeployment(SiteId string, Repository string, Owner string, RootDirectory string, Type string, Reference string, optionalSetters ...CreateTemplateDeploymentOption)(*models.Deployment, error) {
-	r := strings.NewReplacer("{siteId}", url.PathEscape(SiteId))
+func (srv *Sites) CreateTemplateDeployment(SiteId string, Repository string, Owner string, RootDirectory string, Type string, Reference string, optionalSetters ...CreateTemplateDeploymentOption) (*models.Deployment, error) {
+	r := strings.NewReplacer("{siteId}", SiteId)
 	path := r.Replace("/sites/{siteId}/deployments/template")
 	options := CreateTemplateDeploymentOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["siteId"] = SiteId
 	params["repository"] = Repository
 	params["owner"] = Owner
 	params["rootDirectory"] = RootDirectory
@@ -1227,8 +1266,8 @@ func (srv *Sites) CreateTemplateDeployment(SiteId string, Repository string, Own
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -1255,35 +1294,40 @@ func (srv *Sites) CreateTemplateDeployment(SiteId string, Repository string, Own
 	return &parsed, nil
 
 }
+
 type CreateVcsDeploymentOptions struct {
-	Activate bool
+	Activate       bool
 	enabledSetters map[string]bool
 }
+
 func (options CreateVcsDeploymentOptions) New() *CreateVcsDeploymentOptions {
 	options.enabledSetters = map[string]bool{
 		"Activate": false,
 	}
 	return &options
 }
+
 type CreateVcsDeploymentOption func(*CreateVcsDeploymentOptions)
+
 func (srv *Sites) WithCreateVcsDeploymentActivate(v bool) CreateVcsDeploymentOption {
 	return func(o *CreateVcsDeploymentOptions) {
 		o.Activate = v
 		o.enabledSetters["Activate"] = true
 	}
 }
-							
+
 // CreateVcsDeployment create a deployment when a site is connected to VCS.
-// 
+//
 // This endpoint lets you create deployment from a branch, commit, or a tag.
-func (srv *Sites) CreateVcsDeployment(SiteId string, Type string, Reference string, optionalSetters ...CreateVcsDeploymentOption)(*models.Deployment, error) {
-	r := strings.NewReplacer("{siteId}", url.PathEscape(SiteId))
+func (srv *Sites) CreateVcsDeployment(SiteId string, Type string, Reference string, optionalSetters ...CreateVcsDeploymentOption) (*models.Deployment, error) {
+	r := strings.NewReplacer("{siteId}", SiteId)
 	path := r.Replace("/sites/{siteId}/deployments/vcs")
 	options := CreateVcsDeploymentOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["siteId"] = SiteId
 	params["type"] = Type
 	params["reference"] = Reference
 	if options.enabledSetters["Activate"] {
@@ -1291,8 +1335,8 @@ func (srv *Sites) CreateVcsDeployment(SiteId string, Type string, Reference stri
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -1319,15 +1363,17 @@ func (srv *Sites) CreateVcsDeployment(SiteId string, Type string, Reference stri
 	return &parsed, nil
 
 }
-			
+
 // GetDeployment get a site deployment by its unique ID.
-func (srv *Sites) GetDeployment(SiteId string, DeploymentId string)(*models.Deployment, error) {
-	r := strings.NewReplacer("{siteId}", url.PathEscape(SiteId), "{deploymentId}", url.PathEscape(DeploymentId))
+func (srv *Sites) GetDeployment(SiteId string, DeploymentId string) (*models.Deployment, error) {
+	r := strings.NewReplacer("{siteId}", SiteId, "{deploymentId}", DeploymentId)
 	path := r.Replace("/sites/{siteId}/deployments/{deploymentId}")
 	params := map[string]interface{}{}
+	params["siteId"] = SiteId
+	params["deploymentId"] = DeploymentId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1354,15 +1400,17 @@ func (srv *Sites) GetDeployment(SiteId string, DeploymentId string)(*models.Depl
 	return &parsed, nil
 
 }
-			
+
 // DeleteDeployment delete a site deployment by its unique ID.
-func (srv *Sites) DeleteDeployment(SiteId string, DeploymentId string)(*interface{}, error) {
-	r := strings.NewReplacer("{siteId}", url.PathEscape(SiteId), "{deploymentId}", url.PathEscape(DeploymentId))
+func (srv *Sites) DeleteDeployment(SiteId string, DeploymentId string) (*interface{}, error) {
+	r := strings.NewReplacer("{siteId}", SiteId, "{deploymentId}", DeploymentId)
 	path := r.Replace("/sites/{siteId}/deployments/{deploymentId}")
 	params := map[string]interface{}{}
+	params["siteId"] = SiteId
+	params["deploymentId"] = DeploymentId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
+		"content-type":       "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -1388,19 +1436,23 @@ func (srv *Sites) DeleteDeployment(SiteId string, DeploymentId string)(*interfac
 	return &parsed, nil
 
 }
+
 type GetDeploymentDownloadOptions struct {
-	Type string
-	Token string
+	Type           string
+	Token          string
 	enabledSetters map[string]bool
 }
+
 func (options GetDeploymentDownloadOptions) New() *GetDeploymentDownloadOptions {
 	options.enabledSetters = map[string]bool{
-		"Type": false,
+		"Type":  false,
 		"Token": false,
 	}
 	return &options
 }
+
 type GetDeploymentDownloadOption func(*GetDeploymentDownloadOptions)
+
 func (srv *Sites) WithGetDeploymentDownloadType(v string) GetDeploymentDownloadOption {
 	return func(o *GetDeploymentDownloadOptions) {
 		o.Type = v
@@ -1413,19 +1465,21 @@ func (srv *Sites) WithGetDeploymentDownloadToken(v string) GetDeploymentDownload
 		o.enabledSetters["Token"] = true
 	}
 }
-					
+
 // GetDeploymentDownload get a site deployment content by its unique ID. The
 // endpoint response return with a 'Content-Disposition: attachment' header
 // that tells the browser to start downloading the file to user downloads
 // directory.
-func (srv *Sites) GetDeploymentDownload(SiteId string, DeploymentId string, optionalSetters ...GetDeploymentDownloadOption)(*[]byte, error) {
-	r := strings.NewReplacer("{siteId}", url.PathEscape(SiteId), "{deploymentId}", url.PathEscape(DeploymentId))
+func (srv *Sites) GetDeploymentDownload(SiteId string, DeploymentId string, optionalSetters ...GetDeploymentDownloadOption) (*[]byte, error) {
+	r := strings.NewReplacer("{siteId}", SiteId, "{deploymentId}", DeploymentId)
 	path := r.Replace("/sites/{siteId}/deployments/{deploymentId}/download")
 	options := GetDeploymentDownloadOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["siteId"] = SiteId
+	params["deploymentId"] = DeploymentId
 	if options.enabledSetters["Type"] {
 		params["type"] = options.Type
 	}
@@ -1434,7 +1488,7 @@ func (srv *Sites) GetDeploymentDownload(SiteId string, DeploymentId string, opti
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "*/*",
+		"accept":             "*/*",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1460,13 +1514,14 @@ func (srv *Sites) GetDeploymentDownload(SiteId string, DeploymentId string, opti
 	return &parsed, nil
 
 }
+
 // GetDeploymentDownloadURL get a site deployment content by its unique ID.
 // The endpoint response return with a 'Content-Disposition: attachment'
 // header that tells the browser to start downloading the file to user
 // downloads directory.
 // Returns the URL for the resource instead of the content.
 func (srv *Sites) GetDeploymentDownloadURL(SiteId string, DeploymentId string, optionalSetters ...GetDeploymentDownloadOption) (*string, error) {
-	r := strings.NewReplacer("{siteId}", url.PathEscape(SiteId), "{deploymentId}", url.PathEscape(DeploymentId))
+	r := strings.NewReplacer("{siteId}", SiteId, "{deploymentId}", DeploymentId)
 	path := r.Replace("/sites/{siteId}/deployments/{deploymentId}/download")
 	options := GetDeploymentDownloadOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -1487,21 +1542,23 @@ func (srv *Sites) GetDeploymentDownloadURL(SiteId string, DeploymentId string, o
 	result := u.String()
 	return &result, nil
 }
-			
+
 // UpdateDeploymentStatus cancel an ongoing site deployment build. If the
 // build is already in progress, it will be stopped and marked as canceled. If
 // the build hasn't started yet, it will be marked as canceled without
 // executing. You cannot cancel builds that have already completed (status
 // 'ready') or failed. The response includes the final build status and
 // details.
-func (srv *Sites) UpdateDeploymentStatus(SiteId string, DeploymentId string)(*models.Deployment, error) {
-	r := strings.NewReplacer("{siteId}", url.PathEscape(SiteId), "{deploymentId}", url.PathEscape(DeploymentId))
+func (srv *Sites) UpdateDeploymentStatus(SiteId string, DeploymentId string) (*models.Deployment, error) {
+	r := strings.NewReplacer("{siteId}", SiteId, "{deploymentId}", DeploymentId)
 	path := r.Replace("/sites/{siteId}/deployments/{deploymentId}/status")
 	params := map[string]interface{}{}
+	params["siteId"] = SiteId
+	params["deploymentId"] = DeploymentId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -1528,19 +1585,23 @@ func (srv *Sites) UpdateDeploymentStatus(SiteId string, DeploymentId string)(*mo
 	return &parsed, nil
 
 }
+
 type ListLogsOptions struct {
-	Queries []string
-	Total bool
+	Queries        []string
+	Total          bool
 	enabledSetters map[string]bool
 }
+
 func (options ListLogsOptions) New() *ListLogsOptions {
 	options.enabledSetters = map[string]bool{
 		"Queries": false,
-		"Total": false,
+		"Total":   false,
 	}
 	return &options
 }
+
 type ListLogsOption func(*ListLogsOptions)
+
 func (srv *Sites) WithListLogsQueries(v []string) ListLogsOption {
 	return func(o *ListLogsOptions) {
 		o.Queries = v
@@ -1553,17 +1614,18 @@ func (srv *Sites) WithListLogsTotal(v bool) ListLogsOption {
 		o.enabledSetters["Total"] = true
 	}
 }
-			
+
 // ListLogs get a list of all site logs. You can use the query params to
 // filter your results.
-func (srv *Sites) ListLogs(SiteId string, optionalSetters ...ListLogsOption)(*models.ExecutionList, error) {
-	r := strings.NewReplacer("{siteId}", url.PathEscape(SiteId))
+func (srv *Sites) ListLogs(SiteId string, optionalSetters ...ListLogsOption) (*models.ExecutionList, error) {
+	r := strings.NewReplacer("{siteId}", SiteId)
 	path := r.Replace("/sites/{siteId}/logs")
 	options := ListLogsOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["siteId"] = SiteId
 	if options.enabledSetters["Queries"] {
 		params["queries"] = options.Queries
 	}
@@ -1572,7 +1634,7 @@ func (srv *Sites) ListLogs(SiteId string, optionalSetters ...ListLogsOption)(*mo
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1599,15 +1661,17 @@ func (srv *Sites) ListLogs(SiteId string, optionalSetters ...ListLogsOption)(*mo
 	return &parsed, nil
 
 }
-			
+
 // GetLog get a site request log by its unique ID.
-func (srv *Sites) GetLog(SiteId string, LogId string)(*models.Execution, error) {
-	r := strings.NewReplacer("{siteId}", url.PathEscape(SiteId), "{logId}", url.PathEscape(LogId))
+func (srv *Sites) GetLog(SiteId string, LogId string) (*models.Execution, error) {
+	r := strings.NewReplacer("{siteId}", SiteId, "{logId}", LogId)
 	path := r.Replace("/sites/{siteId}/logs/{logId}")
 	params := map[string]interface{}{}
+	params["siteId"] = SiteId
+	params["logId"] = LogId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1634,16 +1698,18 @@ func (srv *Sites) GetLog(SiteId string, LogId string)(*models.Execution, error) 
 	return &parsed, nil
 
 }
-			
+
 // DeleteLog delete a site log by its unique ID.
-func (srv *Sites) DeleteLog(SiteId string, LogId string)(*interface{}, error) {
-	r := strings.NewReplacer("{siteId}", url.PathEscape(SiteId), "{logId}", url.PathEscape(LogId))
+func (srv *Sites) DeleteLog(SiteId string, LogId string) (*interface{}, error) {
+	r := strings.NewReplacer("{siteId}", SiteId, "{logId}", LogId)
 	path := r.Replace("/sites/{siteId}/logs/{logId}")
 	params := map[string]interface{}{}
+	params["siteId"] = SiteId
+	params["logId"] = LogId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -1669,19 +1735,23 @@ func (srv *Sites) DeleteLog(SiteId string, LogId string)(*interface{}, error) {
 	return &parsed, nil
 
 }
+
 type ListVariablesOptions struct {
-	Queries []string
-	Total bool
+	Queries        []string
+	Total          bool
 	enabledSetters map[string]bool
 }
+
 func (options ListVariablesOptions) New() *ListVariablesOptions {
 	options.enabledSetters = map[string]bool{
 		"Queries": false,
-		"Total": false,
+		"Total":   false,
 	}
 	return &options
 }
+
 type ListVariablesOption func(*ListVariablesOptions)
+
 func (srv *Sites) WithListVariablesQueries(v []string) ListVariablesOption {
 	return func(o *ListVariablesOptions) {
 		o.Queries = v
@@ -1694,16 +1764,17 @@ func (srv *Sites) WithListVariablesTotal(v bool) ListVariablesOption {
 		o.enabledSetters["Total"] = true
 	}
 }
-			
+
 // ListVariables get a list of all variables of a specific site.
-func (srv *Sites) ListVariables(SiteId string, optionalSetters ...ListVariablesOption)(*models.VariableList, error) {
-	r := strings.NewReplacer("{siteId}", url.PathEscape(SiteId))
+func (srv *Sites) ListVariables(SiteId string, optionalSetters ...ListVariablesOption) (*models.VariableList, error) {
+	r := strings.NewReplacer("{siteId}", SiteId)
 	path := r.Replace("/sites/{siteId}/variables")
 	options := ListVariablesOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["siteId"] = SiteId
 	if options.enabledSetters["Queries"] {
 		params["queries"] = options.Queries
 	}
@@ -1712,7 +1783,7 @@ func (srv *Sites) ListVariables(SiteId string, optionalSetters ...ListVariablesO
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1739,34 +1810,39 @@ func (srv *Sites) ListVariables(SiteId string, optionalSetters ...ListVariablesO
 	return &parsed, nil
 
 }
+
 type CreateVariableOptions struct {
-	Secret bool
+	Secret         bool
 	enabledSetters map[string]bool
 }
+
 func (options CreateVariableOptions) New() *CreateVariableOptions {
 	options.enabledSetters = map[string]bool{
 		"Secret": false,
 	}
 	return &options
 }
+
 type CreateVariableOption func(*CreateVariableOptions)
+
 func (srv *Sites) WithCreateVariableSecret(v bool) CreateVariableOption {
 	return func(o *CreateVariableOptions) {
 		o.Secret = v
 		o.enabledSetters["Secret"] = true
 	}
 }
-									
+
 // CreateVariable create a new site variable. These variables can be accessed
 // during build and runtime (server-side rendering) as environment variables.
-func (srv *Sites) CreateVariable(SiteId string, VariableId string, Key string, Value string, optionalSetters ...CreateVariableOption)(*models.Variable, error) {
-	r := strings.NewReplacer("{siteId}", url.PathEscape(SiteId))
+func (srv *Sites) CreateVariable(SiteId string, VariableId string, Key string, Value string, optionalSetters ...CreateVariableOption) (*models.Variable, error) {
+	r := strings.NewReplacer("{siteId}", SiteId)
 	path := r.Replace("/sites/{siteId}/variables")
 	options := CreateVariableOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["siteId"] = SiteId
 	params["variableId"] = VariableId
 	params["key"] = Key
 	params["value"] = Value
@@ -1775,8 +1851,8 @@ func (srv *Sites) CreateVariable(SiteId string, VariableId string, Key string, V
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -1803,15 +1879,17 @@ func (srv *Sites) CreateVariable(SiteId string, VariableId string, Key string, V
 	return &parsed, nil
 
 }
-			
+
 // GetVariable get a variable by its unique ID.
-func (srv *Sites) GetVariable(SiteId string, VariableId string)(*models.Variable, error) {
-	r := strings.NewReplacer("{siteId}", url.PathEscape(SiteId), "{variableId}", url.PathEscape(VariableId))
+func (srv *Sites) GetVariable(SiteId string, VariableId string) (*models.Variable, error) {
+	r := strings.NewReplacer("{siteId}", SiteId, "{variableId}", VariableId)
 	path := r.Replace("/sites/{siteId}/variables/{variableId}")
 	params := map[string]interface{}{}
+	params["siteId"] = SiteId
+	params["variableId"] = VariableId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1838,21 +1916,25 @@ func (srv *Sites) GetVariable(SiteId string, VariableId string)(*models.Variable
 	return &parsed, nil
 
 }
+
 type UpdateVariableOptions struct {
-	Key string
-	Value string
-	Secret bool
+	Key            string
+	Value          string
+	Secret         bool
 	enabledSetters map[string]bool
 }
+
 func (options UpdateVariableOptions) New() *UpdateVariableOptions {
 	options.enabledSetters = map[string]bool{
-		"Key": false,
-		"Value": false,
+		"Key":    false,
+		"Value":  false,
 		"Secret": false,
 	}
 	return &options
 }
+
 type UpdateVariableOption func(*UpdateVariableOptions)
+
 func (srv *Sites) WithUpdateVariableKey(v string) UpdateVariableOption {
 	return func(o *UpdateVariableOptions) {
 		o.Key = v
@@ -1871,16 +1953,18 @@ func (srv *Sites) WithUpdateVariableSecret(v bool) UpdateVariableOption {
 		o.enabledSetters["Secret"] = true
 	}
 }
-					
+
 // UpdateVariable update variable by its unique ID.
-func (srv *Sites) UpdateVariable(SiteId string, VariableId string, optionalSetters ...UpdateVariableOption)(*models.Variable, error) {
-	r := strings.NewReplacer("{siteId}", url.PathEscape(SiteId), "{variableId}", url.PathEscape(VariableId))
+func (srv *Sites) UpdateVariable(SiteId string, VariableId string, optionalSetters ...UpdateVariableOption) (*models.Variable, error) {
+	r := strings.NewReplacer("{siteId}", SiteId, "{variableId}", VariableId)
 	path := r.Replace("/sites/{siteId}/variables/{variableId}")
 	options := UpdateVariableOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["siteId"] = SiteId
+	params["variableId"] = VariableId
 	if options.enabledSetters["Key"] {
 		params["key"] = options.Key
 	}
@@ -1892,8 +1976,8 @@ func (srv *Sites) UpdateVariable(SiteId string, VariableId string, optionalSette
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PUT", path, headers, params)
@@ -1920,15 +2004,17 @@ func (srv *Sites) UpdateVariable(SiteId string, VariableId string, optionalSette
 	return &parsed, nil
 
 }
-			
+
 // DeleteVariable delete a variable by its unique ID.
-func (srv *Sites) DeleteVariable(SiteId string, VariableId string)(*interface{}, error) {
-	r := strings.NewReplacer("{siteId}", url.PathEscape(SiteId), "{variableId}", url.PathEscape(VariableId))
+func (srv *Sites) DeleteVariable(SiteId string, VariableId string) (*interface{}, error) {
+	r := strings.NewReplacer("{siteId}", SiteId, "{variableId}", VariableId)
 	path := r.Replace("/sites/{siteId}/variables/{variableId}")
 	params := map[string]interface{}{}
+	params["siteId"] = SiteId
+	params["variableId"] = VariableId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
+		"content-type":       "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)

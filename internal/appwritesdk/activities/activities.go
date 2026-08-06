@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/models"
-	"net/url"
 	"strings"
 )
 
@@ -21,25 +20,28 @@ func New(clt client.Client) *Activities {
 }
 
 type ListEventsOptions struct {
-	Queries []string
+	Queries        []string
 	enabledSetters map[string]bool
 }
+
 func (options ListEventsOptions) New() *ListEventsOptions {
 	options.enabledSetters = map[string]bool{
 		"Queries": false,
 	}
 	return &options
 }
+
 type ListEventsOption func(*ListEventsOptions)
+
 func (srv *Activities) WithListEventsQueries(v []string) ListEventsOption {
 	return func(o *ListEventsOptions) {
 		o.Queries = v
 		o.enabledSetters["Queries"] = true
 	}
 }
-	
+
 // ListEvents list all events for selected filters.
-func (srv *Activities) ListEvents(optionalSetters ...ListEventsOption)(*models.ActivityEventList, error) {
+func (srv *Activities) ListEvents(optionalSetters ...ListEventsOption) (*models.ActivityEventList, error) {
 	path := "/activities/events"
 	options := ListEventsOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -51,7 +53,7 @@ func (srv *Activities) ListEvents(optionalSetters ...ListEventsOption)(*models.A
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -78,15 +80,16 @@ func (srv *Activities) ListEvents(optionalSetters ...ListEventsOption)(*models.A
 	return &parsed, nil
 
 }
-	
+
 // GetEvent get event by ID.
-func (srv *Activities) GetEvent(EventId string)(*models.ActivityEvent, error) {
-	r := strings.NewReplacer("{eventId}", url.PathEscape(EventId))
+func (srv *Activities) GetEvent(EventId string) (*models.ActivityEvent, error) {
+	r := strings.NewReplacer("{eventId}", EventId)
 	path := r.Replace("/activities/events/{eventId}")
 	params := map[string]interface{}{}
+	params["eventId"] = EventId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)

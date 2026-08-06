@@ -14,8 +14,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/config"
 )
 
-// Ports templates/cli/lib/console-fallback.ts.
-//
 // Three OAuth2 endpoints only exist on Appwrite Cloud. On a self-hosted install
 // they 404, and the same answer has to be assembled from the console endpoints
 // that every install does serve. Without this, these commands work on Cloud and
@@ -30,8 +28,6 @@ const (
 )
 
 // isRouteMissing reports whether an error means the Cloud-only route is absent.
-//
-// Ports isRouteMissing(): a 404 or the API's own route-not-found type.
 func isRouteMissing(err error) bool {
 	if err == nil {
 		return false
@@ -122,8 +118,6 @@ type OrganizationList struct {
 }
 
 // ListOrganizationsForSession lists the organizations the session can see.
-//
-// Ports listOrganizationsForSession().
 func ListOrganizationsForSession(limit, offset *int, search string) (any, error) {
 	if hasOAuth2Session() {
 		client, err := ClientForConsole()
@@ -213,8 +207,6 @@ type ProjectList struct {
 }
 
 // ListProjectsForSession lists the projects in an organization.
-//
-// Ports listProjectsForSession().
 func ListProjectsForSession(organizationID string, limit, offset *int, search string) (any, error) {
 	if hasOAuth2Session() {
 		client, err := ClientForConsole()
@@ -294,8 +286,6 @@ func listAllProjects(organizationID, search string) ([]ProjectSummary, error) {
 }
 
 // GetOrganizationForSession returns the organization the session is acting on.
-//
-// Ports getOrganizationForSession().
 func GetOrganizationForSession(organizationID string) (any, error) {
 	client, err := ClientForOrganization(organizationID)
 	if err != nil {

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/client"
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/appwritesdk/models"
-	"net/url"
 	"strings"
 )
 
@@ -21,25 +20,28 @@ func New(clt client.Client) *Mongo {
 }
 
 type ListOptions struct {
-	Queries []string
+	Queries        []string
 	enabledSetters map[string]bool
 }
+
 func (options ListOptions) New() *ListOptions {
 	options.enabledSetters = map[string]bool{
 		"Queries": false,
 	}
 	return &options
 }
+
 type ListOption func(*ListOptions)
+
 func (srv *Mongo) WithListQueries(v []string) ListOption {
 	return func(o *ListOptions) {
 		o.Queries = v
 		o.enabledSetters["Queries"] = true
 	}
 }
-	
+
 // List list all dedicated databases. Results support pagination.
-func (srv *Mongo) List(optionalSetters ...ListOption)(*models.DedicatedDatabaseList, error) {
+func (srv *Mongo) List(optionalSetters ...ListOption) (*models.DedicatedDatabaseList, error) {
 	path := "/mongo"
 	options := ListOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -51,7 +53,7 @@ func (srv *Mongo) List(optionalSetters ...ListOption)(*models.DedicatedDatabaseL
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -78,41 +80,45 @@ func (srv *Mongo) List(optionalSetters ...ListOption)(*models.DedicatedDatabaseL
 	return &parsed, nil
 
 }
+
 type CreateOptions struct {
-	Version string
-	Specification string
-	Replicas int
-	SyncMode string
-	StandbyRegion string
-	NetworkIdleTimeoutSeconds int
-	NetworkIPAllowlist []string
-	IdleTimeoutMinutes int
-	Pitr bool
-	PitrRetentionDays int
-	StorageAutoscaling bool
+	Version                            string
+	Specification                      string
+	Replicas                           int
+	SyncMode                           string
+	StandbyRegion                      string
+	NetworkIdleTimeoutSeconds          int
+	NetworkIPAllowlist                 []string
+	IdleTimeoutMinutes                 int
+	Pitr                               bool
+	PitrRetentionDays                  int
+	StorageAutoscaling                 bool
 	StorageAutoscalingThresholdPercent int
-	StorageAutoscalingMaxGb int
-	enabledSetters map[string]bool
+	StorageAutoscalingMaxGb            int
+	enabledSetters                     map[string]bool
 }
+
 func (options CreateOptions) New() *CreateOptions {
 	options.enabledSetters = map[string]bool{
-		"Version": false,
-		"Specification": false,
-		"Replicas": false,
-		"SyncMode": false,
-		"StandbyRegion": false,
-		"NetworkIdleTimeoutSeconds": false,
-		"NetworkIPAllowlist": false,
-		"IdleTimeoutMinutes": false,
-		"Pitr": false,
-		"PitrRetentionDays": false,
-		"StorageAutoscaling": false,
+		"Version":                            false,
+		"Specification":                      false,
+		"Replicas":                           false,
+		"SyncMode":                           false,
+		"StandbyRegion":                      false,
+		"NetworkIdleTimeoutSeconds":          false,
+		"NetworkIPAllowlist":                 false,
+		"IdleTimeoutMinutes":                 false,
+		"Pitr":                               false,
+		"PitrRetentionDays":                  false,
+		"StorageAutoscaling":                 false,
 		"StorageAutoscalingThresholdPercent": false,
-		"StorageAutoscalingMaxGb": false,
+		"StorageAutoscalingMaxGb":            false,
 	}
 	return &options
 }
+
 type CreateOption func(*CreateOptions)
+
 func (srv *Mongo) WithCreateVersion(v string) CreateOption {
 	return func(o *CreateOptions) {
 		o.Version = v
@@ -191,10 +197,10 @@ func (srv *Mongo) WithCreateStorageAutoscalingMaxGb(v int) CreateOption {
 		o.enabledSetters["StorageAutoscalingMaxGb"] = true
 	}
 }
-					
+
 // Create create a new dedicated database with the chosen engine and
 // configuration. Status will be 'provisioning' until the database is ready.
-func (srv *Mongo) Create(DatabaseId string, Name string, optionalSetters ...CreateOption)(*models.DedicatedDatabase, error) {
+func (srv *Mongo) Create(DatabaseId string, Name string, optionalSetters ...CreateOption) (*models.DedicatedDatabase, error) {
 	path := "/mongo"
 	options := CreateOptions{}.New()
 	for _, opt := range optionalSetters {
@@ -244,8 +250,8 @@ func (srv *Mongo) Create(DatabaseId string, Name string, optionalSetters ...Crea
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -276,12 +282,12 @@ func (srv *Mongo) Create(DatabaseId string, Name string, optionalSetters ...Crea
 // ListSpecifications list the dedicated database specifications available on
 // the current plan. Each specification reports its resource limits, pricing,
 // and whether it is enabled for the organization.
-func (srv *Mongo) ListSpecifications()(*models.DedicatedDatabaseSpecificationList, error) {
+func (srv *Mongo) ListSpecifications() (*models.DedicatedDatabaseSpecificationList, error) {
 	path := "/mongo/specifications"
 	params := map[string]interface{}{}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -308,16 +314,17 @@ func (srv *Mongo) ListSpecifications()(*models.DedicatedDatabaseSpecificationLis
 	return &parsed, nil
 
 }
-	
+
 // Get get a dedicated database by its unique ID. Returns the database
 // configuration and current status.
-func (srv *Mongo) Get(DatabaseId string)(*models.DedicatedDatabase, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
+func (srv *Mongo) Get(DatabaseId string) (*models.DedicatedDatabase, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId)
 	path := r.Replace("/mongo/{databaseId}")
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -344,59 +351,63 @@ func (srv *Mongo) Get(DatabaseId string)(*models.DedicatedDatabase, error) {
 	return &parsed, nil
 
 }
+
 type UpdateOptions struct {
-	Name string
-	Status string
-	Specification string
-	Replicas int
-	SyncMode string
-	CrossRegionReplicas int
-	StandbyRegion string
-	NetworkIdleTimeoutSeconds int
-	NetworkIPAllowlist []string
-	IdleTimeoutMinutes int
-	Pitr bool
-	PitrRetentionDays int
-	StorageAutoscaling bool
+	Name                               string
+	Status                             string
+	Specification                      string
+	Replicas                           int
+	SyncMode                           string
+	CrossRegionReplicas                int
+	StandbyRegion                      string
+	NetworkIdleTimeoutSeconds          int
+	NetworkIPAllowlist                 []string
+	IdleTimeoutMinutes                 int
+	Pitr                               bool
+	PitrRetentionDays                  int
+	StorageAutoscaling                 bool
 	StorageAutoscalingThresholdPercent int
-	StorageAutoscalingMaxGb int
-	MetricsTraceSampleRate float64
-	MetricsSlowQueryLogThresholdMs int
-	SqlApiEnabled bool
-	SqlApiAllowedStatements []string
-	SqlApiMaxRows int
-	SqlApiMaxBytes int
-	SqlApiTimeoutSeconds int
-	enabledSetters map[string]bool
+	StorageAutoscalingMaxGb            int
+	MetricsTraceSampleRate             float64
+	MetricsSlowQueryLogThresholdMs     int
+	SqlApiEnabled                      bool
+	SqlApiAllowedStatements            []string
+	SqlApiMaxRows                      int
+	SqlApiMaxBytes                     int
+	SqlApiTimeoutSeconds               int
+	enabledSetters                     map[string]bool
 }
+
 func (options UpdateOptions) New() *UpdateOptions {
 	options.enabledSetters = map[string]bool{
-		"Name": false,
-		"Status": false,
-		"Specification": false,
-		"Replicas": false,
-		"SyncMode": false,
-		"CrossRegionReplicas": false,
-		"StandbyRegion": false,
-		"NetworkIdleTimeoutSeconds": false,
-		"NetworkIPAllowlist": false,
-		"IdleTimeoutMinutes": false,
-		"Pitr": false,
-		"PitrRetentionDays": false,
-		"StorageAutoscaling": false,
+		"Name":                               false,
+		"Status":                             false,
+		"Specification":                      false,
+		"Replicas":                           false,
+		"SyncMode":                           false,
+		"CrossRegionReplicas":                false,
+		"StandbyRegion":                      false,
+		"NetworkIdleTimeoutSeconds":          false,
+		"NetworkIPAllowlist":                 false,
+		"IdleTimeoutMinutes":                 false,
+		"Pitr":                               false,
+		"PitrRetentionDays":                  false,
+		"StorageAutoscaling":                 false,
 		"StorageAutoscalingThresholdPercent": false,
-		"StorageAutoscalingMaxGb": false,
-		"MetricsTraceSampleRate": false,
-		"MetricsSlowQueryLogThresholdMs": false,
-		"SqlApiEnabled": false,
-		"SqlApiAllowedStatements": false,
-		"SqlApiMaxRows": false,
-		"SqlApiMaxBytes": false,
-		"SqlApiTimeoutSeconds": false,
+		"StorageAutoscalingMaxGb":            false,
+		"MetricsTraceSampleRate":             false,
+		"MetricsSlowQueryLogThresholdMs":     false,
+		"SqlApiEnabled":                      false,
+		"SqlApiAllowedStatements":            false,
+		"SqlApiMaxRows":                      false,
+		"SqlApiMaxBytes":                     false,
+		"SqlApiTimeoutSeconds":               false,
 	}
 	return &options
 }
+
 type UpdateOption func(*UpdateOptions)
+
 func (srv *Mongo) WithUpdateName(v string) UpdateOption {
 	return func(o *UpdateOptions) {
 		o.Name = v
@@ -529,19 +540,20 @@ func (srv *Mongo) WithUpdateSqlApiTimeoutSeconds(v int) UpdateOption {
 		o.enabledSetters["SqlApiTimeoutSeconds"] = true
 	}
 }
-			
+
 // Update update a dedicated database configuration. All changes are applied
 // with zero downtime. Specification changes (cpu, memory, storage) are
 // handled via rolling cutover. Storage expansion is done online. All other
 // settings are applied in-place.
-func (srv *Mongo) Update(DatabaseId string, optionalSetters ...UpdateOption)(*models.DedicatedDatabase, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
+func (srv *Mongo) Update(DatabaseId string, optionalSetters ...UpdateOption) (*models.DedicatedDatabase, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId)
 	path := r.Replace("/mongo/{databaseId}")
 	options := UpdateOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
 	if options.enabledSetters["Name"] {
 		params["name"] = options.Name
 	}
@@ -610,8 +622,8 @@ func (srv *Mongo) Update(DatabaseId string, optionalSetters ...UpdateOption)(*mo
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -638,19 +650,20 @@ func (srv *Mongo) Update(DatabaseId string, optionalSetters ...UpdateOption)(*mo
 	return &parsed, nil
 
 }
-	
+
 // Delete delete a dedicated database. This action is irreversible. The
 // database status will be set to 'deleting' and all resources will be cleaned
 // up. Deletion is allowed from any state, and repeating the call
 // re-dispatches the cleanup.
-func (srv *Mongo) Delete(DatabaseId string)(*interface{}, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
+func (srv *Mongo) Delete(DatabaseId string) (*interface{}, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId)
 	path := r.Replace("/mongo/{databaseId}")
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -676,40 +689,45 @@ func (srv *Mongo) Delete(DatabaseId string)(*interface{}, error) {
 	return &parsed, nil
 
 }
+
 type ListBackupsOptions struct {
-	Queries []string
+	Queries        []string
 	enabledSetters map[string]bool
 }
+
 func (options ListBackupsOptions) New() *ListBackupsOptions {
 	options.enabledSetters = map[string]bool{
 		"Queries": false,
 	}
 	return &options
 }
+
 type ListBackupsOption func(*ListBackupsOptions)
+
 func (srv *Mongo) WithListBackupsQueries(v []string) ListBackupsOption {
 	return func(o *ListBackupsOptions) {
 		o.Queries = v
 		o.enabledSetters["Queries"] = true
 	}
 }
-			
+
 // ListBackups list all backups for a dedicated database. Results can be
 // filtered by status and type.
-func (srv *Mongo) ListBackups(DatabaseId string, optionalSetters ...ListBackupsOption)(*models.DedicatedDatabaseBackupList, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
+func (srv *Mongo) ListBackups(DatabaseId string, optionalSetters ...ListBackupsOption) (*models.DedicatedDatabaseBackupList, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId)
 	path := r.Replace("/mongo/{databaseId}/backups")
 	options := ListBackupsOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
 	if options.enabledSetters["Queries"] {
 		params["queries"] = options.Queries
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -736,42 +754,47 @@ func (srv *Mongo) ListBackups(DatabaseId string, optionalSetters ...ListBackupsO
 	return &parsed, nil
 
 }
+
 type CreateBackupOptions struct {
-	Type string
+	Type           string
 	enabledSetters map[string]bool
 }
+
 func (options CreateBackupOptions) New() *CreateBackupOptions {
 	options.enabledSetters = map[string]bool{
 		"Type": false,
 	}
 	return &options
 }
+
 type CreateBackupOption func(*CreateBackupOptions)
+
 func (srv *Mongo) WithCreateBackupType(v string) CreateBackupOption {
 	return func(o *CreateBackupOptions) {
 		o.Type = v
 		o.enabledSetters["Type"] = true
 	}
 }
-			
+
 // CreateBackup create a manual backup of a dedicated database. The backup
 // will be created asynchronously and its status can be checked via the get
 // backup endpoint.
-func (srv *Mongo) CreateBackup(DatabaseId string, optionalSetters ...CreateBackupOption)(*models.DedicatedDatabaseBackup, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
+func (srv *Mongo) CreateBackup(DatabaseId string, optionalSetters ...CreateBackupOption) (*models.DedicatedDatabaseBackup, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId)
 	path := r.Replace("/mongo/{databaseId}/backups")
 	options := CreateBackupOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
 	if options.enabledSetters["Type"] {
 		params["type"] = options.Type
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -798,39 +821,44 @@ func (srv *Mongo) CreateBackup(DatabaseId string, optionalSetters ...CreateBacku
 	return &parsed, nil
 
 }
+
 type ListBackupPoliciesOptions struct {
-	Queries []string
+	Queries        []string
 	enabledSetters map[string]bool
 }
+
 func (options ListBackupPoliciesOptions) New() *ListBackupPoliciesOptions {
 	options.enabledSetters = map[string]bool{
 		"Queries": false,
 	}
 	return &options
 }
+
 type ListBackupPoliciesOption func(*ListBackupPoliciesOptions)
+
 func (srv *Mongo) WithListBackupPoliciesQueries(v []string) ListBackupPoliciesOption {
 	return func(o *ListBackupPoliciesOptions) {
 		o.Queries = v
 		o.enabledSetters["Queries"] = true
 	}
 }
-			
+
 // ListBackupPolicies list scheduled backup policies for a dedicated database.
-func (srv *Mongo) ListBackupPolicies(DatabaseId string, optionalSetters ...ListBackupPoliciesOption)(*models.BackupPolicyList, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
+func (srv *Mongo) ListBackupPolicies(DatabaseId string, optionalSetters ...ListBackupPoliciesOption) (*models.BackupPolicyList, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId)
 	path := r.Replace("/mongo/{databaseId}/backups/policies")
 	options := ListBackupPoliciesOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
 	if options.enabledSetters["Queries"] {
 		params["queries"] = options.Queries
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -857,19 +885,23 @@ func (srv *Mongo) ListBackupPolicies(DatabaseId string, optionalSetters ...ListB
 	return &parsed, nil
 
 }
+
 type CreateBackupPolicyOptions struct {
-	Type string
-	Enabled bool
+	Type           string
+	Enabled        bool
 	enabledSetters map[string]bool
 }
+
 func (options CreateBackupPolicyOptions) New() *CreateBackupPolicyOptions {
 	options.enabledSetters = map[string]bool{
-		"Type": false,
+		"Type":    false,
 		"Enabled": false,
 	}
 	return &options
 }
+
 type CreateBackupPolicyOption func(*CreateBackupPolicyOptions)
+
 func (srv *Mongo) WithCreateBackupPolicyType(v string) CreateBackupPolicyOption {
 	return func(o *CreateBackupPolicyOptions) {
 		o.Type = v
@@ -882,17 +914,18 @@ func (srv *Mongo) WithCreateBackupPolicyEnabled(v bool) CreateBackupPolicyOption
 		o.enabledSetters["Enabled"] = true
 	}
 }
-											
+
 // CreateBackupPolicy create a scheduled backup policy for a dedicated
 // database.
-func (srv *Mongo) CreateBackupPolicy(DatabaseId string, PolicyId string, Name string, Schedule string, Retention int, optionalSetters ...CreateBackupPolicyOption)(*models.BackupPolicy, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
+func (srv *Mongo) CreateBackupPolicy(DatabaseId string, PolicyId string, Name string, Schedule string, Retention int, optionalSetters ...CreateBackupPolicyOption) (*models.BackupPolicy, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId)
 	path := r.Replace("/mongo/{databaseId}/backups/policies")
 	options := CreateBackupPolicyOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
 	params["policyId"] = PolicyId
 	params["name"] = Name
 	params["schedule"] = Schedule
@@ -905,8 +938,8 @@ func (srv *Mongo) CreateBackupPolicy(DatabaseId string, PolicyId string, Name st
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -933,15 +966,17 @@ func (srv *Mongo) CreateBackupPolicy(DatabaseId string, PolicyId string, Name st
 	return &parsed, nil
 
 }
-			
+
 // GetBackupPolicy get a scheduled backup policy for a dedicated database.
-func (srv *Mongo) GetBackupPolicy(DatabaseId string, PolicyId string)(*models.BackupPolicy, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId), "{policyId}", url.PathEscape(PolicyId))
+func (srv *Mongo) GetBackupPolicy(DatabaseId string, PolicyId string) (*models.BackupPolicy, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId, "{policyId}", PolicyId)
 	path := r.Replace("/mongo/{databaseId}/backups/policies/{policyId}")
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
+	params["policyId"] = PolicyId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -968,23 +1003,27 @@ func (srv *Mongo) GetBackupPolicy(DatabaseId string, PolicyId string)(*models.Ba
 	return &parsed, nil
 
 }
+
 type UpdateBackupPolicyOptions struct {
-	Name string
-	Schedule string
-	Retention int
-	Enabled bool
+	Name           string
+	Schedule       string
+	Retention      int
+	Enabled        bool
 	enabledSetters map[string]bool
 }
+
 func (options UpdateBackupPolicyOptions) New() *UpdateBackupPolicyOptions {
 	options.enabledSetters = map[string]bool{
-		"Name": false,
-		"Schedule": false,
+		"Name":      false,
+		"Schedule":  false,
 		"Retention": false,
-		"Enabled": false,
+		"Enabled":   false,
 	}
 	return &options
 }
+
 type UpdateBackupPolicyOption func(*UpdateBackupPolicyOptions)
+
 func (srv *Mongo) WithUpdateBackupPolicyName(v string) UpdateBackupPolicyOption {
 	return func(o *UpdateBackupPolicyOptions) {
 		o.Name = v
@@ -1009,17 +1048,19 @@ func (srv *Mongo) WithUpdateBackupPolicyEnabled(v bool) UpdateBackupPolicyOption
 		o.enabledSetters["Enabled"] = true
 	}
 }
-					
+
 // UpdateBackupPolicy update a scheduled backup policy for a dedicated
 // database.
-func (srv *Mongo) UpdateBackupPolicy(DatabaseId string, PolicyId string, optionalSetters ...UpdateBackupPolicyOption)(*models.BackupPolicy, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId), "{policyId}", url.PathEscape(PolicyId))
+func (srv *Mongo) UpdateBackupPolicy(DatabaseId string, PolicyId string, optionalSetters ...UpdateBackupPolicyOption) (*models.BackupPolicy, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId, "{policyId}", PolicyId)
 	path := r.Replace("/mongo/{databaseId}/backups/policies/{policyId}")
 	options := UpdateBackupPolicyOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
+	params["policyId"] = PolicyId
 	if options.enabledSetters["Name"] {
 		params["name"] = options.Name
 	}
@@ -1034,8 +1075,8 @@ func (srv *Mongo) UpdateBackupPolicy(DatabaseId string, PolicyId string, optiona
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -1062,18 +1103,20 @@ func (srv *Mongo) UpdateBackupPolicy(DatabaseId string, PolicyId string, optiona
 	return &parsed, nil
 
 }
-			
+
 // DeleteBackupPolicy delete a scheduled backup policy for a dedicated
 // database. Backups already taken by the policy are kept until their
 // retention expires.
-func (srv *Mongo) DeleteBackupPolicy(DatabaseId string, PolicyId string)(*interface{}, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId), "{policyId}", url.PathEscape(PolicyId))
+func (srv *Mongo) DeleteBackupPolicy(DatabaseId string, PolicyId string) (*interface{}, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId, "{policyId}", PolicyId)
 	path := r.Replace("/mongo/{databaseId}/backups/policies/{policyId}")
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
+	params["policyId"] = PolicyId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -1099,21 +1142,25 @@ func (srv *Mongo) DeleteBackupPolicy(DatabaseId string, PolicyId string)(*interf
 	return &parsed, nil
 
 }
+
 type UpdateBackupStorageOptions struct {
-	Region string
-	Prefix string
-	Endpoint string
+	Region         string
+	Prefix         string
+	Endpoint       string
 	enabledSetters map[string]bool
 }
+
 func (options UpdateBackupStorageOptions) New() *UpdateBackupStorageOptions {
 	options.enabledSetters = map[string]bool{
-		"Region": false,
-		"Prefix": false,
+		"Region":   false,
+		"Prefix":   false,
 		"Endpoint": false,
 	}
 	return &options
 }
+
 type UpdateBackupStorageOption func(*UpdateBackupStorageOptions)
+
 func (srv *Mongo) WithUpdateBackupStorageRegion(v string) UpdateBackupStorageOption {
 	return func(o *UpdateBackupStorageOptions) {
 		o.Region = v
@@ -1132,21 +1179,24 @@ func (srv *Mongo) WithUpdateBackupStorageEndpoint(v string) UpdateBackupStorageO
 		o.enabledSetters["Endpoint"] = true
 	}
 }
-											
+
 // UpdateBackupStorage configure off-cluster backup storage for a dedicated
 // database. Supports S3, GCS, and Azure Blob Storage destinations. Backups
 // will be stored to the configured destination in addition to on-cluster
 // storage.
-func (srv *Mongo) UpdateBackupStorage(DatabaseId string, Provider string, Bucket string, AccessKey string, SecretKey string, optionalSetters ...UpdateBackupStorageOption)(*models.DedicatedDatabaseBackupStorage, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
+func (srv *Mongo) UpdateBackupStorage(DatabaseId string, Provider string, Bucket string, AccessKey string, SecretKey string, optionalSetters ...UpdateBackupStorageOption) (*models.DedicatedDatabaseBackupStorage, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId)
 	path := r.Replace("/mongo/{databaseId}/backups/storage")
 	options := UpdateBackupStorageOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
 	params["provider"] = Provider
 	params["bucket"] = Bucket
+	params["accessKey"] = AccessKey
+	params["secretKey"] = SecretKey
 	if options.enabledSetters["Region"] {
 		params["region"] = options.Region
 	}
@@ -1156,12 +1206,10 @@ func (srv *Mongo) UpdateBackupStorage(DatabaseId string, Provider string, Bucket
 	if options.enabledSetters["Endpoint"] {
 		params["endpoint"] = options.Endpoint
 	}
-	params["accessKey"] = AccessKey
-	params["secretKey"] = SecretKey
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PUT", path, headers, params)
@@ -1188,16 +1236,18 @@ func (srv *Mongo) UpdateBackupStorage(DatabaseId string, Provider string, Bucket
 	return &parsed, nil
 
 }
-			
+
 // GetBackup get details of a specific database backup including its status,
 // size, and timestamps.
-func (srv *Mongo) GetBackup(DatabaseId string, BackupId string)(*models.DedicatedDatabaseBackup, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId), "{backupId}", url.PathEscape(BackupId))
+func (srv *Mongo) GetBackup(DatabaseId string, BackupId string) (*models.DedicatedDatabaseBackup, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId, "{backupId}", BackupId)
 	path := r.Replace("/mongo/{databaseId}/backups/{backupId}")
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
+	params["backupId"] = BackupId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1224,17 +1274,19 @@ func (srv *Mongo) GetBackup(DatabaseId string, BackupId string)(*models.Dedicate
 	return &parsed, nil
 
 }
-			
+
 // DeleteBackup delete a database backup. This will permanently remove the
 // backup from storage and cannot be undone.
-func (srv *Mongo) DeleteBackup(DatabaseId string, BackupId string)(*interface{}, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId), "{backupId}", url.PathEscape(BackupId))
+func (srv *Mongo) DeleteBackup(DatabaseId string, BackupId string) (*interface{}, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId, "{backupId}", BackupId)
 	path := r.Replace("/mongo/{databaseId}/backups/{backupId}")
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
+	params["backupId"] = BackupId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -1260,16 +1312,17 @@ func (srv *Mongo) DeleteBackup(DatabaseId string, BackupId string)(*interface{},
 	return &parsed, nil
 
 }
-	
+
 // ListBranches list all ephemeral branches for a dedicated database. Returns
 // branch metadata including ID, name, namespace, and expiration time.
-func (srv *Mongo) ListBranches(DatabaseId string)(*models.DedicatedDatabaseBranchList, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
+func (srv *Mongo) ListBranches(DatabaseId string) (*models.DedicatedDatabaseBranchList, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId)
 	path := r.Replace("/mongo/{databaseId}/branches")
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1296,19 +1349,23 @@ func (srv *Mongo) ListBranches(DatabaseId string)(*models.DedicatedDatabaseBranc
 	return &parsed, nil
 
 }
+
 type CreateBranchOptions struct {
-	BranchId string
-	Ttl int
+	BranchId       string
+	Ttl            int
 	enabledSetters map[string]bool
 }
+
 func (options CreateBranchOptions) New() *CreateBranchOptions {
 	options.enabledSetters = map[string]bool{
 		"BranchId": false,
-		"Ttl": false,
+		"Ttl":      false,
 	}
 	return &options
 }
+
 type CreateBranchOption func(*CreateBranchOptions)
+
 func (srv *Mongo) WithCreateBranchBranchId(v string) CreateBranchOption {
 	return func(o *CreateBranchOptions) {
 		o.BranchId = v
@@ -1321,20 +1378,21 @@ func (srv *Mongo) WithCreateBranchTtl(v int) CreateBranchOption {
 		o.enabledSetters["Ttl"] = true
 	}
 }
-			
+
 // CreateBranch create an ephemeral database branch from the primary via PVC
 // snapshot. The branch is a full copy of the database at the current point in
 // time, useful for testing schema migrations or running experiments without
 // affecting production data. Branches expire after the configured TTL
 // (default 24 hours). The branch is created asynchronously.
-func (srv *Mongo) CreateBranch(DatabaseId string, optionalSetters ...CreateBranchOption)(*models.DedicatedDatabase, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
+func (srv *Mongo) CreateBranch(DatabaseId string, optionalSetters ...CreateBranchOption) (*models.DedicatedDatabase, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId)
 	path := r.Replace("/mongo/{databaseId}/branches")
 	options := CreateBranchOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
 	if options.enabledSetters["BranchId"] {
 		params["branchId"] = options.BranchId
 	}
@@ -1343,8 +1401,8 @@ func (srv *Mongo) CreateBranch(DatabaseId string, optionalSetters ...CreateBranc
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -1371,18 +1429,20 @@ func (srv *Mongo) CreateBranch(DatabaseId string, optionalSetters ...CreateBranc
 	return &parsed, nil
 
 }
-			
+
 // DeleteBranch delete an ephemeral database branch. This removes the branch
 // namespace, its PVC, and the associated VolumeSnapshot. The deletion runs
 // asynchronously and is irreversible.
-func (srv *Mongo) DeleteBranch(DatabaseId string, BranchId string)(*models.DedicatedDatabase, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId), "{branchId}", url.PathEscape(BranchId))
+func (srv *Mongo) DeleteBranch(DatabaseId string, BranchId string) (*models.DedicatedDatabase, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId, "{branchId}", BranchId)
 	path := r.Replace("/mongo/{databaseId}/branches/{branchId}")
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
+	params["branchId"] = BranchId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("DELETE", path, headers, params)
@@ -1409,19 +1469,20 @@ func (srv *Mongo) DeleteBranch(DatabaseId string, BranchId string)(*models.Dedic
 	return &parsed, nil
 
 }
-	
+
 // UpdateCredentials rotate the primary connection credentials for a dedicated
 // database. Generates a new password and updates the database atomically.
 // Previous credentials stop working immediately. Returns the database with a
 // refreshed connection string carrying the new password.
-func (srv *Mongo) UpdateCredentials(DatabaseId string)(*models.DedicatedDatabase, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
+func (srv *Mongo) UpdateCredentials(DatabaseId string) (*models.DedicatedDatabase, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId)
 	path := r.Replace("/mongo/{databaseId}/credentials")
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -1448,44 +1509,49 @@ func (srv *Mongo) UpdateCredentials(DatabaseId string)(*models.DedicatedDatabase
 	return &parsed, nil
 
 }
+
 type CreateFailoverOptions struct {
 	TargetReplicaId string
-	enabledSetters map[string]bool
+	enabledSetters  map[string]bool
 }
+
 func (options CreateFailoverOptions) New() *CreateFailoverOptions {
 	options.enabledSetters = map[string]bool{
 		"TargetReplicaId": false,
 	}
 	return &options
 }
+
 type CreateFailoverOption func(*CreateFailoverOptions)
+
 func (srv *Mongo) WithCreateFailoverTargetReplicaId(v string) CreateFailoverOption {
 	return func(o *CreateFailoverOptions) {
 		o.TargetReplicaId = v
 		o.enabledSetters["TargetReplicaId"] = true
 	}
 }
-			
+
 // CreateFailover trigger a manual failover for a dedicated database with high
 // availability enabled. Promotes a replica to primary. The failover runs
 // asynchronously; poll the database document for status updates. A database
 // left mid-operation by a failover that did not finish also accepts this call
 // as a repair, provided `targetReplicaId` names the member to promote.
-func (srv *Mongo) CreateFailover(DatabaseId string, optionalSetters ...CreateFailoverOption)(*models.DedicatedDatabase, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
+func (srv *Mongo) CreateFailover(DatabaseId string, optionalSetters ...CreateFailoverOption) (*models.DedicatedDatabase, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId)
 	path := r.Replace("/mongo/{databaseId}/failovers")
 	options := CreateFailoverOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
 	if options.enabledSetters["TargetReplicaId"] {
 		params["targetReplicaId"] = options.TargetReplicaId
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -1512,20 +1578,21 @@ func (srv *Mongo) CreateFailover(DatabaseId string, optionalSetters ...CreateFai
 	return &parsed, nil
 
 }
-					
+
 // UpdateMaintenance update the maintenance window for a dedicated database.
 // Maintenance operations like minor version upgrades will be performed during
 // this window.
-func (srv *Mongo) UpdateMaintenance(DatabaseId string, Day string, HourUtc int)(*models.DedicatedDatabase, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
+func (srv *Mongo) UpdateMaintenance(DatabaseId string, Day string, HourUtc int) (*models.DedicatedDatabase, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId)
 	path := r.Replace("/mongo/{databaseId}/maintenance")
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
 	params["day"] = Day
 	params["hourUtc"] = HourUtc
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("PATCH", path, headers, params)
@@ -1552,44 +1619,49 @@ func (srv *Mongo) UpdateMaintenance(DatabaseId string, Day string, HourUtc int)(
 	return &parsed, nil
 
 }
+
 type CreateMigrationOptions struct {
-	Specification string
+	Specification  string
 	enabledSetters map[string]bool
 }
+
 func (options CreateMigrationOptions) New() *CreateMigrationOptions {
 	options.enabledSetters = map[string]bool{
 		"Specification": false,
 	}
 	return &options
 }
+
 type CreateMigrationOption func(*CreateMigrationOptions)
+
 func (srv *Mongo) WithCreateMigrationSpecification(v string) CreateMigrationOption {
 	return func(o *CreateMigrationOptions) {
 		o.Specification = v
 		o.enabledSetters["Specification"] = true
 	}
 }
-					
+
 // CreateMigration migrate a database between shared and dedicated types.
 // Shared to dedicated provisions an always-on dedicated instance; dedicated
 // to shared converts to a serverless instance that scales to zero when idle.
 // Data is copied to the target with a brief read-only window during cutover.
-func (srv *Mongo) CreateMigration(DatabaseId string, TargetType string, optionalSetters ...CreateMigrationOption)(*models.DedicatedDatabase, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
+func (srv *Mongo) CreateMigration(DatabaseId string, TargetType string, optionalSetters ...CreateMigrationOption) (*models.DedicatedDatabase, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId)
 	path := r.Replace("/mongo/{databaseId}/migrations")
 	options := CreateMigrationOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
 	params["targetType"] = TargetType
 	if options.enabledSetters["Specification"] {
 		params["specification"] = options.Specification
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -1616,21 +1688,25 @@ func (srv *Mongo) CreateMigration(DatabaseId string, TargetType string, optional
 	return &parsed, nil
 
 }
+
 type ListOperationsOptions struct {
-	Status string
-	Limit int
-	Offset int
+	Status         string
+	Limit          int
+	Offset         int
 	enabledSetters map[string]bool
 }
+
 func (options ListOperationsOptions) New() *ListOperationsOptions {
 	options.enabledSetters = map[string]bool{
 		"Status": false,
-		"Limit": false,
+		"Limit":  false,
 		"Offset": false,
 	}
 	return &options
 }
+
 type ListOperationsOption func(*ListOperationsOptions)
+
 func (srv *Mongo) WithListOperationsStatus(v string) ListOperationsOption {
 	return func(o *ListOperationsOptions) {
 		o.Status = v
@@ -1649,19 +1725,20 @@ func (srv *Mongo) WithListOperationsOffset(v int) ListOperationsOption {
 		o.enabledSetters["Offset"] = true
 	}
 }
-			
+
 // ListOperations list the lifecycle operations recorded for a dedicated
 // database, newest first. Every provision, update, restore, backup and
 // replication action is recorded here with its outcome, including an attempt
 // that was abandoned because another worker took over the database.
-func (srv *Mongo) ListOperations(DatabaseId string, optionalSetters ...ListOperationsOption)(*models.DedicatedDatabaseOperationList, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
+func (srv *Mongo) ListOperations(DatabaseId string, optionalSetters ...ListOperationsOption) (*models.DedicatedDatabaseOperationList, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId)
 	path := r.Replace("/mongo/{databaseId}/operations")
 	options := ListOperationsOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
 	if options.enabledSetters["Status"] {
 		params["status"] = options.Status
 	}
@@ -1673,7 +1750,7 @@ func (srv *Mongo) ListOperations(DatabaseId string, optionalSetters ...ListOpera
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1700,16 +1777,17 @@ func (srv *Mongo) ListOperations(DatabaseId string, optionalSetters ...ListOpera
 	return &parsed, nil
 
 }
-	
+
 // GetPitr get available point-in-time recovery windows for a dedicated
 // database. Returns the earliest and latest recovery points.
-func (srv *Mongo) GetPitr(DatabaseId string)(*models.DedicatedDatabasePITRWindows, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
+func (srv *Mongo) GetPitr(DatabaseId string) (*models.DedicatedDatabasePITRWindows, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId)
 	path := r.Replace("/mongo/{databaseId}/pitr")
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1736,16 +1814,17 @@ func (srv *Mongo) GetPitr(DatabaseId string)(*models.DedicatedDatabasePITRWindow
 	return &parsed, nil
 
 }
-	
+
 // GetReplicas get high availability status for a dedicated database. Returns
 // replica statuses, replication lag, and sync mode.
-func (srv *Mongo) GetReplicas(DatabaseId string)(*models.DedicatedDatabaseReplicas, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
+func (srv *Mongo) GetReplicas(DatabaseId string) (*models.DedicatedDatabaseReplicas, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId)
 	path := r.Replace("/mongo/{databaseId}/replicas")
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1772,23 +1851,27 @@ func (srv *Mongo) GetReplicas(DatabaseId string)(*models.DedicatedDatabaseReplic
 	return &parsed, nil
 
 }
+
 type ListRestorationsOptions struct {
-	Status string
-	Type string
-	Limit int
-	Offset int
+	Status         string
+	Type           string
+	Limit          int
+	Offset         int
 	enabledSetters map[string]bool
 }
+
 func (options ListRestorationsOptions) New() *ListRestorationsOptions {
 	options.enabledSetters = map[string]bool{
 		"Status": false,
-		"Type": false,
-		"Limit": false,
+		"Type":   false,
+		"Limit":  false,
 		"Offset": false,
 	}
 	return &options
 }
+
 type ListRestorationsOption func(*ListRestorationsOptions)
+
 func (srv *Mongo) WithListRestorationsStatus(v string) ListRestorationsOption {
 	return func(o *ListRestorationsOptions) {
 		o.Status = v
@@ -1813,17 +1896,18 @@ func (srv *Mongo) WithListRestorationsOffset(v int) ListRestorationsOption {
 		o.enabledSetters["Offset"] = true
 	}
 }
-			
+
 // ListRestorations list all restorations for a dedicated database. Results
 // can be filtered by status and type.
-func (srv *Mongo) ListRestorations(DatabaseId string, optionalSetters ...ListRestorationsOption)(*models.DedicatedDatabaseRestorationList, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
+func (srv *Mongo) ListRestorations(DatabaseId string, optionalSetters ...ListRestorationsOption) (*models.DedicatedDatabaseRestorationList, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId)
 	path := r.Replace("/mongo/{databaseId}/restorations")
 	options := ListRestorationsOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
 	if options.enabledSetters["Status"] {
 		params["status"] = options.Status
 	}
@@ -1838,7 +1922,7 @@ func (srv *Mongo) ListRestorations(DatabaseId string, optionalSetters ...ListRes
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1865,21 +1949,25 @@ func (srv *Mongo) ListRestorations(DatabaseId string, optionalSetters ...ListRes
 	return &parsed, nil
 
 }
+
 type CreateRestorationOptions struct {
-	Type string
-	BackupId string
-	TargetTime string
+	Type           string
+	BackupId       string
+	TargetTime     string
 	enabledSetters map[string]bool
 }
+
 func (options CreateRestorationOptions) New() *CreateRestorationOptions {
 	options.enabledSetters = map[string]bool{
-		"Type": false,
-		"BackupId": false,
+		"Type":       false,
+		"BackupId":   false,
 		"TargetTime": false,
 	}
 	return &options
 }
+
 type CreateRestorationOption func(*CreateRestorationOptions)
+
 func (srv *Mongo) WithCreateRestorationType(v string) CreateRestorationOption {
 	return func(o *CreateRestorationOptions) {
 		o.Type = v
@@ -1898,19 +1986,20 @@ func (srv *Mongo) WithCreateRestorationTargetTime(v string) CreateRestorationOpt
 		o.enabledSetters["TargetTime"] = true
 	}
 }
-			
+
 // CreateRestoration restore a database from a backup or to a specific point
 // in time (PITR). For backup restoration, provide a backupId. For PITR,
 // provide a targetTime as an ISO 8601 datetime. PITR requires the database to
 // have PITR enabled and is only available for enterprise databases.
-func (srv *Mongo) CreateRestoration(DatabaseId string, optionalSetters ...CreateRestorationOption)(*models.DedicatedDatabaseRestoration, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
+func (srv *Mongo) CreateRestoration(DatabaseId string, optionalSetters ...CreateRestorationOption) (*models.DedicatedDatabaseRestoration, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId)
 	path := r.Replace("/mongo/{databaseId}/restorations")
 	options := CreateRestorationOptions{}.New()
 	for _, opt := range optionalSetters {
 		opt(options)
 	}
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
 	if options.enabledSetters["Type"] {
 		params["type"] = options.Type
 	}
@@ -1922,8 +2011,8 @@ func (srv *Mongo) CreateRestoration(DatabaseId string, optionalSetters ...Create
 	}
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)
@@ -1950,16 +2039,18 @@ func (srv *Mongo) CreateRestoration(DatabaseId string, optionalSetters ...Create
 	return &parsed, nil
 
 }
-			
+
 // GetRestoration get details of a specific database restoration including its
 // status, type, and timestamps.
-func (srv *Mongo) GetRestoration(DatabaseId string, RestorationId string)(*models.DedicatedDatabaseRestoration, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId), "{restorationId}", url.PathEscape(RestorationId))
+func (srv *Mongo) GetRestoration(DatabaseId string, RestorationId string) (*models.DedicatedDatabaseRestoration, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId, "{restorationId}", RestorationId)
 	path := r.Replace("/mongo/{databaseId}/restorations/{restorationId}")
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
+	params["restorationId"] = RestorationId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -1986,17 +2077,18 @@ func (srv *Mongo) GetRestoration(DatabaseId string, RestorationId string)(*model
 	return &parsed, nil
 
 }
-	
+
 // GetStatus get real-time health and status information for a dedicated
 // database. Returns health status, readiness, uptime, connection info,
 // replica status, and volume information.
-func (srv *Mongo) GetStatus(DatabaseId string)(*models.DatabaseStatus, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
+func (srv *Mongo) GetStatus(DatabaseId string) (*models.DatabaseStatus, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId)
 	path := r.Replace("/mongo/{databaseId}/status")
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"accept": "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("GET", path, headers, params)
@@ -2023,18 +2115,19 @@ func (srv *Mongo) GetStatus(DatabaseId string)(*models.DatabaseStatus, error) {
 	return &parsed, nil
 
 }
-			
+
 // CreateUpgrade upgrade a dedicated database to a new engine version. Uses
 // blue-green deployment for zero-downtime cutover.
-func (srv *Mongo) CreateUpgrade(DatabaseId string, TargetVersion string)(*models.DedicatedDatabase, error) {
-	r := strings.NewReplacer("{databaseId}", url.PathEscape(DatabaseId))
+func (srv *Mongo) CreateUpgrade(DatabaseId string, TargetVersion string) (*models.DedicatedDatabase, error) {
+	r := strings.NewReplacer("{databaseId}", DatabaseId)
 	path := r.Replace("/mongo/{databaseId}/upgrades")
 	params := map[string]interface{}{}
+	params["databaseId"] = DatabaseId
 	params["targetVersion"] = TargetVersion
 	headers := map[string]interface{}{
 		"X-Appwrite-Project": srv.client.Config["project"],
-		"content-type": "application/json",
-		"accept": "application/json",
+		"content-type":       "application/json",
+		"accept":             "application/json",
 	}
 
 	resp, err := srv.client.Call("POST", path, headers, params)

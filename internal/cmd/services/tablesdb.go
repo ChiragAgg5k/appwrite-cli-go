@@ -30,10 +30,6 @@ func NewTablesDBCommand() *cobra.Command {
 	cmd.AddCommand(newTablesDBUpdateCommand())
 	cmd.AddCommand(newTablesDBDeleteCommand())
 	cmd.AddCommand(newTablesDBCreateFailoverCommand())
-	cmd.AddCommand(newTablesDBListMigrationsCommand())
-	cmd.AddCommand(newTablesDBCreateMigrationCommand())
-	cmd.AddCommand(newTablesDBGetMigrationCommand())
-	cmd.AddCommand(newTablesDBDeleteMigrationCommand())
 	cmd.AddCommand(newTablesDBListOperationsCommand())
 	cmd.AddCommand(newTablesDBGetReplicasCommand())
 	cmd.AddCommand(newTablesDBGetStatusCommand())
@@ -647,123 +643,6 @@ func newTablesDBCreateFailoverCommand() *cobra.Command {
 	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&targetReplicaId, "target-replica-id", "", "Target replica ID to promote. If not specified, the healthiest replica is selected.")
-	return cmd
-}
-
-func newTablesDBListMigrationsCommand() *cobra.Command {
-	var databaseId string
-
-	cmd := &cobra.Command{
-		Use:   "list-migrations",
-		Short: "List the dedicated migrations for a TablesDB database. A database has at most one in-flight migration.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForProject("")
-			if err != nil {
-				return err
-			}
-			service := tablesdb.New(client)
-
-			result, err := service.ListMigrations(databaseId)
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
-	_ = cmd.MarkFlagRequired("database-id")
-	return cmd
-}
-
-func newTablesDBCreateMigrationCommand() *cobra.Command {
-	var databaseId string
-	var specification string
-
-	cmd := &cobra.Command{
-		Use:   "create-migration",
-		Short: "Start migrating a serverless TablesDB database onto a dedicated MySQL compute. Data is copied to the target while the source stays live, with a brief read-only window during cutover.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForProject("")
-			if err != nil {
-				return err
-			}
-			service := tablesdb.New(client)
-
-			result, err := service.CreateMigration(databaseId, specification)
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
-	_ = cmd.MarkFlagRequired("database-id")
-	cmd.Flags().StringVar(&specification, "specification", "", "Dedicated compute specification to provision as the migration target (e.g. s-2vcpu-4gb). The migration always targets a dedicated compute, so `serverless` is not accepted.")
-	_ = cmd.MarkFlagRequired("specification")
-	return cmd
-}
-
-func newTablesDBGetMigrationCommand() *cobra.Command {
-	var databaseId string
-	var migrationId string
-
-	cmd := &cobra.Command{
-		Use:   "get-migration",
-		Short: "Get a single dedicated migration for a TablesDB database by its ID.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForProject("")
-			if err != nil {
-				return err
-			}
-			service := tablesdb.New(client)
-
-			result, err := service.GetMigration(databaseId, migrationId)
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
-	_ = cmd.MarkFlagRequired("database-id")
-	cmd.Flags().StringVar(&migrationId, "migration-id", "", "Migration ID.")
-	_ = cmd.MarkFlagRequired("migration-id")
-	return cmd
-}
-
-func newTablesDBDeleteMigrationCommand() *cobra.Command {
-	var databaseId string
-	var migrationId string
-
-	cmd := &cobra.Command{
-		Use:   "delete-migration",
-		Short: "Abort an in-flight TablesDB dedicated migration. Only allowed before cutover; once the migration has cut over it cannot be aborted.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForProject("")
-			if err != nil {
-				return err
-			}
-			service := tablesdb.New(client)
-
-			result, err := service.DeleteMigration(databaseId, migrationId)
-			if err != nil {
-				return err
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
-	_ = cmd.MarkFlagRequired("database-id")
-	cmd.Flags().StringVar(&migrationId, "migration-id", "", "Migration ID.")
-	_ = cmd.MarkFlagRequired("migration-id")
 	return cmd
 }
 

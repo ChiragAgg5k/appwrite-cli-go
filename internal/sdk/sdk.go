@@ -12,8 +12,6 @@ import (
 	"github.com/ChiragAgg5k/appwrite-cli-go/internal/config"
 )
 
-// Ports templates/cli/lib/sdks.ts onto the generated Go SDK's client.
-//
 // The CLI's own internal/client stays for the OAuth endpoints, which are hit
 // before a session exists; everything a service command does goes through the
 // SDK so request building, multipart upload and chunking are not reimplemented.
@@ -185,8 +183,6 @@ func (c *Context) projectEndpoint() (string, error) {
 }
 
 // ForConsole builds a client against the console project.
-//
-// Ports sdkForConsole().
 func (c *Context) ForConsole() (sdkclient.Client, error) {
 	endpoint, err := c.endpoint()
 	if err != nil {
@@ -208,8 +204,6 @@ func (c *Context) ForConsole() (sdkclient.Client, error) {
 // The `/organization` endpoints carry no organization ID in their path and act
 // on whichever organization the header names, so it is resolved from the
 // project config unless the caller passes one.
-//
-// Ports sdkForConsoleWithOrganization().
 func (c *Context) ForConsoleWithOrganization(organizationID string) (sdkclient.Client, error) {
 	client, err := c.ForConsole()
 	if err != nil {
@@ -231,8 +225,6 @@ func (c *Context) ForConsoleWithOrganization(organizationID string) (sdkclient.C
 
 // ForProject builds a client against the project in the working directory's
 // config.
-//
-// Ports sdkForProject().
 func (c *Context) ForProject(projectID string) (sdkclient.Client, error) {
 	endpoint, err := c.projectEndpoint()
 	if err != nil {

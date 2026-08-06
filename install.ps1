@@ -13,8 +13,8 @@
 # You can use "View source" of this page to see the full script.
 
 # REPO
-$GITHUB_x64_URL = "https://github.com/ChiragAgg5k/appwrite-cli-go/releases/download/0.7.16-preview/appwrite-cli-win-x64.exe"
-$GITHUB_arm64_URL = "https://github.com/ChiragAgg5k/appwrite-cli-go/releases/download/0.7.16-preview/appwrite-cli-win-arm64.exe"
+$GITHUB_x64_URL = "https://github.com/ChiragAgg5k/appwrite-cli-go/releases/download/0.7.17-preview/appwrite-cli-win-x64.exe"
+$GITHUB_arm64_URL = "https://github.com/ChiragAgg5k/appwrite-cli-go/releases/download/0.7.17-preview/appwrite-cli-win-arm64.exe"
 
 $APPWRITE_BINARY_NAME = "appwrite.exe"
 
@@ -30,6 +30,12 @@ $USER_PATH_ENV_VAR = [Environment]::GetEnvironmentVariable("PATH", "User")
 function Greeting {
     Write-Host @"
 
+     _                            _ _           ___   __   _____
+    /_\  _ __  _ ____      ___ __(_) |_ ___    / __\ / /   \_   \
+   //_\\| '_ \| '_ \ \ /\ / / '__| | __/ _ \  / /   / /     / /\/
+  /  _  \ |_) | |_) \ V  V /| |  | | ||  __/ / /___/ /___/\/ /_
+  \_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___| \____/\____/\____/
+        |_|   |_|                                                
 
 "@ -ForegroundColor red
     Write-Host "Welcome to the Appwrite CLI install shield."  
@@ -77,7 +83,7 @@ function CleanUp {
 function InstallCompleted {
     Write-Host "[4/4] Finishing Installation ... "
     cleanup
-    Write-Host "To get started with Appwrite CLI, please visit https://appwrite.io/docs/command-line"
+    Write-Host "To get started with Appwrite CLI, please visit https://github.com/ChiragAgg5k/appwrite-cli-go/docs/command-line"
     Write-Host "As first step, you can login to your Appwrite account using 'appwrite login'"
 }
 
